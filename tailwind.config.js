@@ -5,13 +5,12 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"Roboto Mono"', 'ui-monospace', '"SF Mono"', 'Menlo', 'monospace'],
+      },
+    },
   },
   plugins: [],
-  
-}
-
-fontFamily: {
-  sans: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
-  mono: ['"Roboto Mono"', 'ui-monospace', '"SF Mono"', 'Menlo', 'monospace'],
 }

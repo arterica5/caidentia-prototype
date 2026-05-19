@@ -4,15 +4,30 @@
 
 /* Reset default body styles for full-bleed canvas */
 html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   font-family: "Roboto", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
+/* Apply Roboto to all elements (defensive) */
 *, *::before, *::after {
-  font-family: inherit;  /* 모든 요소 강제 상속 */
+  font-family: inherit;
 }
 
-code, pre, .font-mono, [class*="font-mono"] {
-  font-family: "Roboto Mono", ... !important;
+/* Use Roboto Mono for monospace contexts (price, IDs, codes) */
+code, pre, kbd, samp,
+.font-mono,
+[class*="font-mono"] {
+  font-family: "Roboto Mono", ui-monospace, "SF Mono", Menlo, monospace !important;
+}
+
+/* Form elements: inherit Roboto */
+input, button, textarea, select {
+  font-family: inherit;
 }
 
 /* Scrollbar (subtle) */
