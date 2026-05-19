@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Bell, Search, User, Settings, ChevronDown, ChevronRight, ChevronLeft,
-  Package, GitBranch, DollarSign, Send, ShieldCheck, Building2, Users,
+  Package, GitBranch, DollarSign, Send, ShieldCheck, Building2, Users, UsersRound,
   AlertTriangle, AlertCircle, CheckCircle, XCircle, Clock, Filter,
   Plus, MoreHorizontal, MessageSquare, Sparkles, TrendingUp, TrendingDown,
   ArrowRight, Hash, Paperclip, AtSign, Smile, Layers, FileText, Zap,
@@ -78,11 +78,11 @@ const PROJECTS = [
     pm: "PM", ownerName: "Paige Kim", collaborators: 1,
     suppliers: 0, items: 0, tmcGap: 0, lastUpdate: "Today", priority: "med", isNew: true },
   { code: "BPM260400354", name: "NPI Project_Samsung Smartphone #2", product: "Smartphone A1",
-    type: "New To The Company", phase: "Develop", phaseDays: 23, readiness: 65, blocking: 4,
+    type: "New To The Company", phase: "Develop", phaseDays: 23, readiness: 65, blocking: 3,
     pm: "PM", ownerName: "Paige Kim", collaborators: 5,
     suppliers: 8, items: 80, tmcGap: 8.5, lastUpdate: "2026/04/30", priority: "high" },
   { code: "BPM260400353", name: "NPI Project_Galaxy Watch 7", product: "SmartWatch G7",
-    type: "Major Enhancement", phase: "Plan", phaseDays: 45, readiness: 68, blocking: 1,
+    type: "Major Enhancement", phase: "Plan", phaseDays: 45, readiness: 68, blocking: 0,
     pm: "PM", ownerName: "Paige Wong", collaborators: 4,
     suppliers: 6, items: 42, tmcGap: -2.4, lastUpdate: "2026/04/29", priority: "high" },
   { code: "BPM260400352", name: "Galaxy Buds Pro 4 Refresh", product: "Earbuds B4",
@@ -90,7 +90,7 @@ const PROJECTS = [
     pm: "PM", ownerName: "Paige Kim", collaborators: 3,
     suppliers: 4, items: 28, tmcGap: -1.2, lastUpdate: "2026/04/30", priority: "med" },
   { code: "BPM260400351", name: "Smart TV QN90D 75\"", product: "TV Q90",
-    type: "Major Enhancement", phase: "Develop", phaseDays: 67, readiness: 72, blocking: 2,
+    type: "Major Enhancement", phase: "Develop", phaseDays: 67, readiness: 72, blocking: 0,
     pm: "QM", ownerName: "Quinn Rodriguez", collaborators: 6,
     suppliers: 12, items: 156, tmcGap: 5.8, lastUpdate: "2026/04/28", priority: "med" },
   { code: "BPM260400350", name: "Foldable Z Fold 7", product: "Foldable F7",
@@ -98,7 +98,7 @@ const PROJECTS = [
     pm: "DE", ownerName: "Dean Park", collaborators: 7,
     suppliers: 9, items: 105, tmcGap: 28.4, lastUpdate: "2026/04/30", priority: "high" },
   { code: "BPM260400349", name: "NPI Project_Samsung Smartphone #1", product: "Smartphone S1",
-    type: "Major Enhancement", phase: "Develop", phaseDays: 31, readiness: 81, blocking: 1,
+    type: "Major Enhancement", phase: "Develop", phaseDays: 31, readiness: 81, blocking: 0,
     pm: "PM", ownerName: "Pete Hayes", collaborators: 4,
     suppliers: 7, items: 76, tmcGap: 2.1, lastUpdate: "2026/04/27", priority: "med" },
   { code: "BPM260400348", name: "Wireless Charger 25W", product: "Charger C25",
@@ -106,7 +106,7 @@ const PROJECTS = [
     pm: "CM", ownerName: "Cory Chen", collaborators: 2,
     suppliers: 3, items: 18, tmcGap: 0, lastUpdate: "2026/04/22", priority: "low" },
   { code: "BPM260400347", name: "Tablet Tab S10 Ultra", product: "Tablet T10",
-    type: "Major Enhancement", phase: "Plan", phaseDays: 58, readiness: 64, blocking: 2,
+    type: "Major Enhancement", phase: "Plan", phaseDays: 58, readiness: 64, blocking: 0,
     pm: "SM", ownerName: "Sam Lee", collaborators: 5,
     suppliers: 8, items: 92, tmcGap: 7.6, lastUpdate: "2026/04/29", priority: "med" },
   { code: "BPM260400346", name: "Soundbar HW-Q990D", product: "Audio Q990",
@@ -193,11 +193,46 @@ const SHARED_FILES = [
 
 // === Collaborators ===
 const COLLABORATORS = [
-  { persona: "PM", role: "Project Manager", active: "now", contribution: 28, owner: true },
-  { persona: "DE", role: "Design Engineer", active: "5 min ago", contribution: 47, owner: false },
-  { persona: "CM", role: "Cost Manager", active: "2 hours ago", contribution: 32, owner: false },
-  { persona: "SM", role: "Sourcing Manager", active: "Yesterday", contribution: 24, owner: false },
-  { persona: "QM", role: "Quality Manager", active: "3 hours ago", contribution: 18, owner: false },
+  { persona: "PM", role: "Project Manager", active: "now", contribution: 28, owner: true,
+    email: "paige.kim@samsung.com", department: "NPI Office" },
+  { persona: "DE", role: "Design Engineer", active: "5 min ago", contribution: 47, owner: false,
+    email: "dean.park@samsung.com", department: "Mobile R&D" },
+  { persona: "CM", role: "Cost Manager", active: "2 hours ago", contribution: 32, owner: false,
+    email: "cory.chen@samsung.com", department: "Cost Engineering" },
+  { persona: "SM", role: "Sourcing Manager", active: "Yesterday", contribution: 24, owner: false,
+    email: "sam.lee@samsung.com", department: "Strategic Sourcing" },
+  { persona: "QM", role: "Quality Manager", active: "3 hours ago", contribution: 18, owner: false,
+    email: "quinn.r@samsung.com", department: "Quality Assurance" },
+];
+
+// === External collaborators (suppliers / vendors) ===
+// Per-project external contacts — appears only when supplier engagements exist
+const EXTERNAL_COLLABORATORS = [
+  { id: "ext-1", name: "Chen Wei", company: "BOE Technology", role: "Account Manager",
+    initial: "CW", color: "#1565E0",
+    email: "chen.wei@boe.com", phone: "+86 10 6436 8888",
+    contribution: "AMOLED Panel · Supplier (Selected)", active: "Today 14:22",
+    bomScope: "C" },
+  { id: "ext-2", name: "Hideki Tanaka", company: "Samsung Display", role: "Senior Sales",
+    initial: "HT", color: "#532DF6",
+    email: "h.tanaka@samsungdisplay.com", phone: "+82 31 5181 2000",
+    contribution: "AMOLED Panel · RFQ (Not selected)", active: "Yesterday",
+    bomScope: "C" },
+  { id: "ext-3", name: "Min-jun Park", company: "LG Display", role: "Key Account",
+    initial: "MP", color: "#009955",
+    email: "minjun.p@lgdisplay.com", phone: "+82 2 3777 1114",
+    contribution: "AMOLED Panel · RFQ (Not selected)", active: "Yesterday",
+    bomScope: "C" },
+  { id: "ext-4", name: "Sarah Williams", company: "Nitto Denko", role: "Sales Engineer",
+    initial: "SW", color: "#E06900",
+    email: "s.williams@nitto.com", phone: "+1 415 778 2700",
+    contribution: "Polarizer Film · Supplier (Primary)", active: "2 days ago",
+    bomScope: "C" },
+  { id: "ext-5", name: "Robert Liu", company: "3M Korea", role: "Technical Sales",
+    initial: "RL", color: "#1565E0",
+    email: "r.liu@3m.com", phone: "+82 2 3771 4114",
+    contribution: "OCA Adhesive · Supplier", active: "Last week",
+    bomScope: "C" },
 ];
 
 // === Per-project shared files (isNew → empty; otherwise → SHARED_FILES) ===
@@ -213,6 +248,20 @@ function getCollaboratorsForProject(project) {
     return COLLABORATORS.filter(c => c.owner);
   }
   return COLLABORATORS;
+}
+
+// === Per-project external collaborators (suppliers) ===
+// isNew project or projects not in Develop+ phase → empty
+function getExternalCollaboratorsForProject(project) {
+  if (!project || project.isNew) return [];
+  // Hero project has full supplier engagement
+  if (project.code === "BPM260400354") return EXTERNAL_COLLABORATORS;
+  // Other projects: subset based on phase (later phases have more suppliers)
+  const phaseOrder = ["Incubation", "Concept", "Plan", "Define", "Develop", "Verify", "SOP"];
+  const phaseIdx = phaseOrder.indexOf(project.phase);
+  if (phaseIdx < 3) return []; // Pre-Define: no suppliers yet
+  if (phaseIdx < 4) return EXTERNAL_COLLABORATORS.slice(0, 2);
+  return EXTERNAL_COLLABORATORS.slice(0, 3);
 }
 
 // === BOM Timeline Events ===
@@ -1839,6 +1888,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
       items: [
         { id: "cockpit", icon: LayoutDashboard, label: "Overview", badge: null },
         { id: "info", icon: Info, label: "Project Info", badge: null },
+        { id: "collaborators", icon: UsersRound, label: "Collaborators", badge: null },
       ],
     },
     {
@@ -1856,8 +1906,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
       label: "Quality",
       items: [
         {
-          id: "apqp", icon: BadgeCheck, label: "APQP",
-          badge: isHeroProject ? { value: "●", color: C.warning, tooltip: "PPAP in progress" } : null,
+          id: "apqp", icon: BadgeCheck, label: "APQP", badge: null,
         },
       ],
     },
@@ -2107,7 +2156,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
                           title={isNotCreated ? `${bom.name} not yet created` : isNotStarted ? `${bom.name} promoted, awaiting owner` : (bom.syncNote || `${bom.name} · sync OK`)}>
                           <span className={`text-[12px] flex-1 min-w-0 truncate ${isBomActive ? "font-semibold" : "font-normal"}`}
                             style={{ color: isBomActive ? C.primary : (isDisabled ? C.textDisabled : C.textPrimary) }}>
-                            {bom.label}s
+                            {bom.label}
                           </span>
                           {isNotCreated ? (
                             <span className="text-[9px] shrink-0 italic" style={{ color: C.textDisabled }}>
@@ -3081,8 +3130,8 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
     }
     if (phaseFilter !== "all") result = result.filter((p) => p.phase === phaseFilter);
     if (priorityFilter !== "all") result = result.filter((p) => p.priority === priorityFilter);
-    if (statusFilter === "onTrack") result = result.filter((p) => p.readiness >= 90);
-    if (statusFilter === "atRisk") result = result.filter((p) => p.readiness < 70);
+    if (statusFilter === "onTrack") result = result.filter((p) => p.blocking === 0 && p.readiness >= 70);
+    if (statusFilter === "atRisk") result = result.filter((p) => p.blocking === 0 && p.readiness < 70);
     if (statusFilter === "blocked") result = result.filter((p) => p.blocking > 0);
 
     // Composite urgency sort: blocking desc → D-day asc → readiness asc
@@ -3103,11 +3152,15 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
     return result;
   }, [search, phaseFilter, priorityFilter, sortBy, statusFilter]);
 
+  // Mutually exclusive status categorization (Blocked > At Risk > On Track).
+  // A project that has blockers is "Blocked" regardless of readiness.
+  // Among unblocked projects, readiness < 70 is "At Risk"; readiness >= 70 is "On Track".
+  // Categories are exhaustive: every project falls into exactly one — sum equals total.
   const totals = useMemo(() => ({
     total: PROJECTS.length,
     blocked: PROJECTS.filter((p) => p.blocking > 0).length,
-    atRisk: PROJECTS.filter((p) => p.readiness < 70).length,
-    onTrack: PROJECTS.filter((p) => p.readiness >= 90).length,
+    atRisk: PROJECTS.filter((p) => p.blocking === 0 && p.readiness < 70).length,
+    onTrack: PROJECTS.filter((p) => p.blocking === 0 && p.readiness >= 70).length,
   }), []);
 
   const onOpenProject = (code) => {
@@ -3338,14 +3391,11 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                         <span className="text-[10px]" style={{ color: C.textDisabled }}>—</span>
                       )}
                     </td>
-                    {/* Gate Readiness — default primary; red only for true crisis (low readiness + urgent deadline + blocking, ALL required) */}
+                    {/* Gate Readiness — primary by default; error red when blocked */}
                     <td className="py-3 px-2">
                       {(() => {
-                        // True crisis: readiness < 70 AND phaseDays < 60 AND blocking > 0
-                        const isCrisis = p.readiness < 70 && p.phaseDays < 60 && p.blocking > 0;
-                        const readinessColor = isCrisis ? C.error
-                          : p.readiness >= 90 ? C.success
-                          : C.primary;
+                        const isBlocked = p.blocking > 0;
+                        const readinessColor = isBlocked ? C.error : C.primary;
                         return (
                           <div className="flex items-center gap-2">
                             <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: C.borderLight }}>
@@ -3404,7 +3454,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
 
 
 // === SCREEN 1. PROJECT COCKPIT ===
-function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView }) {
+function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, activePersona }) {
   const project = PROJECTS.find((p) => p.code === activeProjectCode) || PROJECTS[0];
   const isHeroProject = project.code === ACTIVE_PROJECT_CODE;
 
@@ -3418,20 +3468,79 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView }
   const blockingItems = isHeroProject ? BLOCKING_ITEMS : generateGenericBlockingItems(project);
 
   // Per-phase Gate Readiness 3 sub-indicators (Design / Source & Cost / Quality)
-  // Sourcing is now part of C-BOM, so it's reflected in the Cost indicator (renamed for clarity)
+  // Values average to the main readiness % for math consistency.
+  // Initial: 78 + 58 + 60 → avg ≈ 65%
+  // Resolved: 98 + 96 + 92 → avg ≈ 95.3% (rounded to 96%)
   const subIndicators = isHeroProject
     ? (isResolved
         ? [{ label: "Design", value: 98, color: C.info },
            { label: "Source & Cost", value: 96, color: C.warning },
            { label: "Quality", value: 92, color: C.primary }]
-        : [{ label: "Design", value: 92, color: C.info },
-           { label: "Source & Cost", value: 81, color: C.warning },
-           { label: "Quality", value: 71, color: C.primary }])
+        : [{ label: "Design", value: 78, color: C.info },
+           { label: "Source & Cost", value: 58, color: C.warning },
+           { label: "Quality", value: 60, color: C.primary }])
     : [
         { label: "Design", value: Math.min(100, project.readiness + 5), color: C.info },
         { label: "Source & Cost", value: Math.max(20, project.readiness - 4), color: C.warning },
         { label: "Quality", value: Math.max(20, project.readiness - 12), color: C.primary },
       ];
+
+  // === DE Cockpit (Design Engineer view) ===
+  // Different KPIs + widgets focused on spec review & design queue.
+  // Only renders for Hero project (other projects keep PM-style view to avoid empty widgets).
+  if (activePersona === "DE" && !project.isNew && isHeroProject) {
+    return (
+      <DeCockpit
+        project={project}
+        scenarioStep={scenarioStep}
+        isResolved={isResolved}
+        onOpenItem={onOpenItem}
+        setView={setView}
+      />
+    );
+  }
+
+  // === CM Cockpit (Cost Manager view) ===
+  // KPIs + widgets focused on cost reconciliation, RFQ tracking, and supplier quote alignment.
+  if (activePersona === "CM" && !project.isNew && isHeroProject) {
+    return (
+      <CmCockpit
+        project={project}
+        scenarioStep={scenarioStep}
+        isResolved={isResolved}
+        onOpenItem={onOpenItem}
+        setView={setView}
+      />
+    );
+  }
+
+  // === SM Cockpit (Sourcing Manager / GCM view) ===
+  // KPIs + widgets focused on supplier risk, commodity prices, and sourcing actions.
+  if (activePersona === "SM" && !project.isNew && isHeroProject) {
+    return (
+      <SmCockpit
+        project={project}
+        scenarioStep={scenarioStep}
+        isResolved={isResolved}
+        onOpenItem={onOpenItem}
+        setView={setView}
+      />
+    );
+  }
+
+  // === QM Cockpit (Quality Manager view) ===
+  // KPIs + widgets focused on PPAP tracking, PCR review, and DVT validation.
+  if (activePersona === "QM" && !project.isNew && isHeroProject) {
+    return (
+      <QmCockpit
+        project={project}
+        scenarioStep={scenarioStep}
+        isResolved={isResolved}
+        onOpenItem={onOpenItem}
+        setView={setView}
+      />
+    );
+  }
 
   // === Newly-created project: dedicated onboarding state ===
   if (project.isNew) {
@@ -3587,16 +3696,49 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView }
         </button>
       </div>
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        <KpiCard icon={Clock} iconColor={C.warning} label="Phase Due" value={`D-${project.phaseDays}`} sub={project.lastUpdate} />
-        <KpiCard icon={DollarSign} iconColor={tmcGap > 0 ? C.error : tmcGap < 0 ? C.success : C.textSecondary} label="TMC Gap"
+      {/* KPI Row — PM Cockpit (5 cards: Runway / Decisions / Cost / Conflicts / Risk) */}
+      <div className="grid grid-cols-5 gap-4 mb-5">
+        {/* Gate Runway — phase deadline */}
+        <KpiCard
+          icon={Clock}
+          iconColor={project.phaseDays <= 7 ? C.error : project.phaseDays <= 30 ? C.warning : C.textSecondary}
+          label="Gate Runway"
+          value={`${project.phaseDays} days`}
+          sub={`${project.phase} gate deadline`} />
+
+        {/* Open Decisions — pending PM action */}
+        <KpiCard
+          icon={AtSign}
+          iconColor={isResolved ? C.success : (isHeroProject ? C.primary : C.textSecondary)}
+          label="Open Decisions"
+          value={isResolved ? "0" : (isHeroProject ? "3" : "0")}
+          sub={isResolved ? "All resolved" : (isHeroProject ? "Awaiting PM review" : "Nothing pending")} />
+
+        {/* Cost vs Target — TMC Gap */}
+        <KpiCard
+          icon={DollarSign}
+          iconColor={tmcGap > 0 ? C.error : tmcGap < 0 ? C.success : C.textSecondary}
+          label="Cost vs Target"
           value={tmcGap === 0 ? "—" : tmcGap > 0 ? `+$${tmcGap}k` : `-$${Math.abs(tmcGap)}k`}
-          sub={tmcGap > 0 ? "Over Target" : tmcGap < 0 ? "Under Target" : "On Target"} />
-        <KpiCard icon={AlertTriangle} iconColor={blocking > 0 ? C.error : C.success} label="Blocking Items"
-          value={blocking} sub={blocking > 0 ? "Action Required" : "All Clear"} />
-        <KpiCard icon={AtSign} iconColor={C.primary} label="My Pending Actions"
-          value={isHeroProject ? "3" : "0"} sub={isHeroProject ? "2 mentions, 1 approval" : "Nothing pending"} />
+          sub={tmcGap > 0 ? "Over target" : tmcGap < 0 ? "Under target" : "On target"} />
+
+        {/* BOM Conflicts — cross-BOM blocking issues */}
+        <KpiCard
+          icon={AlertTriangle}
+          iconColor={blocking > 0 ? C.error : C.success}
+          label="BOM Conflicts"
+          value={blocking}
+          sub={blocking > 0
+            ? (isHeroProject ? "AMOLED Panel" : "Action required")
+            : "All clear"} />
+
+        {/* Risk Items — High risk parts (Q-BOM) */}
+        <KpiCard
+          icon={ShieldCheck}
+          iconColor={isResolved ? C.success : (isHeroProject ? C.warning : C.textSecondary)}
+          label="Risk Items"
+          value={isResolved ? "0" : (isHeroProject ? "6" : "0")}
+          sub={isResolved ? "All cleared" : (isHeroProject ? "3 sole-source · 2 geo" : "—")} />
       </div>
 
       {/* Gate Readiness + Blocking Items */}
@@ -3627,12 +3769,12 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView }
         <div className="col-span-2 p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="flex items-center justify-between mb-4">
             <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
-              {isResolved ? "Recently Resolved Items" : blocking > 0 ? "Blocking Items" : "Recent Activity"}
+              {isResolved ? "Recently Resolved Items" : blocking > 0 ? "Pending Decisions" : "Recent Activity"}
             </div>
             <span className="text-xs px-2 py-0.5 rounded"
               style={{ backgroundColor: isResolved ? C.successLight : (blocking > 0 ? C.errorLight : C.bg),
                        color: isResolved ? C.success : (blocking > 0 ? C.error : C.textSecondary) }}>
-              {isResolved ? "Last 24h" : blocking > 0 ? "Action needed" : "All clear"}
+              {isResolved ? "Last 24h" : blocking > 0 ? "Require PM action" : "All clear"}
             </span>
           </div>
           {isResolved ? (
@@ -3649,38 +3791,66 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView }
             </div>
           ) : (
             <div className="space-y-2">
-              {blockingItems.map((item) => (
-                <button key={item.id} onClick={() => isHeroProject && onOpenItem(item.id)}
-                  disabled={!isHeroProject}
-                  className="w-full text-left p-3 rounded-lg border hover:shadow-sm transition-all"
-                  style={{ borderColor: C.borderLight, cursor: isHeroProject ? "pointer" : "default" }}>
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: C.errorLight }}>
-                      <Package className="w-4 h-4" style={{ color: C.error }} />
+              {blockingItems.map((item) => {
+                // Infer PM action type from blockReason/status:
+                // - "no supplier" / "not assigned" → Assign
+                // - "Risk Assessment pending" / spec review → Review
+                // - cost/price conflicts → Resolve
+                const reason = (item.blockReason || "").toLowerCase();
+                let actionLabel = "Resolve";
+                let actionColor = C.error;
+                if (reason.includes("not assigned") || reason.includes("no supplier") || reason.includes("rfq not")) {
+                  actionLabel = "Assign";
+                  actionColor = C.primary;
+                } else if (reason.includes("pending") || reason.includes("review") || reason.includes("spec")) {
+                  actionLabel = "Review";
+                  actionColor = C.warning;
+                }
+                return (
+                  <div key={item.id}
+                    className="w-full p-3 rounded-lg border transition-all hover:shadow-sm"
+                    style={{ borderColor: C.borderLight }}>
+                    <div className="flex items-start gap-3">
+                      <button
+                        onClick={() => isHeroProject && onOpenItem && onOpenItem(item.id)}
+                        disabled={!isHeroProject}
+                        className="flex-1 min-w-0 text-left flex items-start gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
+                        style={{ cursor: isHeroProject ? "pointer" : "default" }}>
+                        <div className="w-9 h-9 rounded flex items-center justify-center shrink-0"
+                          style={{ backgroundColor: C.errorLight }}>
+                          <Package className="w-4 h-4" style={{ color: C.error }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-sm font-medium" style={{ color: C.textPrimary }}>
+                              {item.partName || item.partId}
+                            </span>
+                            <span className="text-xs font-mono" style={{ color: C.textSecondary }}>
+                              {item.partId}
+                            </span>
+                          </div>
+                          <div className="text-xs mb-2" style={{ color: C.textSecondary }}>
+                            {item.blockReason}
+                          </div>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {item.status && Object.entries(item.status).map(([k, v]) => (
+                              <StatusPill key={k} kind={v} label={`${k}: ${STATUS_MAP[v].label}`} />
+                            ))}
+                          </div>
+                        </div>
+                      </button>
+                      {isHeroProject && (
+                        <button
+                          onClick={() => onOpenItem && onOpenItem(item.id)}
+                          className="h-7 px-2.5 rounded-md text-[11px] font-semibold border transition-colors shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
+                          style={{ borderColor: actionColor, color: actionColor, backgroundColor: "white" }}>
+                          {actionLabel}
+                        </button>
+                      )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium" style={{ color: C.textPrimary }}>
-                          {item.partName || item.partId}
-                        </span>
-                        <span className="text-xs font-mono" style={{ color: C.textSecondary }}>
-                          {item.partId}
-                        </span>
-                      </div>
-                      <div className="text-xs mb-2" style={{ color: C.textSecondary }}>
-                        {item.blockReason}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        {item.status && Object.entries(item.status).map(([k, v]) => (
-                          <StatusPill key={k} kind={v} label={`${k}: ${STATUS_MAP[v].label}`} />
-                        ))}
-                      </div>
-                    </div>
-                    {isHeroProject && <ChevronRight className="w-4 h-4 shrink-0" style={{ color: C.textDisabled }} />}
                   </div>
-                </button>
-              ))}
+                );
+              })}
               {!isHeroProject && (
                 <div className="mt-2 px-3 py-2 rounded-md text-xs flex items-center gap-2"
                   style={{ backgroundColor: C.infoLight, color: C.info }}>
@@ -3693,52 +3863,1329 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView }
         </div>
       </div>
 
-      {/* Activity Mini */}
-      <div className="p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Recent Activity & Decisions</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
-              Project mentions & decisions — synced with the Activity Stream in BOM Collaboration.
+      {/* Activity Mini + Risk Summary (2-column) */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* Activity Mini — 2/3 width */}
+        <div className="col-span-2 p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Recent Activity & Decisions</div>
+              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+                Project mentions & decisions — synced with the Activity Stream in BOM Collaboration.
+              </div>
             </div>
+            <button onClick={() => setView("bom")}
+              className="text-xs font-medium px-3 py-1.5 rounded-md border flex items-center gap-1.5 transition-colors hover:bg-gray-50"
+              style={{ color: C.primary, borderColor: C.primaryLight, backgroundColor: "white" }}>
+              View full Activity Stream
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
           </div>
-          <button onClick={() => setView("bom")}
-            className="text-xs font-medium px-3 py-1.5 rounded-md border flex items-center gap-1.5 transition-colors hover:bg-gray-50"
-            style={{ color: C.primary, borderColor: C.primaryLight, backgroundColor: "white" }}>
-            View full Activity Stream
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          {isHeroProject ? (
+            <div className="space-y-3">
+              {ACTIVITY_FEED.slice(0, Math.min(scenarioStep + 1, 4)).map((m) => (
+                <div key={m.id} className="flex items-start gap-3 text-sm">
+                  <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={26} />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-medium" style={{ color: C.textPrimary }}>
+                        {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
+                      </span>
+                      <span className="text-xs" style={{ color: C.textDisabled }}>·</span>
+                      <span className="text-xs" style={{ color: C.textDisabled }}>{m.ts}</span>
+                      {m.decision && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                          style={{ backgroundColor: C.primaryLight, color: C.primary }}>DECISION</span>
+                      )}
+                    </div>
+                    <div className="text-xs leading-relaxed" style={{ color: C.textSecondary }}>{m.message}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Activity className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
+              <div className="text-xs" style={{ color: C.textSecondary }}>
+                {project.name}'s activity log will appear here
+              </div>
+            </div>
+          )}
         </div>
-        {isHeroProject ? (
-          <div className="space-y-3">
-            {ACTIVITY_FEED.slice(0, Math.min(scenarioStep + 1, 4)).map((m) => (
-              <div key={m.id} className="flex items-start gap-3 text-sm">
-                <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={26} />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-medium" style={{ color: C.textPrimary }}>
-                      {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
+
+        {/* Risk Summary — 1/3 width (NEW) */}
+        <div className="p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Risk Summary</div>
+              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>Supplier source distribution</div>
+            </div>
+            <button onClick={() => setView("bom")}
+              className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              style={{ color: C.primary }}>
+              Full dashboard →
+            </button>
+          </div>
+          {(() => {
+            // Hero project: scenario-driven values; resolved state shows improved metrics
+            // Other projects: derived placeholders
+            const riskData = isHeroProject
+              ? (isResolved
+                  ? [
+                      { label: "Sole source", value: 8, target: 10, color: C.success, status: "good" },
+                      { label: "Single source", value: 12, target: 15, color: C.success, status: "good" },
+                      { label: "Dual+", value: 80, target: 75, color: C.success, status: "good" },
+                    ]
+                  : [
+                      { label: "Sole source", value: 18, target: 10, color: C.error, status: "over" },
+                      { label: "Single source", value: 24, target: 15, color: C.warning, status: "over" },
+                      { label: "Dual+", value: 58, target: 75, color: C.warning, status: "under" },
+                    ])
+              : [
+                  { label: "Sole source", value: 12, target: 10, color: C.warning, status: "over" },
+                  { label: "Single source", value: 18, target: 15, color: C.warning, status: "over" },
+                  { label: "Dual+", value: 70, target: 75, color: C.warning, status: "under" },
+                ];
+            return (
+              <div className="space-y-3.5">
+                {riskData.map((r) => (
+                  <div key={r.label}>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span style={{ color: C.textSecondary }}>{r.label}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold" style={{ color: r.color }}>{r.value}%</span>
+                        <span className="text-[10px]" style={{ color: C.textDisabled }}>Target {r.target}%</span>
+                      </div>
+                    </div>
+                    <div className="h-1.5 rounded-full overflow-hidden relative" style={{ backgroundColor: C.borderLight }}>
+                      <div className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, r.value)}%`,
+                          backgroundColor: r.color,
+                        }} />
+                      {/* Target marker */}
+                      <div className="absolute top-0 bottom-0 w-px"
+                        style={{
+                          left: `${Math.min(100, r.target)}%`,
+                          backgroundColor: C.textPrimary,
+                          opacity: 0.4,
+                        }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// === DE COCKPIT ===
+// Design Engineer-focused dashboard:
+// 5 KPIs (Pending Decisions, Spec Changes, Conflicts, New Parts, PPAP Items)
+// + BOM Review Queue + Changes Submitted + DVT Validation + Process Sheet Completeness
+function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
+  // ===== Mock data for DE scenario (Hero project) =====
+  // BOM Review Queue: changes others submitted that DE needs to accept/decide/review
+  const bomReviewQueue = isResolved ? [] : [
+    { id: 3, partId: "EI2-I6DA-003WB", partName: "AMOLED Panel 6.7\"",
+      meta: "Display spec: 6.5\" 90Hz → 6.7\" 120Hz",
+      status: "conflict", action: "Resolve" },
+    { id: 7, partId: "GL2-7HKR-WA1Z3", partName: "Cover Glass Gorilla Victus 2",
+      meta: "Thickness: 0.65mm → 0.70mm — CM proposed",
+      status: "pending", action: "Decide" },
+    { id: 9, partId: "QE3-8DHV-XIRG8", partName: "Fan Module",
+      meta: "Blade material: PC → PC+ABS — supplier suggested",
+      status: "pending", action: "Decide" },
+    { id: 6, partId: "1W6-4YP3-X6FU2", partName: "Touch Controller IC",
+      meta: "New part added by CM",
+      status: "pending", action: "Review" },
+    { id: 2, partId: "XYR-YZK5-WA1A7", partName: "Display Module 6.7\"",
+      meta: "Brightness: 1300 nits → 1500 nits — DE approved",
+      status: "accepted", action: null },
+  ];
+
+  // Changes I submitted (DE-initiated spec changes)
+  const changesSubmitted = isResolved
+    ? [
+        { id: "c1", title: "AMOLED Panel 6.7\" 120Hz", meta: "Spec change · CM applied · QM cleared", state: "approved" },
+        { id: "c2", title: "Polarizer Film update", meta: "Material spec · All teams approved", state: "approved" },
+        { id: "c3", title: "Display Module brightness", meta: "1500 nits peak · confirmed", state: "approved" },
+      ]
+    : [
+        { id: "c1", title: "AMOLED Panel 6.7\" 120Hz", meta: "Spec change · CM negotiating supplier", state: "review" },
+        { id: "c2", title: "Polarizer Film (new)", meta: "New part · RFQ pending · sourcing TBD", state: "pending" },
+        { id: "c3", title: "OCA Adhesive (new)", meta: "New part · Supplier TBC", state: "pending" },
+        { id: "c4", title: "Cover Glass spec", meta: "No change from Rev A — confirmed", state: "unchanged" },
+      ];
+
+  // DVT validation required (Design Verification Test items)
+  const dvtItems = isResolved ? [] : [
+    { id: "d1", title: "AMOLED Panel 6.7\" 120Hz refresh",
+      detail: "Touch latency & color accuracy validation required.",
+      due: "Apr 25", urgent: true },
+    { id: "d2", title: "Fan Module flow test",
+      detail: "Airflow at PC+ABS blade — thermal margin re-verification.",
+      due: "May 2", urgent: false },
+    { id: "d3", title: "Mainboard 5G thermal",
+      detail: "New AMOLED draws +12% — re-run thermal scenarios.",
+      due: "TBD", urgent: false },
+  ];
+
+  // Process sheet completeness by sub-system
+  const processSheets = isResolved
+    ? [
+        { label: "Display Module", value: 100, color: C.success },
+        { label: "Camera Module", value: 95, color: C.success },
+        { label: "Mainboard", value: 98, color: C.success },
+        { label: "Battery", value: 92, color: C.success },
+        { label: "Mechanical", value: 88, color: C.success },
+      ]
+    : [
+        { label: "Display Module", value: 72, color: C.warning },
+        { label: "Camera Module", value: 85, color: C.success },
+        { label: "Mainboard", value: 60, color: C.warning },
+        { label: "Battery", value: 90, color: C.success },
+        { label: "Mechanical", value: 55, color: C.error },
+      ];
+
+  // ===== KPI calculations =====
+  const pendingDecisions = bomReviewQueue.filter(q => q.status !== "accepted").length;
+  const specChanges = isResolved ? 7 : 7; // total spec deltas vs E-BOM Rev A
+  const conflicts = isResolved ? 0 : 1;   // cross-team blockers DE owns
+  const newParts = isResolved ? 0 : 2;     // parts without supplier
+  const ppapPending = isResolved ? 0 : 4;  // Q-BOM items awaiting DE input
+
+  // Status meta for review queue
+  const statusMeta = {
+    conflict: { label: "Conflict", bg: C.errorLight, fg: C.error, actionBorder: C.error },
+    pending:  { label: "Pending",  bg: C.warningLight, fg: C.warning, actionBorder: C.warning },
+    accepted: { label: "Accepted", bg: C.successLight, fg: C.success, actionBorder: null },
+  };
+
+  return (
+    <div className="p-6" style={{ minHeight: "100%" }}>
+      {/* AI Banner for DE */}
+      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+        style={{
+          backgroundColor: isResolved ? C.successLight : C.primarySoft,
+          borderColor: isResolved ? C.success : C.primaryLight,
+        }}>
+        <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="text-sm font-semibold mb-0.5"
+            style={{ color: isResolved ? C.successDark : C.primaryDark }}>
+            {isResolved
+              ? `All design reviews cleared — ${project.phase} Phase Gate ready`
+              : `${pendingDecisions} decisions pending — Spec change Rev B awaiting review`}
+          </div>
+          <div className="text-xs" style={{ color: C.textSecondary }}>
+            {isResolved
+              ? "All AMOLED Panel collaboration sign-offs complete. Process sheets at 95%+."
+              : `${specChanges} spec deltas vs Rev A baseline. ${newParts} new parts need supplier assignment.`}
+          </div>
+        </div>
+        <button
+          onClick={() => setView && setView("bom")}
+          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          {isResolved ? "Open BOM" : "Open BOM workspace"}
+        </button>
+      </div>
+
+      {/* KPI Row — DE-specific (5 cards) */}
+      <div className="grid grid-cols-5 gap-4 mb-5">
+        <KpiCard
+          icon={AtSign}
+          iconColor={pendingDecisions > 0 ? C.primary : C.success}
+          label="My Pending Decisions"
+          value={pendingDecisions}
+          sub={pendingDecisions > 0 ? "Accept / Keep needed" : "All cleared"} />
+
+        <KpiCard
+          icon={GitBranch}
+          iconColor={specChanges > 0 ? C.warning : C.success}
+          label="Spec Changes (Rev B)"
+          value={specChanges}
+          sub="vs Rev A baseline" />
+
+        <KpiCard
+          icon={AlertTriangle}
+          iconColor={conflicts > 0 ? C.error : C.success}
+          label="Conflicts"
+          value={conflicts}
+          sub={conflicts > 0 ? "AMOLED Panel" : "All clear"} />
+
+        <KpiCard
+          icon={Package}
+          iconColor={newParts > 0 ? C.warning : C.success}
+          label="New Parts (No Supplier)"
+          value={newParts}
+          sub={newParts > 0 ? "RFQ needed" : "All assigned"} />
+
+        <KpiCard
+          icon={ShieldCheck}
+          iconColor={ppapPending > 0 ? C.warning : C.success}
+          label="PPAP Items Pending"
+          value={ppapPending}
+          sub={ppapPending > 0 ? "QM review required" : "All cleared"} />
+      </div>
+
+      {/* Row 1: BOM Review Queue (2/3) + Changes Submitted (1/3) */}
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        {/* My BOM Review Queue */}
+        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+            <div>
+              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>My BOM Review Queue</div>
+              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+                Accept or keep each change submitted by collaborators
+              </div>
+            </div>
+            <button onClick={() => setView && setView("bom")}
+              className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              style={{ color: C.primary }}>
+              Open BOM workspace →
+            </button>
+          </div>
+          {bomReviewQueue.length === 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
+              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>All reviews cleared</div>
+              <div className="text-xs" style={{ color: C.textSecondary }}>No pending decisions on your queue.</div>
+            </div>
+          ) : (
+            <div className="divide-y" style={{ borderColor: C.borderLight }}>
+              {bomReviewQueue.map((q) => {
+                const meta = statusMeta[q.status];
+                return (
+                  <div key={q.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                    <button
+                      onClick={() => onOpenItem && onOpenItem(q.id)}
+                      className="flex-1 min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded">
+                      <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{q.partName}</div>
+                      <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+                        <span className="font-mono" style={{ color: C.textDisabled }}>{q.partId}</span>
+                        <span style={{ color: C.borderLight }}> · </span>
+                        {q.meta}
+                      </div>
+                    </button>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded shrink-0"
+                      style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                      {meta.label}
                     </span>
-                    <span className="text-xs" style={{ color: C.textDisabled }}>·</span>
-                    <span className="text-xs" style={{ color: C.textDisabled }}>{m.ts}</span>
-                    {m.decision && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
-                        style={{ backgroundColor: C.primaryLight, color: C.primary }}>DECISION</span>
+                    {q.action && (
+                      <button
+                        onClick={() => onOpenItem && onOpenItem(q.id)}
+                        className="h-7 px-2.5 rounded-md text-[11px] font-semibold border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                        style={{ borderColor: meta.actionBorder, color: meta.actionBorder, backgroundColor: "white" }}>
+                        {q.action}
+                      </button>
                     )}
                   </div>
-                  <div className="text-xs leading-relaxed" style={{ color: C.textSecondary }}>{m.message}</div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Changes I Submitted */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Changes I Submitted</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>Tracking your spec changes</div>
+          </div>
+          <div className="divide-y" style={{ borderColor: C.borderLight }}>
+            {changesSubmitted.map((c) => {
+              const stateMeta = {
+                approved:  { label: "Approved",  bg: C.successLight, fg: C.success, action: "View" },
+                review:    { label: "In Review", bg: C.warningLight, fg: C.warning, action: "Track" },
+                pending:   { label: "Pending",   bg: C.warningLight, fg: C.warning, action: "Track RFQ" },
+                unchanged: { label: "Unchanged", bg: C.bg, fg: C.textSecondary, action: null },
+              }[c.state] || { label: c.state, bg: C.bg, fg: C.textSecondary, action: null };
+              return (
+                <div key={c.id} className="px-5 py-3 flex items-start gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-semibold" style={{ color: C.textPrimary }}>{c.title}</div>
+                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{c.meta}</div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                      style={{ backgroundColor: stateMeta.bg, color: stateMeta.fg }}>
+                      {stateMeta.label}
+                    </span>
+                    {stateMeta.action && (
+                      <button onClick={() => setView && setView("bom")}
+                        className="h-6 px-2 rounded text-[10px] font-medium border hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                        style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                        {stateMeta.action}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Row 2: DVT Validation Required (1/2) + Process Sheet Completeness (1/2) */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* DVT Validation Required */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>DVT Validation Required</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              Design verification tests pending execution
+            </div>
+          </div>
+          {dvtItems.length === 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
+              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>All DVT validations complete</div>
+              <div className="text-xs" style={{ color: C.textSecondary }}>No outstanding test items.</div>
+            </div>
+          ) : (
+            <div className="divide-y" style={{ borderColor: C.borderLight }}>
+              {dvtItems.map((d) => (
+                <div key={d.id} className="px-5 py-3 flex items-start gap-3 transition-colors hover:bg-gray-50">
+                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0"
+                    style={{ backgroundColor: d.urgent ? C.error : C.warning }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{d.title}</div>
+                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
+                  </div>
+                  <span className="text-[11px] font-medium shrink-0"
+                    style={{ color: d.due === "TBD" ? C.textDisabled : C.textSecondary }}>
+                    {d.due}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Process Sheet Completeness */}
+        <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
+          <div className="mb-4">
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Process Sheet Completeness</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>Rev B by sub-system</div>
+          </div>
+          <div className="space-y-3.5">
+            {processSheets.map((p) => (
+              <div key={p.label}>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span style={{ color: C.textSecondary }}>{p.label}</span>
+                  <span className="font-semibold" style={{ color: p.color }}>{p.value}%</span>
+                </div>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: C.borderLight }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${p.value}%`, backgroundColor: p.color }} />
                 </div>
               </div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-8">
-            <Activity className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
-            <div className="text-xs" style={{ color: C.textSecondary }}>
-              {project.name}'s activity log will appear here
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// === CM COCKPIT ===
+// Cost Manager-focused dashboard:
+// 5 KPIs (Should vs Quoted Gap, Should-cost Coverage, RFQ Outstanding, Cost Conflicts, Total Cost)
+// + Cost Reconcile table + RFQ Status + My Action Queue
+function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
+  // ===== Mock data — Cost reconciliation rows (Hero project parts) =====
+  // Hero scenario step 4+: should-cost computed; step 6+: RFQ responses in; step 7+: BOE awarded
+  const costRows = isResolved
+    ? [
+        { id: 2,  part: "Display Module 6.7\"",      target: 41.50, quoted: 40.20, should: 40.80, gap: -1.30, status: "aligned" },
+        { id: 3,  part: "AMOLED Panel 6.7\"",        target: 38.00, quoted: 38.90, should: 41.80, gap: +0.90, status: "aligned", isHero: true },
+        { id: 6,  part: "Touch Controller IC",       target: 4.20,  quoted: 4.10,  should: 4.05,  gap: -0.10, status: "aligned" },
+        { id: 4,  part: "Polarizer Film",            target: 1.80,  quoted: 1.75,  should: 1.78,  gap: -0.05, status: "aligned" },
+        { id: 5,  part: "OCA Adhesive",              target: 0.95,  quoted: 0.92,  should: 0.94,  gap: -0.03, status: "aligned" },
+        { id: 10, part: "Mainboard 5G",              target: 28.00, quoted: 27.40, should: 27.90, gap: -0.60, status: "aligned" },
+      ]
+    : [
+        { id: 2,  part: "Display Module 6.7\"",      target: 41.50, quoted: 40.20, should: 40.80, gap: -1.30, status: "aligned" },
+        { id: 3,  part: "AMOLED Panel 6.7\"",        target: 38.00, quoted: scenarioStep >= 6 ? 38.90 : null, should: scenarioStep >= 4 ? 41.80 : null,
+                  gap: scenarioStep >= 6 ? +0.90 : (scenarioStep >= 4 ? +3.80 : 0), status: "conflict", isHero: true },
+        { id: 6,  part: "Touch Controller IC",       target: 4.20,  quoted: 4.70,  should: 4.05,  gap: +0.50, status: "conflict" },
+        { id: 10, part: "Mainboard 5G",              target: 28.00, quoted: 27.40, should: null,  gap: -0.60, status: "should-needed" },
+        { id: 11, part: "Battery Cell 5000mAh",      target: 12.50, quoted: null,  should: null,  gap: 0,     status: "rfq-open" },
+        { id: 12, part: "Camera Module 200MP",       target: 18.00, quoted: null,  should: null,  gap: 0,     status: "rfq-open" },
+      ];
+
+  // ===== RFQ status — supplier engagements pending (SM-CM collaboration) =====
+  const rfqRows = isResolved ? [] : [
+    { id: "r1", part: "Battery Cell 5000mAh",   meta: "Strategic spec. FEPT target $12.50. 0 quotes.", state: "open", urgent: true },
+    { id: "r2", part: "Camera Module 200MP",    meta: "New ODM part. FEPT target $18.00. Supplier search needed.", state: "open", urgent: true },
+    { id: "r3", part: "AMOLED Panel — alt",     meta: "Samsung Disp $40.20 / BOE $38.90 / LG $41.00", state: "progress", urgent: false },
+  ];
+
+  // ===== My action queue (CM-specific actions) =====
+  const actionQueue = isResolved ? [] : [
+    { id: "a1", title: "Resolve AMOLED cost conflict",   meta: "Quoted $38.90 vs Should $41.80 — verify supplier capability", status: "conflict", action: "Resolve" },
+    { id: "a2", title: "Enter Should-cost for Battery Cell", meta: "3 items missing Should-cost",                                      status: "pending",  action: "Enter cost" },
+    { id: "a3", title: "Confirm Camera Module RFQ target",   meta: "FEPT target $18.00 needs CM approval",                            status: "pending",  action: "Confirm" },
+  ];
+
+  // ===== KPI calculations =====
+  const validQuotes = costRows.filter(r => r.quoted !== null);
+  const validShould = costRows.filter(r => r.should !== null);
+  const shouldVsQuotedGap = validQuotes.reduce((sum, r) => {
+    if (r.should !== null && r.quoted !== null) return sum + (r.quoted - r.should);
+    return sum;
+  }, 0).toFixed(2);
+  const shouldCoverage = `${validShould.length}/${costRows.length}`;
+  const rfqOutstanding = rfqRows.filter(r => r.state === "open").length;
+  const costConflicts = costRows.filter(r => r.status === "conflict").length;
+  // Hero total project cost (mock aggregate)
+  const totalCost = isResolved ? 384.50 : 392.10;
+  const targetTotal = 386.00;
+  const totalGap = (totalCost - targetTotal).toFixed(2);
+
+  // Status meta for cost reconcile table
+  const reconStatusMeta = {
+    aligned:        { label: "Aligned",      bg: C.successLight, fg: C.success },
+    reconciling:    { label: "Reconciling",  bg: C.warningLight, fg: C.warning },
+    conflict:       { label: "Conflict",     bg: C.errorLight,   fg: C.error },
+    "should-needed":{ label: "Should needed",bg: C.warningLight, fg: C.warning },
+    "rfq-open":     { label: "RFQ open",     bg: C.bg,           fg: C.textSecondary },
+  };
+
+  // Action queue meta
+  const actionMeta = {
+    conflict: { label: "Conflict", bg: C.errorLight,   fg: C.error,   border: C.error },
+    pending:  { label: "Pending",  bg: C.warningLight, fg: C.warning, border: C.warning },
+  };
+
+  // Format cents → dollar string (with sign for gaps)
+  const fmt = (v) => v === null ? "—" : `$${v.toFixed(2)}`;
+  const fmtGap = (v) => {
+    if (v === null || v === 0) return "—";
+    const sign = v > 0 ? "+" : "−";
+    return `${sign}${Math.abs(v).toFixed(2)}`;
+  };
+  const gapColor = (v) => v > 0 ? C.error : v < 0 ? C.success : C.textDisabled;
+
+  return (
+    <div className="p-6" style={{ minHeight: "100%" }}>
+      {/* AI Banner for CM */}
+      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+        style={{
+          backgroundColor: isResolved ? C.successLight : C.primarySoft,
+          borderColor: isResolved ? C.success : C.primaryLight,
+        }}>
+        <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="text-sm font-semibold mb-0.5"
+            style={{ color: isResolved ? C.successDark : C.primaryDark }}>
+            {isResolved
+              ? `Cost reconcile complete — All items aligned for ${project.phase} Phase Gate`
+              : `${costConflicts} cost conflict${costConflicts !== 1 ? "s" : ""} · ${rfqOutstanding} RFQ outstanding · Action required`}
+          </div>
+          <div className="text-xs" style={{ color: C.textSecondary }}>
+            {isResolved
+              ? `Total cost ${fmt(totalCost)} (${fmtGap(parseFloat(totalGap))} vs target). All Should-costs confirmed.`
+              : `AI Should-cost computed for ${validShould.length}/${costRows.length} parts. Awaiting Should-cost for ${costRows.length - validShould.length} more.`}
+          </div>
+        </div>
+        <button
+          onClick={() => setView && setView("bom")}
+          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          {isResolved ? "View C-BOM" : "Open cost reconcile"}
+        </button>
+      </div>
+
+      {/* KPI Row — CM-specific (5 cards) */}
+      <div className="grid grid-cols-5 gap-4 mb-5">
+        <KpiCard
+          icon={DollarSign}
+          iconColor={parseFloat(shouldVsQuotedGap) > 0 ? C.error : C.success}
+          label="Should vs Quoted Gap"
+          value={`${parseFloat(shouldVsQuotedGap) >= 0 ? "+" : "−"}$${Math.abs(parseFloat(shouldVsQuotedGap)).toFixed(2)}`}
+          sub={parseFloat(shouldVsQuotedGap) >= 0 ? "Quoted higher" : "Quoted lower"} />
+
+        <KpiCard
+          icon={Target}
+          iconColor={validShould.length < costRows.length ? C.warning : C.success}
+          label="Should-cost Coverage"
+          value={shouldCoverage}
+          sub={validShould.length < costRows.length
+            ? `${costRows.length - validShould.length} parts need Should-cost`
+            : "All parts covered"} />
+
+        <KpiCard
+          icon={Send}
+          iconColor={rfqOutstanding > 0 ? C.warning : C.success}
+          label="RFQ Outstanding"
+          value={rfqOutstanding}
+          sub={rfqOutstanding > 0 ? "Battery + Camera" : "All received"} />
+
+        <KpiCard
+          icon={AlertTriangle}
+          iconColor={costConflicts > 0 ? C.error : C.success}
+          label="Cost Conflicts"
+          value={costConflicts}
+          sub={costConflicts > 0 ? "AMOLED + Touch IC" : "All clear"} />
+
+        <KpiCard
+          icon={Layers}
+          iconColor={parseFloat(totalGap) > 0 ? C.error : C.success}
+          label="Total Cost"
+          value={`$${totalCost.toFixed(2)}`}
+          sub={`${fmtGap(parseFloat(totalGap))} vs target`} />
+      </div>
+
+      {/* Cost Reconcile Table — full width */}
+      <div className="rounded-xl border bg-white mb-5" style={{ borderColor: C.border }}>
+        <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+          <div>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Cost Reconcile — Rev B</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              FEPT Target · Quoted · Should-cost · Gap
             </div>
           </div>
-        )}
+          <button onClick={() => setView && setView("bom")}
+            className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{ color: C.primary }}>
+            Open cost reconcile →
+          </button>
+        </div>
+        <table className="w-full">
+          <thead>
+            <tr style={{ color: C.textDisabled, borderBottom: `1px solid ${C.borderLight}` }}>
+              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5">Part</th>
+              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Target</th>
+              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Quoted</th>
+              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Should-cost</th>
+              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Gap (Q−T)</th>
+              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5 w-32">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {costRows.map((r) => {
+              const meta = reconStatusMeta[r.status] || reconStatusMeta.reconciling;
+              const isConflict = r.status === "conflict";
+              return (
+                <tr key={r.id}
+                  onClick={() => onOpenItem && onOpenItem(r.id)}
+                  className="cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+                  style={{
+                    borderBottom: `1px solid ${C.borderLight}`,
+                    backgroundColor: isConflict ? "rgba(211,47,47,0.04)" : "white",
+                  }}>
+                  <td className="py-3 px-5 text-sm font-medium"
+                    style={{ color: isConflict ? C.error : C.textPrimary }}>
+                    {r.part}
+                  </td>
+                  <td className="py-3 px-3 text-right text-sm font-mono" style={{ color: C.textPrimary }}>
+                    {fmt(r.target)}
+                  </td>
+                  <td className="py-3 px-3 text-right text-sm font-mono" style={{ color: r.quoted !== null ? C.textPrimary : C.textDisabled }}>
+                    {fmt(r.quoted)}
+                  </td>
+                  <td className="py-3 px-3 text-right text-sm font-mono" style={{ color: r.should !== null ? C.textPrimary : C.textDisabled }}>
+                    {fmt(r.should)}
+                  </td>
+                  <td className="py-3 px-3 text-right text-sm font-mono font-semibold" style={{ color: gapColor(r.gap) }}>
+                    {fmtGap(r.gap)}
+                  </td>
+                  <td className="py-3 px-5">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded inline-block"
+                      style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                      {meta.label}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Row: RFQ Status (1/2) + My Action Queue (1/2) */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* RFQ Status */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>RFQ Status</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              Supplier quote engagement progress
+            </div>
+          </div>
+          {rfqRows.length === 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
+              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>All RFQs received</div>
+              <div className="text-xs" style={{ color: C.textSecondary }}>No outstanding supplier engagements.</div>
+            </div>
+          ) : (
+            <div className="divide-y" style={{ borderColor: C.borderLight }}>
+              {rfqRows.map((r) => (
+                <div key={r.id} className="px-5 py-3 flex items-start gap-3 transition-colors hover:bg-gray-50">
+                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0"
+                    style={{ backgroundColor: r.urgent ? C.error : C.warning }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{r.part}</div>
+                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{r.meta}</div>
+                  </div>
+                  <span className="text-[11px] font-medium shrink-0"
+                    style={{ color: r.state === "open" ? C.error : C.warning }}>
+                    {r.state === "open" ? "Open" : "In progress"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* My Action Queue */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>My Action Queue</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              CM tasks requiring your input
+            </div>
+          </div>
+          {actionQueue.length === 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
+              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>All actions cleared</div>
+              <div className="text-xs" style={{ color: C.textSecondary }}>Nothing pending on your queue.</div>
+            </div>
+          ) : (
+            <div className="divide-y" style={{ borderColor: C.borderLight }}>
+              {actionQueue.map((a) => {
+                const meta = actionMeta[a.status];
+                return (
+                  <div key={a.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{a.title}</div>
+                      <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
+                    </div>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded shrink-0"
+                      style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                      {meta.label}
+                    </span>
+                    <button
+                      onClick={() => setView && setView("bom")}
+                      className="h-7 px-2.5 rounded-md text-[11px] font-semibold border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      style={{ borderColor: meta.border, color: meta.border, backgroundColor: "white" }}>
+                      {a.action}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// === SM COCKPIT ===
+// Sourcing Manager-focused dashboard:
+// 5 KPIs (GCM Input Needed, Commodity Exposure, Sole Source, Geo Exposure, Alt Sourcing)
+// + Market Commodities tracker + SSS Risk Dashboard + My GCM Action Queue
+function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
+  // ===== Mock data — Market commodities (live tracking) =====
+  // Each item: 52w-low → 52w-high range with current position as % (0-100)
+  // Hero project uses smartphone-relevant commodities (Copper for wiring, Lithium for battery, etc.)
+  const commodities = [
+    { id: "cu",     name: "Copper (Cu)",   source: "LME",    pos: 78, price: "$9,340/t",  ytd: "+16%", trend: "up",   risk: "high" },
+    { id: "li",     name: "Lithium (Li)",  source: "CNEV",   pos: 52, price: "$15,200/t", ytd: "−8%",  trend: "down", risk: "low"  },
+    { id: "co",     name: "Cobalt (Co)",   source: "LME",    pos: 64, price: "$33,100/t", ytd: "+4%",  trend: "up",   risk: "med"  },
+    { id: "nand",   name: "NAND Flash",    source: "DRAMeX", pos: 42, price: "$4.20/GB",  ytd: "−12%", trend: "down", risk: "low"  },
+    { id: "amoled", name: "AMOLED Panel",  source: "OMDIA",  pos: 70, price: "$78/unit",  ytd: "+9%",  trend: "up",   risk: "med"  },
+    { id: "al",     name: "Al 6061",       source: "LME",    pos: 88, price: "$2,650/t",  ytd: "+22%", trend: "up",   risk: "high" },
+  ];
+
+  // ===== SSS Risk dashboard (Sole / Single / Dual+) =====
+  // Initial: project is over targets on sole/single source
+  const sssRisk = isResolved
+    ? [
+        { label: "Sole source",   value: 8,  target: 10, color: C.success },
+        { label: "Single source", value: 12, target: 15, color: C.success },
+        { label: "Dual+",         value: 80, target: 75, color: C.success },
+      ]
+    : [
+        { label: "Sole source",   value: 18, target: 10, color: C.error },
+        { label: "Single source", value: 24, target: 15, color: C.warning },
+        { label: "Dual+",         value: 58, target: 75, color: C.warning },
+      ];
+
+  // ===== My GCM Action Queue =====
+  const actionQueue = isResolved ? [] : [
+    { id: "a1", title: "AMOLED Panel — sole source risk",
+      meta: "BOE selected. Recommend qualifying secondary supplier.",
+      state: "urgent", action: "Add alt" },
+    { id: "a2", title: "Copper wiring — dual source plan",
+      meta: "Furukawa primary · Tatsuta in qualification",
+      state: "progress", action: "Update" },
+    { id: "a3", title: "Battery Cell sourcing",
+      meta: "No supplier · Spec finalized · RFQ ready to send",
+      state: "open", action: "Send RFQ" },
+    { id: "a4", title: "Al 6061 index alert",
+      meta: "Price +22% YTD · 3 BOM parts exposed (frame, brackets)",
+      state: "alert", action: "Review" },
+  ];
+
+  // ===== KPI calculations =====
+  const itemsNeedingInput = isResolved ? 0 : 4;
+  const commodityExposure = isResolved ? "$8.2k" : "$11.2k"; // $ at risk from volatile materials
+  const soleSourceCount = isResolved ? 4 : 9;
+  const soleSourcePct = isResolved ? 8 : 18;
+  const geoExposure = isResolved ? 28 : 38; // % of suppliers in single geo (China)
+  const altSourcingActive = isResolved ? 0 : 3;
+
+  // ===== Helpers =====
+  const commodityBarColor = (risk) => risk === "high" ? C.error : risk === "med" ? C.warning : C.success;
+  const ytdColor = (trend) => trend === "up" ? C.error : trend === "down" ? C.success : C.textSecondary;
+
+  const actionMeta = {
+    urgent:   { label: "Urgent",      bg: C.errorLight,   fg: C.error,   border: C.error,   filled: true  },
+    progress: { label: "In progress", bg: C.warningLight, fg: C.warning, border: C.warning, filled: false },
+    open:     { label: "Open",        bg: C.warningLight, fg: C.warning, border: C.warning, filled: false },
+    alert:    { label: "Alert",       bg: C.errorLight,   fg: C.error,   border: C.error,   filled: false },
+  };
+
+  return (
+    <div className="p-6" style={{ minHeight: "100%" }}>
+      {/* AI Banner for SM */}
+      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+        style={{
+          backgroundColor: isResolved ? C.successLight : C.primarySoft,
+          borderColor: isResolved ? C.success : C.primaryLight,
+        }}>
+        <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="text-sm font-semibold mb-0.5"
+            style={{ color: isResolved ? C.successDark : C.primaryDark }}>
+            {isResolved
+              ? `Sourcing strategy aligned — All risk targets within range`
+              : `Sole source ${soleSourcePct}% above ${10}% target · Al 6061 index +22% YTD`}
+          </div>
+          <div className="text-xs" style={{ color: C.textSecondary }}>
+            {isResolved
+              ? `${altSourcingActive === 0 ? "All alt sourcing qualified" : `${altSourcingActive} alt sourcing in progress`}. Commodity exposure reduced to ${commodityExposure}.`
+              : `${itemsNeedingInput} items need GCM input. ${altSourcingActive} alt sourcing evaluations active.`}
+          </div>
+        </div>
+        <button
+          onClick={() => setView && setView("bom")}
+          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          {isResolved ? "View C-BOM" : "Open sourcing view"}
+        </button>
+      </div>
+
+      {/* KPI Row — SM-specific (5 cards) */}
+      <div className="grid grid-cols-5 gap-4 mb-5">
+        <KpiCard
+          icon={AtSign}
+          iconColor={itemsNeedingInput > 0 ? C.error : C.success}
+          label="Items Needing GCM Input"
+          value={itemsNeedingInput}
+          sub={itemsNeedingInput > 0 ? "Aligned cost not set" : "All set"} />
+
+        <KpiCard
+          icon={DollarSign}
+          iconColor={C.warning}
+          label="Commodity Exposure"
+          value={commodityExposure}
+          sub="CRM / volatile materials" />
+
+        <KpiCard
+          icon={AlertTriangle}
+          iconColor={soleSourcePct > 10 ? C.error : C.success}
+          label="Sole Source Items"
+          value={soleSourceCount}
+          sub={`${soleSourcePct}% of BOM · Target 10%`} />
+
+        <KpiCard
+          icon={Layers}
+          iconColor={geoExposure > 35 ? C.error : C.success}
+          label="China Geo Exposure"
+          value={`${geoExposure}%`}
+          sub={geoExposure > 35 ? "Above 35% threshold" : "Within threshold"} />
+
+        <KpiCard
+          icon={GitMerge}
+          iconColor={altSourcingActive > 0 ? C.info : C.success}
+          label="Alt Sourcing Active"
+          value={altSourcingActive}
+          sub={altSourcingActive > 0 ? "Evaluation in progress" : "None active"} />
+      </div>
+
+      {/* Market Commodities — full width */}
+      <div className="rounded-xl border bg-white mb-5" style={{ borderColor: C.border }}>
+        <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+          <div>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
+              Market Commodities — Live Tracking
+            </div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              High-volatility items requiring GCM response
+            </div>
+          </div>
+          <button onClick={() => setView && setView("bom")}
+            className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{ color: C.primary }}>
+            Full commodity view →
+          </button>
+        </div>
+        <div className="px-5 py-3 divide-y" style={{ borderColor: C.borderLight }}>
+          {commodities.map((c) => (
+            <div key={c.id} className="py-2.5 grid grid-cols-12 items-center gap-3">
+              {/* Name + Source */}
+              <div className="col-span-3 min-w-0">
+                <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
+                  {c.name}
+                  <span className="ml-1.5 text-[10px] font-mono" style={{ color: C.textDisabled }}>
+                    {c.source}
+                  </span>
+                </div>
+              </div>
+              {/* Range bar with current position */}
+              <div className="col-span-6 relative">
+                <div className="h-1.5 rounded-full" style={{ backgroundColor: C.borderLight }}>
+                  <div className="h-1.5 rounded-full transition-all"
+                    style={{ width: `${c.pos}%`, backgroundColor: commodityBarColor(c.risk) }} />
+                </div>
+                <div className="flex justify-between text-[10px] mt-0.5" style={{ color: C.textDisabled }}>
+                  <span>52w low</span>
+                  <span>52w high</span>
+                </div>
+              </div>
+              {/* Price */}
+              <div className="col-span-2 text-right">
+                <span className="text-sm font-mono font-semibold" style={{ color: commodityBarColor(c.risk) }}>
+                  {c.price}
+                </span>
+              </div>
+              {/* YTD */}
+              <div className="col-span-1 text-right">
+                <span className="text-[11px] font-semibold inline-flex items-center gap-0.5 justify-end"
+                  style={{ color: ytdColor(c.trend) }}>
+                  {c.trend === "up" ? <TrendingUp className="w-3 h-3" /> : c.trend === "down" ? <TrendingDown className="w-3 h-3" /> : null}
+                  {c.ytd} YTD
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Row: SSS Risk Dashboard (1/2) + My GCM Action Queue (1/2) */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* SSS Risk Dashboard */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+            <div>
+              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>SSS Risk Dashboard</div>
+              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+                Sole / Single / Dual+ source distribution
+              </div>
+            </div>
+            <button onClick={() => setView && setView("bom")}
+              className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              style={{ color: C.primary }}>
+              Full risk view →
+            </button>
+          </div>
+          <div className="px-5 py-5 space-y-4">
+            {sssRisk.map((r) => (
+              <div key={r.label}>
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span style={{ color: C.textSecondary }}>{r.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold" style={{ color: r.color }}>{r.value}%</span>
+                    <span className="text-[10px]" style={{ color: C.textDisabled }}>Target {r.target}%</span>
+                  </div>
+                </div>
+                <div className="h-2 rounded-full overflow-hidden relative" style={{ backgroundColor: C.borderLight }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, r.value)}%`, backgroundColor: r.color }} />
+                  {/* Target marker */}
+                  <div className="absolute top-0 bottom-0 w-px"
+                    style={{
+                      left: `${Math.min(100, r.target)}%`,
+                      backgroundColor: C.textPrimary,
+                      opacity: 0.4,
+                    }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* My GCM Action Queue */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>My GCM Action Queue</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              Sourcing decisions requiring your input
+            </div>
+          </div>
+          {actionQueue.length === 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
+              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>All actions cleared</div>
+              <div className="text-xs" style={{ color: C.textSecondary }}>Nothing pending on your queue.</div>
+            </div>
+          ) : (
+            <div className="divide-y" style={{ borderColor: C.borderLight }}>
+              {actionQueue.map((a) => {
+                const meta = actionMeta[a.state];
+                return (
+                  <div key={a.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{a.title}</div>
+                      <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
+                    </div>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded shrink-0"
+                      style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                      {meta.label}
+                    </span>
+                    <button
+                      onClick={() => setView && setView("bom")}
+                      className="h-7 px-2.5 rounded-md text-[11px] font-semibold transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      style={{
+                        border: meta.filled ? "none" : `1px solid ${meta.border}`,
+                        color: meta.filled ? "white" : meta.border,
+                        backgroundColor: meta.filled ? meta.border : "white",
+                      }}>
+                      {a.action}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// === QM COCKPIT ===
+// Quality Manager-focused dashboard:
+// 5 KPIs (PPAP Items Open, PCR Requiring SQE, DVT Issues, Spec Changes to Review, New Parts No PPAP)
+// + PCR Tracker (cross-functional SSOT) + PPAP Status + DVT Open Issues
+function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
+  // ===== PCR Tracker — Part Change Requests requiring cross-functional review =====
+  // Columns: DE owner, SQE reviewer, CM cost confirmer, Status
+  // For Hero: AMOLED + spec/cost issues
+  const pcrRows = isResolved
+    ? [
+        { id: 3,  code: "BPM-DIS-AMOLED", part: "AMOLED Panel 6.7\" — spec upgrade", de: "done", sqe: "done", cm: "done", status: "approved" },
+        { id: 2,  code: "BPM-DIS-MODULE", part: "Display Module 6.7\" — brightness 1500 nits", de: "done", sqe: "done", cm: "done", status: "approved" },
+        { id: 10, code: "BPM-MNB-5G",     part: "Mainboard 5G — risk re-assessment", de: "done", sqe: "done", cm: "done", status: "approved" },
+        { id: 4,  code: "BPM-DIS-POLZR",  part: "Polarizer Film — material spec", de: "done", sqe: "done", cm: "done", status: "approved" },
+      ]
+    : [
+        { id: 3,  code: "BPM-DIS-AMOLED", part: "AMOLED Panel 6.7\" — spec upgrade",
+          de: "done", sqe: "pending", cm: "pending", status: "conflict" },
+        { id: 6,  code: "BPM-DIS-TIC",    part: "Touch Controller IC — price +6.7%",
+          de: "done", sqe: "review", cm: "review", status: "in-review" },
+        { id: 2,  code: "BPM-DIS-MODULE", part: "Display Module 6.7\" — brightness upgrade",
+          de: "done", sqe: "done", cm: "done", status: "approved" },
+        { id: 11, code: "BPM-BAT-CELL",   part: "Battery Cell 5000mAh — new part (regulatory)",
+          de: "done", sqe: "pending", cm: "pending", status: "sqe-needed" },
+        { id: 7,  code: "BPM-DIS-GLASS",  part: "Cover Glass — thickness change",
+          de: "pending", sqe: "pending", cm: "pending", status: "pending" },
+      ];
+
+  // ===== PPAP Status — per-part PPAP progress =====
+  const ppapStatus = isResolved
+    ? [
+        { id: 3,  part: "AMOLED Panel (BOE)",        ppapLevel: 3, progress: 100, state: "complete" },
+        { id: 2,  part: "Display Module (Samsung)",  ppapLevel: 3, progress: 100, state: "complete" },
+        { id: 10, part: "Mainboard 5G (Samsung)",    ppapLevel: 3, progress: 95,  state: "complete" },
+        { id: 6,  part: "Touch Controller IC (Synaptics)", ppapLevel: 2, progress: 92, state: "complete" },
+        { id: 4,  part: "Polarizer Film (Nitto)",    ppapLevel: 2, progress: 100, state: "complete" },
+      ]
+    : [
+        { id: 10, part: "Mainboard 5G (Samsung Foundry)", ppapLevel: 3, progress: 65, state: "in-progress" },
+        { id: 3,  part: "AMOLED Panel (BOE)",             ppapLevel: 3, progress: 12, state: "in-progress" },
+        { id: 2,  part: "Display Module (Samsung)",       ppapLevel: 3, progress: 100, state: "complete" },
+        { id: 11, part: "Battery Cell 5000mAh",           ppapLevel: 3, progress: 0,  state: "not-started" },
+        { id: 12, part: "Camera Module 200MP",            ppapLevel: 2, progress: 0,  state: "not-started" },
+      ];
+
+  // ===== DVT Open Issues =====
+  const dvtIssues = isResolved ? [] : [
+    { id: "d1", title: "AMOLED Panel 6.7\" — 120Hz validation",
+      detail: "Touch latency & color accuracy. Apr 28.",
+      due: "Apr 28", urgent: true },
+    { id: "d2", title: "Mainboard 5G — thermal scenario",
+      detail: "AMOLED draws +12% — re-run May 5.",
+      due: "May 5", urgent: false },
+  ];
+
+  // ===== KPI calculations =====
+  const ppapInProgress = ppapStatus.filter(p => p.state === "in-progress").length;
+  const ppapNotStarted = ppapStatus.filter(p => p.state === "not-started").length;
+  const ppapItemsOpen = ppapInProgress + ppapNotStarted;
+  const pcrRequiringSqe = pcrRows.filter(p => p.sqe === "pending" || p.sqe === "review").length;
+  const dvtIssuesOpen = dvtIssues.length;
+  const specChangesToReview = isResolved ? 0 : 7;
+  const newPartsNoPpap = isResolved ? 0 : 2; // Battery Cell + Camera Module
+
+  // ===== Helpers =====
+  // Role indicator dot — colored based on completion
+  const roleStatusDot = (state, persona) => {
+    const meta = {
+      done:    { bg: PERSONAS[persona]?.color || C.success, text: "white",     opacity: 1 },
+      review:  { bg: C.warning, text: "white",     opacity: 1 },
+      pending: { bg: C.bg,      text: C.textDisabled, opacity: 1 },
+    }[state] || { bg: C.bg, text: C.textDisabled, opacity: 1 };
+    return (
+      <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border"
+        style={{ backgroundColor: meta.bg, color: meta.text, borderColor: state === "pending" ? C.border : "transparent" }}>
+        {persona === "CM" ? "GC" : persona === "DE" ? "DE" : persona === "QM" ? "SQ" : persona}
+      </div>
+    );
+  };
+
+  const pcrStatusMeta = {
+    approved:     { label: "Approved",    bg: C.successLight, fg: C.success },
+    "in-review":  { label: "In review",   bg: C.warningLight, fg: C.warning },
+    conflict:     { label: "Conflict",    bg: C.errorLight,   fg: C.error },
+    "sqe-needed": { label: "SQE needed",  bg: C.warningLight, fg: C.warning },
+    pending:      { label: "Pending",     bg: C.warningLight, fg: C.warning },
+  };
+
+  const ppapBarColor = (state, progress) => {
+    if (state === "complete") return C.success;
+    if (state === "not-started") return C.borderLight;
+    if (progress < 30) return C.error;
+    return C.warning;
+  };
+  const ppapStateLabel = (state) => ({
+    complete: "Complete",
+    "in-progress": "In progress",
+    "not-started": "Not started",
+  })[state] || state;
+
+  return (
+    <div className="p-6" style={{ minHeight: "100%" }}>
+      {/* AI Banner for QM */}
+      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+        style={{
+          backgroundColor: isResolved ? C.successLight : C.primarySoft,
+          borderColor: isResolved ? C.success : C.primaryLight,
+        }}>
+        <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="text-sm font-semibold mb-0.5"
+            style={{ color: isResolved ? C.successDark : C.primaryDark }}>
+            {isResolved
+              ? `Quality validation complete — All PPAP cleared for ${project.phase} Phase Gate`
+              : `${ppapItemsOpen} PPAP items open · ${pcrRequiringSqe} PCR requiring SQE review`}
+          </div>
+          <div className="text-xs" style={{ color: C.textSecondary }}>
+            {isResolved
+              ? "All process sign-offs from DE, SQE, and GCM aligned. PPAP submissions verified."
+              : `${dvtIssuesOpen} DVT issue${dvtIssuesOpen !== 1 ? "s" : ""} open. ${specChangesToReview} spec changes need quality review.`}
+          </div>
+        </div>
+        <button
+          onClick={() => setView && setView("apqp")}
+          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
+          {isResolved ? "View APQP" : "Open APQP"}
+        </button>
+      </div>
+
+      {/* KPI Row — QM-specific (5 cards) */}
+      <div className="grid grid-cols-5 gap-4 mb-5">
+        <KpiCard
+          icon={ShieldCheck}
+          iconColor={ppapItemsOpen > 0 ? C.error : C.success}
+          label="PPAP Items Open"
+          value={ppapItemsOpen}
+          sub={ppapItemsOpen > 0 ? "DVT phase target 0" : "All cleared"} />
+
+        <KpiCard
+          icon={AtSign}
+          iconColor={pcrRequiringSqe > 0 ? C.warning : C.success}
+          label="PCR Requiring SQE"
+          value={pcrRequiringSqe}
+          sub={pcrRequiringSqe > 0 ? "Part change requests" : "All reviewed"} />
+
+        <KpiCard
+          icon={AlertTriangle}
+          iconColor={dvtIssuesOpen > 0 ? C.error : C.success}
+          label="DVT Issues Open"
+          value={dvtIssuesOpen}
+          sub={dvtIssuesOpen > 0 ? "Validation pending" : "All resolved"} />
+
+        <KpiCard
+          icon={GitBranch}
+          iconColor={specChangesToReview > 0 ? C.info : C.success}
+          label="Spec Changes to Review"
+          value={specChangesToReview}
+          sub="Rev B vs Rev A" />
+
+        <KpiCard
+          icon={Package}
+          iconColor={newPartsNoPpap > 0 ? C.error : C.success}
+          label="New Parts (No PPAP)"
+          value={newPartsNoPpap}
+          sub={newPartsNoPpap > 0 ? "Battery + Camera" : "All registered"} />
+      </div>
+
+      {/* PCR Tracker — full width */}
+      <div className="rounded-xl border bg-white mb-5" style={{ borderColor: C.border }}>
+        <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+          <div>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
+              PCR Tracker — Cross-functional SSOT
+            </div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              Engineering · SQE · GCM — same real-time view
+            </div>
+          </div>
+          <button onClick={() => setView && setView("bom")}
+            className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{ color: C.primary }}>
+            Open BOM workspace →
+          </button>
+        </div>
+        <table className="w-full">
+          <thead>
+            <tr style={{ color: C.textDisabled, borderBottom: `1px solid ${C.borderLight}` }}>
+              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5 w-40">Code</th>
+              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Part & Change</th>
+              <th className="text-center font-semibold text-[10px] uppercase tracking-wider py-2.5 px-2 w-12">DE</th>
+              <th className="text-center font-semibold text-[10px] uppercase tracking-wider py-2.5 px-2 w-12">SQE</th>
+              <th className="text-center font-semibold text-[10px] uppercase tracking-wider py-2.5 px-2 w-12">GCM</th>
+              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5 w-32">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pcrRows.map((r) => {
+              const meta = pcrStatusMeta[r.status] || pcrStatusMeta.pending;
+              return (
+                <tr key={r.id}
+                  onClick={() => onOpenItem && onOpenItem(r.id)}
+                  className="cursor-pointer transition-colors hover:bg-gray-50"
+                  style={{ borderBottom: `1px solid ${C.borderLight}` }}>
+                  <td className="py-3 px-5 text-xs font-mono" style={{ color: C.textDisabled }}>
+                    {r.code}
+                  </td>
+                  <td className="py-3 px-3 text-sm font-medium" style={{ color: C.textPrimary }}>
+                    {r.part}
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <div className="inline-flex justify-center">{roleStatusDot(r.de, "DE")}</div>
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <div className="inline-flex justify-center">{roleStatusDot(r.sqe, "QM")}</div>
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <div className="inline-flex justify-center">{roleStatusDot(r.cm, "CM")}</div>
+                  </td>
+                  <td className="py-3 px-5">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded inline-block"
+                      style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                      {meta.label}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Row: PPAP Status (1/2) + DVT Open Issues (1/2) */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* PPAP Status */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>PPAP Status</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              Per-part PPAP submission progress
+            </div>
+          </div>
+          <div className="divide-y" style={{ borderColor: C.borderLight }}>
+            {ppapStatus.map((p) => (
+              <div key={p.id} className="px-5 py-3 transition-colors hover:bg-gray-50">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{p.part}</div>
+                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+                      PPAP Level {p.ppapLevel} · {ppapStateLabel(p.state)}
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-medium ml-2 shrink-0"
+                    style={{ color: p.state === "complete" ? C.success : p.state === "in-progress" ? C.warning : C.textDisabled }}>
+                    {ppapStateLabel(p.state)}
+                  </span>
+                </div>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: C.borderLight }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${p.progress}%`, backgroundColor: ppapBarColor(p.state, p.progress) }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* DVT Open Issues */}
+        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>DVT Open Issues</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              Design verification test results pending
+            </div>
+          </div>
+          {dvtIssues.length === 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
+              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>All DVT issues resolved</div>
+              <div className="text-xs" style={{ color: C.textSecondary }}>No outstanding validations.</div>
+            </div>
+          ) : (
+            <div className="divide-y" style={{ borderColor: C.borderLight }}>
+              {dvtIssues.map((d) => (
+                <div key={d.id} className="px-5 py-3 flex items-start gap-3 transition-colors hover:bg-gray-50">
+                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0"
+                    style={{ backgroundColor: d.urgent ? C.error : C.warning }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{d.title}</div>
+                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
+                  </div>
+                  <span className="text-[11px] font-medium shrink-0"
+                    style={{ color: d.due === "TBD" ? C.textDisabled : C.textSecondary }}>
+                    {d.due}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -3837,10 +5284,10 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
 
   return (
     <div className="p-6" style={{ minHeight: "100%" }}>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="space-y-4">
 
-        {/* === COLUMN 1: General Info === */}
-        <div className="col-span-2 space-y-4">
+        {/* === General Info === */}
+        <div className="space-y-4">
           {/* Project Meta Card */}
           <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
             <div className="flex items-start justify-between mb-4">
@@ -4015,84 +5462,567 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
           </div>
         </div>
 
-        {/* === COLUMN 2: Collaborators === */}
-        <div className="space-y-4">
-          {/* Collaborators Card */}
-          <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-            <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-              <div className="flex items-center gap-2">
-                <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.primary }}>
-                  Collaborators
-                </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: C.bg, color: C.textSecondary }}>
-                  {projectCollaborators.length}
-                </span>
-              </div>
-              <button className="text-[11px] font-medium hover:underline" style={{ color: C.primary }}>
-                + Invite
-              </button>
-            </div>
-            <div className="divide-y" style={{ borderColor: C.borderLight }}>
-              {projectCollaborators.map((c) => {
-                const isMe = activePersona === c.persona;
-                return (
-                  <button key={c.persona}
-                    onClick={() => setActivePersona && setActivePersona(c.persona)}
-                    className="w-full px-5 py-3 flex items-center gap-3 text-left transition-colors"
-                    style={{ backgroundColor: isMe ? C.primarySoft : "transparent" }}
-                    onMouseEnter={(e) => { if (!isMe) e.currentTarget.style.backgroundColor = C.bg; }}
-                    onMouseLeave={(e) => { if (!isMe) e.currentTarget.style.backgroundColor = "transparent"; }}>
-                    <div className="relative shrink-0">
-                      <PersonaAvatar p={c.persona} size={36} />
-                      {c.active === "now" && (
-                        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white"
-                          style={{ backgroundColor: C.success }} />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>
-                          {PERSONAS[c.persona]?.name}
-                        </span>
-                        {c.owner && (
-                          <span className="text-[9px] px-1 py-0.5 rounded font-bold"
-                            style={{ backgroundColor: C.warningLight, color: C.warning }}>OWNER</span>
-                        )}
-                        {isMe && (
-                          <span className="text-[9px] px-1 py-0.5 rounded font-bold"
-                            style={{ backgroundColor: C.primary, color: "white" }}>ME</span>
-                        )}
-                      </div>
-                      <div className="text-[10px]" style={{ color: C.textSecondary }}>{c.role}</div>
-                      <div className="text-[10px] mt-0.5 flex items-center gap-1.5" style={{ color: C.textDisabled }}>
-                        <span>Active: {c.active}</span>
-                        <span>·</span>
-                        <span>{c.contribution} contributions</span>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-              {project.isNew && (
-                <div className="px-5 py-6 text-center border-t" style={{ borderColor: C.borderLight }}>
-                  <Users className="w-7 h-7 mx-auto mb-2" style={{ color: C.textDisabled }} />
-                  <div className="text-xs mb-1" style={{ color: C.textPrimary }}>
-                    You're the only one here
-                  </div>
-                  <div className="text-[11px]" style={{ color: C.textSecondary }}>
-                    Invite DE, CM, SM, and QM to start collaborating.
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
 }
 
-// === SCREEN: BOM LIST (5 BOMs) ===
+// === SCREEN: COLLABORATORS ===
+// Groups: Internal (5 personas) + External (suppliers).
+// Supports multi-select with bulk action toolbar for Share / Send Update / Invite to Meeting.
+function CollaboratorsScreen({ activeProjectCode }) {
+  const project = PROJECTS.find((p) => p.code === activeProjectCode) || PROJECTS[0];
+  const internalList = getCollaboratorsForProject(project);
+  const externalList = getExternalCollaboratorsForProject(project);
+
+  // Multi-select state — keyed by unique IDs (persona for internal, id for external)
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeAction, setActiveAction] = useState(null); // null | "update" | "meeting" | "share"
+  const [addMode, setAddMode] = useState(null); // null | "internal" | "external"
+
+  const toggleId = (id) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setSelectedIds(next);
+  };
+
+  const toggleGroup = (ids, allSelected) => {
+    const next = new Set(selectedIds);
+    if (allSelected) ids.forEach(id => next.delete(id));
+    else ids.forEach(id => next.add(id));
+    setSelectedIds(next);
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  // Filtered lists based on search query
+  const filterFn = (item, nameKey, secondaryKey) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return item[nameKey]?.toLowerCase().includes(q) || item[secondaryKey]?.toLowerCase().includes(q);
+  };
+
+  const filteredInternal = internalList.filter(c => {
+    const name = PERSONAS[c.persona]?.name || c.persona;
+    return !searchQuery || name.toLowerCase().includes(searchQuery.toLowerCase()) || c.role.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+  const filteredExternal = externalList.filter(c => filterFn(c, "name", "company"));
+
+  const internalIds = filteredInternal.map(c => `int-${c.persona}`);
+  const externalIds = filteredExternal.map(c => `ext-${c.id}`);
+  const allInternalSelected = internalIds.length > 0 && internalIds.every(id => selectedIds.has(id));
+  const allExternalSelected = externalIds.length > 0 && externalIds.every(id => selectedIds.has(id));
+
+  const selectedCount = selectedIds.size;
+  const hasExternal = externalList.length > 0;
+
+  return (
+    <div className="p-6" style={{ minHeight: "100%" }}>
+      <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+        {/* Toolbar */}
+        <div className="px-5 py-3 border-b flex items-center justify-between flex-wrap gap-3" style={{ borderColor: C.border }}>
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Search */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: C.textDisabled }} />
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search name, role, or company..."
+                className="h-8 pl-8 pr-3 rounded-md border text-xs outline-none focus:outline-none focus-visible:ring-2"
+                style={{ borderColor: C.border, backgroundColor: C.surfaceTinted, width: 280, color: C.textPrimary }} />
+            </div>
+            <div className="text-[11px] flex items-center gap-2" style={{ color: C.textSecondary }}>
+              <span style={{ color: C.textDisabled }}>Total:</span>
+              <span style={{ color: C.textPrimary, fontWeight: 500 }}>{internalList.length} internal · {externalList.length} external</span>
+            </div>
+          </div>
+
+          <div className="text-[11px]" style={{ color: C.textSecondary }}>
+            <span style={{ color: C.textDisabled }}>Project:</span>{" "}
+            <span style={{ color: C.textPrimary, fontWeight: 500 }}>{project.code}</span>
+          </div>
+        </div>
+
+        {/* Bulk action bar (appears when items selected) */}
+        {selectedCount > 0 && (
+          <div className="px-5 py-2.5 border-b flex items-center justify-between" style={{ borderColor: C.border, backgroundColor: C.primarySoft }}>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold" style={{ color: C.primary }}>
+                {selectedCount} selected
+              </span>
+              <button onClick={clearSelection}
+                className="text-[11px] underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                style={{ color: C.textSecondary }}>
+                Clear
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setActiveAction("update")}
+                className="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2"
+                style={{ backgroundColor: C.primary, color: "white" }}>
+                <Send className="w-3.5 h-3.5" />
+                Send Update
+              </button>
+              <button onClick={() => setActiveAction("share")}
+                className="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors border hover:bg-white focus:outline-none focus-visible:ring-2"
+                style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                <Paperclip className="w-3.5 h-3.5" />
+                Share Document
+              </button>
+              <button onClick={() => setActiveAction("meeting")}
+                className="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors border hover:bg-white focus:outline-none focus-visible:ring-2"
+                style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                <Clock className="w-3.5 h-3.5" />
+                Invite to Meeting
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Body */}
+        <div className="p-5 space-y-6">
+          {/* === INTERNAL GROUP === */}
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: C.primarySoft }}>
+                  <UsersRound className="w-4 h-4" style={{ color: C.primary }} />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Internal Team</div>
+                  <div className="text-[11px]" style={{ color: C.textSecondary }}>{filteredInternal.length} member{filteredInternal.length !== 1 ? "s" : ""} from Samsung</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {filteredInternal.length > 0 && (
+                  <button onClick={() => toggleGroup(internalIds, allInternalSelected)}
+                    className="text-[11px] font-medium underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                    style={{ color: C.primary }}>
+                    {allInternalSelected ? "Deselect all" : "Select all"}
+                  </button>
+                )}
+                <button onClick={() => setAddMode("internal")}
+                  className="h-7 px-2.5 rounded-md text-[11px] font-medium inline-flex items-center gap-1 border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                  style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                  <Plus className="w-3 h-3" />
+                  Add Member
+                </button>
+              </div>
+            </div>
+
+            {filteredInternal.length === 0 ? (
+              <div className="text-center py-6 text-sm rounded-lg border" style={{ color: C.textSecondary, borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
+                No internal members match this search.
+              </div>
+            ) : (
+              <div className="border rounded-lg divide-y" style={{ borderColor: C.borderLight }}>
+                {filteredInternal.map(c => {
+                  const personaMeta = PERSONAS[c.persona] || {};
+                  const id = `int-${c.persona}`;
+                  const isSelected = selectedIds.has(id);
+                  return (
+                    <label key={id}
+                      className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-gray-50"
+                      style={{ backgroundColor: isSelected ? C.primarySoft : "transparent" }}>
+                      <input type="checkbox" checked={isSelected} onChange={() => toggleId(id)}
+                        className="w-4 h-4 rounded accent-current cursor-pointer"
+                        style={{ accentColor: C.primary }} />
+                      <PersonaAvatar p={c.persona} size={36} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>{personaMeta.name || c.persona}</span>
+                          <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: C.bg, color: C.textSecondary }}>{c.persona}</span>
+                          {c.owner && (
+                            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: C.primary, color: "white" }}>Owner</span>
+                          )}
+                        </div>
+                        <div className="text-xs mt-0.5" style={{ color: C.textSecondary }}>
+                          {c.role} · {c.department}
+                        </div>
+                        <div className="text-[11px] mt-0.5 flex items-center gap-3" style={{ color: C.textDisabled }}>
+                          <span>{c.email}</span>
+                          <span>·</span>
+                          <span>Last active: {c.active}</span>
+                          <span>·</span>
+                          <span>{c.contribution} contributions</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
+                          style={{ borderColor: C.border, color: C.textSecondary }}
+                          onClick={(e) => e.preventDefault()}
+                          title="Chat">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                        </button>
+                        <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
+                          style={{ borderColor: C.border, color: C.textSecondary }}
+                          onClick={(e) => e.preventDefault()}
+                          title="Email">
+                          <Send className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          {/* === EXTERNAL GROUP === */}
+          {hasExternal && (
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: "rgba(21,101,224,0.10)" }}>
+                    <Building2 className="w-4 h-4" style={{ color: C.info }} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>External Partners</div>
+                    <div className="text-[11px]" style={{ color: C.textSecondary }}>{filteredExternal.length} supplier contact{filteredExternal.length !== 1 ? "s" : ""}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {filteredExternal.length > 0 && (
+                    <button onClick={() => toggleGroup(externalIds, allExternalSelected)}
+                      className="text-[11px] font-medium underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      style={{ color: C.primary }}>
+                      {allExternalSelected ? "Deselect all" : "Select all"}
+                    </button>
+                  )}
+                  <button onClick={() => setAddMode("external")}
+                    className="h-7 px-2.5 rounded-md text-[11px] font-medium inline-flex items-center gap-1 border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                    style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                    <Plus className="w-3 h-3" />
+                    Add Partner
+                  </button>
+                </div>
+              </div>
+
+              {filteredExternal.length === 0 ? (
+                <div className="text-center py-6 text-sm rounded-lg border" style={{ color: C.textSecondary, borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
+                  No external partners match this search.
+                </div>
+              ) : (
+                <div className="border rounded-lg divide-y" style={{ borderColor: C.borderLight }}>
+                  {filteredExternal.map(c => {
+                    const id = `ext-${c.id}`;
+                    const isSelected = selectedIds.has(id);
+                    return (
+                      <label key={id}
+                        className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-gray-50"
+                        style={{ backgroundColor: isSelected ? C.primarySoft : "transparent" }}>
+                        <input type="checkbox" checked={isSelected} onChange={() => toggleId(id)}
+                          className="w-4 h-4 rounded accent-current cursor-pointer"
+                          style={{ accentColor: C.primary }} />
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0"
+                          style={{ backgroundColor: c.color }}>
+                          {c.initial}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>{c.name}</span>
+                            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(21,101,224,0.10)", color: C.info }}>External</span>
+                          </div>
+                          <div className="text-xs mt-0.5" style={{ color: C.textSecondary }}>
+                            {c.role} · {c.company}
+                          </div>
+                          <div className="text-[11px] mt-0.5 flex items-center gap-3 flex-wrap" style={{ color: C.textDisabled }}>
+                            <span>{c.email}</span>
+                            <span>·</span>
+                            <span>Last active: {c.active}</span>
+                          </div>
+                          <div className="text-[11px] mt-1" style={{ color: C.textSecondary }}>
+                            {c.contribution}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
+                            style={{ borderColor: C.border, color: C.textSecondary }}
+                            onClick={(e) => e.preventDefault()}
+                            title="Email">
+                            <Send className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Empty state for new project */}
+          {!hasExternal && project.isNew && (
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
+                    <Building2 className="w-4 h-4" style={{ color: C.textDisabled }} />
+                  </div>
+                  <div className="text-sm font-semibold" style={{ color: C.textDisabled }}>External Partners</div>
+                </div>
+                <button onClick={() => setAddMode("external")}
+                  className="h-7 px-2.5 rounded-md text-[11px] font-medium inline-flex items-center gap-1 border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+                  style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                  <Plus className="w-3 h-3" />
+                  Add Partner
+                </button>
+              </div>
+              <div className="text-center py-8 rounded-lg border-2 border-dashed" style={{ borderColor: C.borderLight }}>
+                <div className="text-sm mb-1" style={{ color: C.textPrimary }}>No external partners yet</div>
+                <div className="text-xs" style={{ color: C.textSecondary }}>Suppliers will appear here once added to the C-BOM.</div>
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+
+      {/* Bulk action modals */}
+      {activeAction && (
+        <BulkActionModal
+          action={activeAction}
+          selectedCount={selectedCount}
+          onClose={() => setActiveAction(null)}
+        />
+      )}
+
+      {/* Add Collaborator modal */}
+      {addMode && (
+        <AddCollaboratorModal
+          mode={addMode}
+          onClose={() => setAddMode(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// === BULK ACTION MODAL ===
+// Shared modal for Send Update / Share Document / Invite to Meeting
+function BulkActionModal({ action, selectedCount, onClose }) {
+  const config = {
+    update: { title: "Send Update", icon: Send, cta: "Send", placeholder: "Type your update message..." },
+    share:  { title: "Share Document", icon: Paperclip, cta: "Share", placeholder: "Add a note (optional)..." },
+    meeting:{ title: "Invite to Meeting", icon: Clock, cta: "Send Invite", placeholder: "Meeting agenda..." },
+  };
+  const cfg = config[action] || config.update;
+  const Icon = cfg.icon;
+
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <>
+      <div className="fixed inset-0 z-40" style={{ backgroundColor: "rgba(16, 24, 40, 0.4)" }} onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
+        style={{ transform: "translate(-50%, -50%)", width: 560 }}>
+        <div className="px-6 pt-5 pb-4 border-b flex items-start gap-4" style={{ borderColor: C.border }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: C.primarySoft }}>
+            <Icon className="w-5 h-5" style={{ color: C.primary }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>{cfg.title}</div>
+            <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>
+              Sending to <strong style={{ color: C.textPrimary }}>{selectedCount}</strong> recipient{selectedCount !== 1 ? "s" : ""}
+            </div>
+          </div>
+          <button onClick={onClose}
+            className="w-9 h-9 rounded-md flex items-center justify-center transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ color: C.textSecondary }}>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="px-6 py-4 space-y-3">
+          {action === "update" && (
+            <div>
+              <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Subject</label>
+              <input className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}
+                placeholder="e.g. AMOLED Panel spec update" />
+            </div>
+          )}
+          <div>
+            <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Message</label>
+            <textarea rows={4} placeholder={cfg.placeholder}
+              className="px-3 py-2 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 resize-none"
+              style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+          </div>
+        </div>
+        <div className="px-6 py-3 border-t flex items-center justify-end gap-2" style={{ borderColor: C.border }}>
+          <button onClick={onClose}
+            className="h-9 px-4 rounded-md text-sm font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+            Cancel
+          </button>
+          <button onClick={onClose}
+            className="h-9 px-4 rounded-md text-sm font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2"
+            style={{ backgroundColor: C.primary }}>
+            {cfg.cta}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// === ADD COLLABORATOR MODAL ===
+// Two modes: "internal" (Samsung employees by email/role) or "external" (supplier contacts by company)
+function AddCollaboratorModal({ mode, onClose }) {
+  const isInternal = mode === "internal";
+
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  const cfg = isInternal
+    ? {
+        title: "Add Internal Member",
+        subtitle: "Invite a Samsung team member to this project",
+        icon: UsersRound,
+        iconBg: C.primarySoft,
+        iconFg: C.primary,
+        cta: "Send Invitation",
+      }
+    : {
+        title: "Add External Partner",
+        subtitle: "Invite a supplier or vendor contact to this project",
+        icon: Building2,
+        iconBg: "rgba(21,101,224,0.10)",
+        iconFg: C.info,
+        cta: "Send Invitation",
+      };
+  const Icon = cfg.icon;
+
+  return (
+    <>
+      <div className="fixed inset-0 z-40" style={{ backgroundColor: "rgba(16, 24, 40, 0.4)" }} onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
+        style={{ transform: "translate(-50%, -50%)", width: 560 }}>
+        <div className="px-6 pt-5 pb-4 border-b flex items-start gap-4" style={{ borderColor: C.border }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: cfg.iconBg }}>
+            <Icon className="w-5 h-5" style={{ color: cfg.iconFg }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>{cfg.title}</div>
+            <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>{cfg.subtitle}</div>
+          </div>
+          <button onClick={onClose}
+            className="w-9 h-9 rounded-md flex items-center justify-center transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ color: C.textSecondary }}>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="px-6 py-4 space-y-3">
+          {isInternal ? (
+            <>
+              <div>
+                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Email</label>
+                <input type="email"
+                  placeholder="member@samsung.com"
+                  className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                  style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Role</label>
+                <select
+                  className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 bg-white"
+                  style={{ borderColor: C.border }}>
+                  <option>Project Manager (PM)</option>
+                  <option>Design Engineer (DE)</option>
+                  <option>Cost Manager (CM)</option>
+                  <option>Sourcing Manager (SM)</option>
+                  <option>Quality Manager (QM)</option>
+                  <option>Observer / Stakeholder</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Department <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
+                <input type="text"
+                  placeholder="e.g. Mobile R&D, Cost Engineering"
+                  className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                  style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Contact Name</label>
+                <input type="text"
+                  placeholder="e.g. Chen Wei"
+                  className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                  style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Company</label>
+                <input type="text"
+                  placeholder="e.g. BOE Technology"
+                  className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                  style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Email</label>
+                  <input type="email"
+                    placeholder="contact@company.com"
+                    className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                    style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+                </div>
+                <div>
+                  <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Phone <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
+                  <input type="tel"
+                    placeholder="+1 ..."
+                    className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                    style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>BOM Scope</label>
+                <select
+                  className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 bg-white"
+                  style={{ borderColor: C.border }}>
+                  <option>C-BOM (Source & Cost)</option>
+                  <option>Q-BOM (Quality / PPAP)</option>
+                  <option>All BOMs</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          <div>
+            <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Personal Message <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
+            <textarea rows={3}
+              placeholder="Add a note to the invitation..."
+              className="px-3 py-2 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 resize-none"
+              style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+          </div>
+        </div>
+
+        <div className="px-6 py-3 border-t flex items-center justify-end gap-2" style={{ borderColor: C.border }}>
+          <button onClick={onClose}
+            className="h-9 px-4 rounded-md text-sm font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+            Cancel
+          </button>
+          <button onClick={onClose}
+            className="h-9 px-4 rounded-md text-sm font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2"
+            style={{ backgroundColor: C.primary }}>
+            {cfg.cta}
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// === SCREEN: BOM LIST (3 BOMs: E / C / Q) ===
 function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) {
   const project = PROJECTS.find((p) => p.code === activeProjectCode) || PROJECTS[0];
   const isHeroProject = project.code === ACTIVE_PROJECT_CODE;
@@ -4142,7 +6072,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
             No BOMs Yet
           </div>
           <div className="text-sm max-w-md mx-auto mb-6" style={{ color: C.textSecondary }}>
-            Start by adding the E-BOM (Engineering). Once spec is defined, S/Q/C-BOMs can be added in parallel as each domain begins collaborating.
+            Start by adding the E-BOM (Engineering). Once spec is defined, C-BOM and Q-BOM can be added in parallel as each domain begins collaborating.
           </div>
           <div className="inline-flex items-center gap-2">
             <button className="px-4 py-2 rounded-md text-sm font-semibold text-white inline-flex items-center gap-2 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
@@ -5130,16 +7060,22 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
     // Flat mode: flatten all nodes + apply groupBy + insert group headers
     const flatNodes = BOM_TREE.map((n) => ({ ...n, lvl: 1, _groupKey: n[groupBy] || "Unknown" }));
-    const grouped = {};
-    flatNodes.forEach((n) => {
-      const k = n._groupKey;
-      if (!grouped[k]) grouped[k] = [];
-      grouped[k].push(n);
-    });
-    Object.keys(grouped).sort().forEach((k) => {
-      result.push({ id: `__group_${k}`, _isGroupHeader: true, _groupKey: k, _groupCount: grouped[k].length });
-      grouped[k].forEach((n) => result.push(n));
-    });
+
+    if (groupBy === "none") {
+      // No grouping — return flat list directly, no group headers
+      flatNodes.forEach((n) => result.push(n));
+    } else {
+      const grouped = {};
+      flatNodes.forEach((n) => {
+        const k = n._groupKey;
+        if (!grouped[k]) grouped[k] = [];
+        grouped[k].push(n);
+      });
+      Object.keys(grouped).sort().forEach((k) => {
+        result.push({ id: `__group_${k}`, _isGroupHeader: true, _groupKey: k, _groupCount: grouped[k].length });
+        grouped[k].forEach((n) => result.push(n));
+      });
+    }
 
     // Heat level filter (overlay heatmaps): show only matching levels + ancestors
     const matchesHeatLevel = (n) => {
@@ -5207,7 +7143,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
             No BOM to Collaborate On
           </div>
           <div className="text-sm max-w-md mx-auto mb-6" style={{ color: C.textSecondary }}>
-            BOM Collaboration becomes active once the first BOM exists. Start with E-BOM, then S/Q/C-BOMs follow in parallel as each domain engages.
+            BOM Collaboration becomes active once the first BOM exists. Start with E-BOM, then C-BOM and Q-BOM follow in parallel as each domain engages.
           </div>
           <div className="inline-flex items-center gap-2">
             <button
@@ -5273,10 +7209,31 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
             <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}
               className="h-7 px-2 rounded-md border text-[11px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               style={{ borderColor: C.border, color: C.textPrimary }}>
-              <option value="supplier">Group: Supplier</option>
-              <option value="ppap">Group: PPAP Level</option>
-              <option value="category">Group: Category</option>
-              <option value="risk">Group: Risk Level</option>
+              {/* E-BOM: engineering perspective (no supplier/risk/ppap — those are downstream) */}
+              {activeBom === "E" && (
+                <>
+                  <option value="none">Group: None</option>
+                  <option value="category">Group: Category</option>
+                  <option value="type">Group: Part Type</option>
+                </>
+              )}
+              {/* C-BOM: sourcing + cost perspective */}
+              {activeBom === "C" && (
+                <>
+                  <option value="none">Group: None</option>
+                  <option value="supplier">Group: Supplier</option>
+                  <option value="category">Group: Category</option>
+                </>
+              )}
+              {/* Q-BOM: quality / risk perspective */}
+              {activeBom === "Q" && (
+                <>
+                  <option value="none">Group: None</option>
+                  <option value="ppap">Group: PPAP Level</option>
+                  <option value="risk">Group: Risk Level</option>
+                  <option value="supplier">Group: Supplier</option>
+                </>
+              )}
             </select>
           )}
 
@@ -5512,6 +7469,32 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
           </div>
 
           <div className="flex-1 overflow-auto">
+          {/* C-BOM Final price source legend */}
+          {activeBom === "C" && (
+            <div className="px-4 py-2 border-b flex items-center gap-3 flex-wrap text-[10px]"
+              style={{ borderColor: C.borderLight, backgroundColor: C.surfaceTinted, color: C.textSecondary }}>
+              <span className="font-semibold uppercase tracking-wider" style={{ color: C.textDisabled }}>
+                Final price source:
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: C.info }} />
+                Quoted
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: C.success }} />
+                Negotiated
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: C.textSecondary }} />
+                Carryover
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: C.primary }} />
+                AI Should-cost
+              </span>
+              <span style={{ color: C.textDisabled }}>· Hover Final value for details</span>
+            </div>
+          )}
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-white border-b" style={{ borderColor: C.border }}>
               <tr style={{ color: C.textSecondary }}>
@@ -5522,7 +7505,10 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
                 {/* BOM-specific columns */}
                 {activeBom === "E" && (
-                  <th className="text-left font-medium py-2.5 px-3 w-20">Type</th>
+                  <>
+                    <th className="text-left font-medium py-2.5 px-3 w-32">Category</th>
+                    <th className="text-left font-medium py-2.5 px-3 w-20">Type</th>
+                  </>
                 )}
                 {activeBom === "Q" && (
                   <>
@@ -5538,6 +7524,11 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                     <th className="text-right font-medium py-2.5 px-3 w-20">Should</th>
                     <th className="text-right font-medium py-2.5 px-3 w-20">Market</th>
                     <th className="text-right font-medium py-2.5 px-3 w-24">Δ vs Target</th>
+                    <th className="text-right font-medium py-2.5 px-3 w-28">
+                      <span title="Final price source: ● blue=quoted · ● green=negotiated · ● gray=carryover · ● purple=AI should-cost">
+                        Final
+                      </span>
+                    </th>
                   </>
                 )}
 
@@ -5776,12 +7767,19 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                     </td>
                     {/* BOM-specific cells */}
                     {activeBom === "E" && (
-                      <td className="py-2 px-3">
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded"
-                          style={{ backgroundColor: C.bg, color: C.textSecondary }}>
-                          {node.type || "—"}
-                        </span>
-                      </td>
+                      <>
+                        <td className="py-2 px-3">
+                          <span className="text-[11px]" style={{ color: C.textPrimary }}>
+                            {node.category || "—"}
+                          </span>
+                        </td>
+                        <td className="py-2 px-3">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                            style={{ backgroundColor: C.bg, color: C.textSecondary }}>
+                            {node.type || "—"}
+                          </span>
+                        </td>
+                      </>
                     )}
                     {activeBom === "Q" && (
                       <>
@@ -5851,6 +7849,47 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                             title={`Target: $${mockCost.target.toFixed(2)}`}>
                             {mockCost.delta > 0 ? "+" : ""}${mockCost.delta.toFixed(2)}
                           </span>
+                        </td>
+                        {/* Final price + source indicator
+                            Priority: quoted (if available) > carryover (if previous version unchanged) > should (AI fallback) */}
+                        <td className="py-2 px-3 text-right">
+                          {(() => {
+                            // Decide source based on data + scenario context
+                            let finalValue, source, sourceLabel, sourceColor;
+                            const isHeroPart = node.id === 3;
+                            const isAwarded = isHeroPart && scenarioStep >= 7;
+                            const wasNegotiated = isHeroPart && isAwarded; // BOE negotiated quote
+                            if (wasNegotiated) {
+                              finalValue = mockCost.quoted;
+                              source = "negotiated";
+                              sourceLabel = `Negotiated · BOE Technology ($${mockCost.quoted.toFixed(2)})`;
+                              sourceColor = C.success;
+                            } else if (mockCost.quoted !== null) {
+                              finalValue = mockCost.quoted;
+                              source = "quoted";
+                              sourceLabel = `Quoted · ${node.supplier || "Supplier"} ($${mockCost.quoted.toFixed(2)})`;
+                              sourceColor = C.info;
+                            } else if (mockCost.carryover !== null) {
+                              finalValue = mockCost.carryover;
+                              source = "carryover";
+                              sourceLabel = `Carryover from previous version ($${mockCost.carryover.toFixed(2)})`;
+                              sourceColor = C.textSecondary;
+                            } else {
+                              finalValue = mockCost.shouldCost;
+                              source = "should";
+                              sourceLabel = `AI Should-cost (no quote yet) · $${mockCost.shouldCost.toFixed(2)}`;
+                              sourceColor = C.primary;
+                            }
+                            return (
+                              <span className="inline-flex items-center gap-1.5 justify-end"
+                                title={`Final price from: ${sourceLabel}`}>
+                                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: sourceColor }} />
+                                <span className="font-mono text-[11px] font-semibold" style={{ color: C.textPrimary }}>
+                                  ${finalValue.toFixed(2)}
+                                </span>
+                              </span>
+                            );
+                          })()}
                         </td>
                       </>
                     )}
@@ -6974,117 +9013,6 @@ function CostTab({ item, scenarioStep }) {
   );
 }
 
-function SourcingTab({ item, scenarioStep }) {
-  const isHero = item.id === 3;
-  const rfqSent = isHero && scenarioStep >= 5;
-  const responsesReceived = isHero && scenarioStep >= 6;
-  const awarded = isHero && scenarioStep >= 7;
-
-  // Hero uses scenario suppliers; other parts read from item.suppliers
-  const suppliers = isHero
-    ? [
-        { name: "Samsung Display", risk: "Low", capability: 95, performance: 92, recommended: true, quote: 40.20 },
-        { name: "BOE Technology", risk: "Med", capability: 88, performance: 85, recommended: true, quote: 38.90, awarded: awarded },
-        { name: "LG Display", risk: "Low", capability: 90, performance: 89, recommended: true, quote: 41.00 },
-      ]
-    : (item.suppliers || []);
-
-  if (suppliers.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <Building2 className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
-        <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>No Supplier Selected</div>
-        <div className="text-xs" style={{ color: C.textSecondary }}>No supplier has been selected for this part yet.</div>
-      </div>
-    );
-  }
-
-  // Generic part: highlight the awarded supplier (recommended + 1st)
-  const generalAwardedName = !isHero && suppliers[0] ? suppliers[0].name : null;
-
-  return (
-    <div>
-      <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>
-        {isHero ? "Recommended Suppliers" : "Qualified Suppliers"}{" "}
-        <span className="text-[10px]" style={{ color: C.textSecondary }}>
-          · {isHero ? "Pre-qualified by AI" : "Master Supplier List"}
-        </span>
-      </div>
-      <div className="space-y-2 mb-4">
-        {suppliers.map((s, idx) => {
-          const isAwarded = s.awarded || (!isHero && idx === 0 && s.recommended);
-          return (
-            <div key={s.name} className="p-2.5 rounded-md border"
-              style={{
-                borderColor: isAwarded ? C.success : C.borderLight,
-                backgroundColor: isAwarded ? C.successLight : "white",
-              }}>
-              <div className="flex items-start justify-between mb-1.5">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <Building2 className="w-3.5 h-3.5" style={{ color: C.textSecondary }} />
-                  <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>{s.name}</span>
-                  {isAwarded && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded font-medium"
-                      style={{ backgroundColor: C.success, color: "white" }}>AWARDED</span>
-                  )}
-                  {s.recommended && !isAwarded && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded font-medium"
-                      style={{ backgroundColor: C.primaryLight, color: C.primary }}>RECOMMENDED</span>
-                  )}
-                </div>
-                {(responsesReceived || (!isHero && s.quote)) && (
-                  <span className="font-mono font-semibold text-xs"
-                    style={{ color: isAwarded ? C.success : C.textPrimary }}>
-                    {s.quote ? `$${s.quote.toFixed(2)}` : "—"}
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-[10px]">
-                <div>
-                  <div style={{ color: C.textDisabled }}>Risk</div>
-                  <div className="font-medium" style={{ color: s.risk === "Low" ? C.success : s.risk === "Med" ? C.warning : C.error }}>{s.risk}</div>
-                </div>
-                <div>
-                  <div style={{ color: C.textDisabled }}>Capability</div>
-                  <div className="font-medium" style={{ color: C.textPrimary }}>{s.capability}/100</div>
-                </div>
-                <div>
-                  <div style={{ color: C.textDisabled }}>Performance</div>
-                  <div className="font-medium" style={{ color: C.textPrimary }}>{s.performance}/100</div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* AI Recommendation (Hero scenario) */}
-      {isHero && responsesReceived && !awarded && (
-        <div className="p-3 mb-4 rounded-md border flex items-start gap-2"
-          style={{ backgroundColor: C.primarySoft, borderColor: C.primaryLight }}>
-          <Sparkles className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.primary }} />
-          <div className="text-xs">
-            <div className="font-semibold mb-0.5" style={{ color: C.textPrimary }}>AI Recommendation</div>
-            <div style={{ color: C.textSecondary }}>
-              <span className="font-medium">BOE Technology</span>  — -$2.90 vs Should-cost (best); Risk Med but Performance is solid
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Scenario action button (Hero only) */}
-      {isHero && (
-        <button className="w-full px-3 py-2 rounded-md text-xs font-medium text-white flex items-center justify-center gap-1.5"
-          style={{ backgroundColor: awarded ? C.success : C.primary }}>
-          {awarded ? <><CheckCircle className="w-3.5 h-3.5" />BOE Awarded · Notify CM</>
-            : rfqSent ? <><Clock className="w-3.5 h-3.5" />Awaiting Quotes (D-3)</>
-            : <><Send className="w-3.5 h-3.5" />Send Multi-Supplier RFQ</>}
-        </button>
-      )}
-    </div>
-  );
-}
-
 // === PROCUREMENT TAB (Cost + Sourcing combined) ===
 // Decision flow: "How much?" → "From whom?" → "Send RFQ"
 function ProcurementTab({ item, scenarioStep }) {
@@ -7351,7 +9279,7 @@ function QualityTab({ item, scenarioStep }) {
         )}
         <div className="flex-1 text-xs">
           <div className="font-semibold" style={{ color: overallSync ? C.success : C.warning }}>
-            {overallSync ? "Q-BOM ↔ Sourcing BOM Synced" : "Q-BOM Sync Needed"}
+            {overallSync ? "Q-BOM ↔ C-BOM Synced" : "Q-BOM Sync Needed"}
           </div>
           <div className="text-[10px]" style={{ color: C.textSecondary }}>
             {overallSync ? "Last sync: Just now · Auto-sync enabled" : "Register newly added parts to Q-BOM"}
@@ -8351,11 +10279,11 @@ function CostWaterfallTab({ isHeroProject }) {
 // PPAP Stage Kanban: Not Started → Requested → In Review → Submitted → Approved
 // At scenario step >=7: AMOLED Panel moves Requested → In Review
 const PPAP_STAGES = [
-  { id: "notStarted", label: "Not Started", color: C.textDisabled, bg: C.bg, desc: "PPAP not requested" },
-  { id: "requested", label: "Requested", color: C.warning, bg: C.warningLight, desc: "Sent request to supplier" },
-  { id: "review", label: "In Review", color: C.info, bg: C.infoLight, desc: "Awaiting supplier response" },
-  { id: "submitted", label: "Submitted", color: C.primary, bg: C.primaryLight, desc: "Pending review" },
-  { id: "approved", label: "Approved", color: C.success, bg: C.successLight, desc: "Approved" },
+  { id: "notStarted", label: "Not Started", color: C.textDisabled, desc: "PPAP not requested" },
+  { id: "requested", label: "Requested", color: C.warning, desc: "Sent request to supplier" },
+  { id: "review", label: "In Review", color: C.info, desc: "Awaiting supplier response" },
+  { id: "submitted", label: "Submitted", color: C.primary, desc: "Pending review" },
+  { id: "approved", label: "Approved", color: C.success, desc: "Approved" },
 ];
 
 // Parts under PPAP tracking (based on Q-BOM)
@@ -8702,12 +10630,12 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
           const cards = grouped[stage.id] || [];
           return (
             <div key={stage.id} className="flex flex-col rounded-xl overflow-hidden border"
-              style={{ borderColor: C.borderLight, backgroundColor: stage.bg, minHeight: 500 }}>
+              style={{ borderColor: C.borderLight, backgroundColor: C.surfaceTinted, minHeight: 500 }}>
               {/* Column Header */}
-              <div className="px-3 py-2.5 flex items-center justify-between"
-                style={{ borderBottom: `2px solid ${stage.color}` }}>
+              <div className="px-3 py-2.5 flex items-center justify-between border-b"
+                style={{ borderColor: C.borderLight }}>
                 <div>
-                  <div className="text-xs font-bold flex items-center gap-1.5" style={{ color: stage.color }}>
+                  <div className="text-xs font-semibold flex items-center gap-1.5" style={{ color: C.textPrimary }}>
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: stage.color }} />
                     {stage.label}
                   </div>
@@ -8715,8 +10643,8 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                     {stage.desc}
                   </div>
                 </div>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: "white", color: stage.color }}>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                  style={{ backgroundColor: "white", color: C.textSecondary, border: `1px solid ${C.borderLight}` }}>
                   {cards.length}
                 </span>
               </div>
@@ -8737,14 +10665,14 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                     <button key={card.id}
                       onClick={() => onOpenItem && onOpenItem(card.id)}
                       className="w-full text-left rounded-md bg-white border transition-all hover:shadow-md relative focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                      style={{ borderColor: card.isHero ? C.warning : C.borderLight }}>
-                      {/* Risk left bar */}
+                      style={{ borderColor: card.isHero ? C.primary : C.borderLight }}>
+                      {/* Risk left bar — only colored for High; Med/Low neutral */}
                       <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l"
-                        style={{ backgroundColor: riskColor(card.risk) }} />
+                        style={{ backgroundColor: card.risk === "High" ? C.error : C.borderLight }} />
 
                       <div className="p-2.5 pl-3">
-                        {/* Top row: Title only (no HERO badge — border indicates priority) */}
-                        <div className="min-w-0 mb-1">
+                        {/* Title */}
+                        <div className="min-w-0 mb-1.5">
                           <div className="text-xs font-semibold leading-snug" style={{ color: C.textPrimary }}>
                             {card.name}
                           </div>
@@ -8753,26 +10681,31 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                           </div>
                         </div>
 
-                        {/* Badges row */}
+                        {/* Badges row — minimal: PPAP Lv (outlined neutral) + Risk text only when High */}
                         <div className="flex items-center gap-1 flex-wrap mb-2">
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded"
-                            style={{ backgroundColor: C.primaryLight, color: C.primary }}>
-                            Lv{card.ppapLevel}
+                          <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded border"
+                            style={{ backgroundColor: "white", color: C.textSecondary, borderColor: C.border }}>
+                            PPAP Lv{card.ppapLevel}
                           </span>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded"
-                            style={{
-                              backgroundColor: card.risk === "High" ? C.errorLight : card.risk === "Med" ? C.warningLight : C.successLight,
-                              color: riskColor(card.risk),
-                            }}>
-                            {card.risk}
-                          </span>
-                          {card.dDay !== null && card.stage !== "approved" && (
+                          {card.risk === "High" && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                              style={{ backgroundColor: C.errorLight, color: C.error }}>
+                              High Risk
+                            </span>
+                          )}
+                          {card.dDay !== null && card.stage !== "approved" && (isOverdue || isUrgent) && (
                             <span className="text-[9px] font-bold px-1.5 py-0.5 rounded ml-auto"
                               style={{
-                                backgroundColor: isOverdue ? C.error : isUrgent ? C.warning : C.bg,
-                                color: isOverdue || isUrgent ? "white" : C.textSecondary,
+                                backgroundColor: isOverdue ? C.error : C.warning,
+                                color: "white",
                               }}>
                               {isOverdue ? `${Math.abs(card.dDay)}d overdue` : `D-${card.dDay}`}
+                            </span>
+                          )}
+                          {card.dDay !== null && card.stage !== "approved" && !isOverdue && !isUrgent && (
+                            <span className="text-[9px] font-medium ml-auto"
+                              style={{ color: C.textDisabled }}>
+                              D-{card.dDay}
                             </span>
                           )}
                         </div>
@@ -8785,7 +10718,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                           </span>
                         </div>
 
-                        {/* Progress bar */}
+                        {/* Progress bar — single neutral primary color */}
                         <div className="mb-1.5">
                           <div className="flex items-center justify-between mb-0.5">
                             <span className="text-[9px]" style={{ color: C.textSecondary }}>
@@ -8795,11 +10728,11 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                               {card.deliverableDone}/{card.deliverableTotal}
                             </span>
                           </div>
-                          <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: C.bg }}>
+                          <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: C.borderLight }}>
                             <div className="h-full rounded-full"
                               style={{
                                 width: `${(card.deliverableDone / card.deliverableTotal) * 100}%`,
-                                backgroundColor: card.deliverableDone === card.deliverableTotal ? C.success : stage.color,
+                                backgroundColor: card.deliverableDone === card.deliverableTotal ? C.success : C.primary,
                               }} />
                           </div>
                         </div>
@@ -9096,6 +11029,7 @@ export default function App() {
                       scenarioStep={scenarioStep}
                       activeProjectCode={activeProjectCode}
                       setView={setView}
+                      activePersona={activePersona}
                     />
                   )}
                   {view === "info" && (
@@ -9103,6 +11037,11 @@ export default function App() {
                       activeProjectCode={activeProjectCode}
                       activePersona={activePersona}
                       setActivePersona={setActivePersona}
+                    />
+                  )}
+                  {view === "collaborators" && (
+                    <CollaboratorsScreen
+                      activeProjectCode={activeProjectCode}
                     />
                   )}
                   {view === "bomlist" && (
