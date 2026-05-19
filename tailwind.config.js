@@ -8,4 +8,10 @@ export default {
     extend: {},
   },
   plugins: [],
+  
+}
+
+fontFamily: {
+  sans: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
+  mono: ['"Roboto Mono"', 'ui-monospace', '"SF Mono"', 'Menlo', 'monospace'],
 }

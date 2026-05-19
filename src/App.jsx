@@ -236,25 +236,11 @@ const BOM_TIMELINE_EVENTS = {
     { id: "e7", date: "May 10", time: "2:30 PM", title: "v2.0 created",
       kind: "neutral", iconType: "version", author: "DE", detail: "Branched from v1.5." },
   ],
-  S: [
-    { id: "s1", date: "Today, May 18", time: "2:15 PM", title: "RFQ sent: AMOLED Panel",
-      kind: "primary", iconType: "send", author: "SM", detail: "3 suppliers: Samsung Display, BOE, LG Display." },
-    { id: "s2", date: "Today, May 18", time: "11:08 AM", title: "Supplier selection requested by CM",
-      kind: "primary", iconType: "message", author: "CM", detail: "Should-cost confirmed at $41.80." },
-    { id: "s3", date: "May 17", time: "4:30 PM", title: "Pre-qualification updated",
-      kind: "success", iconType: "check", author: "SM", detail: "BOE Technology added to qualified vendor list." },
-    { id: "s4", date: "May 15", time: "10:22 AM", title: "Conflict resolved: Polarizer dual-source",
-      kind: "success", iconType: "check", author: "SM", detail: "Nitto Denko (primary) + LG Chem (secondary) approved." },
-    { id: "s5", date: "May 13", time: "3:00 PM", title: "Conflict detected: Polarizer single-source",
-      kind: "error", iconType: "alert", author: "QM", detail: "QM flagged: single-source risk on critical part." },
-    { id: "s6", date: "May 12", time: "9:45 AM", title: "v1.5 created from E-BOM sync",
-      kind: "neutral", iconType: "version", author: "SM", detail: "60 of 84 parts have suppliers assigned." },
-  ],
   Q: [
     { id: "q1", date: "Today, May 18", time: "2:22 PM", title: "PPAP Lv3 assigned: AMOLED Panel → BOE",
       kind: "primary", iconType: "shield", author: "QM", detail: "Risk Assessment auto-completed. Medium risk." },
     { id: "q2", date: "Today, May 18", time: "8:45 AM", title: "Q-BOM auto-sync confirmed",
-      kind: "success", iconType: "check", author: "QM", detail: "Synced from S-BOM v1.7." },
+      kind: "success", iconType: "check", author: "QM", detail: "Synced from C-BOM v2.2." },
     { id: "q3", date: "May 17", time: "1:15 PM", title: "PFMEA draft updated",
       kind: "neutral", iconType: "upload", author: "QM", detail: "Display Module bonding process — Critical entry added." },
     { id: "q4", date: "May 15", time: "11:30 AM", title: "PPAP Lv2 approved: OCA Adhesive",
@@ -263,18 +249,27 @@ const BOM_TIMELINE_EVENTS = {
       kind: "neutral", iconType: "version", author: "QM", detail: "Synced from E-BOM v1.8." },
   ],
   C: [
+    // Source & Cost combined timeline — events from both supplier selection (SM) and cost analysis (CM)
     { id: "c1", date: "Today, May 18", time: "2:35 PM", title: "BOE quote applied: $38.90",
       kind: "success", iconType: "check", author: "CM", detail: "Best of 3 quotes. Δ vs Should-cost: -$2.90." },
-    { id: "c2", date: "Today, May 18", time: "11:08 AM", title: "Should-cost analysis: AMOLED Panel",
-      kind: "primary", iconType: "zap", author: "CM", detail: "$41.80 confirmed. Market: $42.50." },
-    { id: "c3", date: "May 17", time: "5:42 PM", title: "Cost target locked: $38.00",
+    { id: "c2", date: "Today, May 18", time: "2:15 PM", title: "RFQ sent: AMOLED Panel",
+      kind: "primary", iconType: "send", author: "SM", detail: "3 suppliers: Samsung Display, BOE, LG Display." },
+    { id: "c3", date: "Today, May 18", time: "11:08 AM", title: "Should-cost analysis: AMOLED Panel",
+      kind: "primary", iconType: "zap", author: "CM", detail: "$41.80 confirmed. Market: $42.50. Supplier selection requested." },
+    { id: "c4", date: "May 17", time: "5:42 PM", title: "Cost target locked: $38.00",
       kind: "primary", iconType: "shield", author: "CM", detail: "Approved by PM." },
-    { id: "c4", date: "May 15", time: "9:30 AM", title: "Polarizer savings: $0.05/unit",
+    { id: "c5", date: "May 17", time: "4:30 PM", title: "Pre-qualification updated",
+      kind: "success", iconType: "check", author: "SM", detail: "BOE Technology added to qualified vendor list." },
+    { id: "c6", date: "May 15", time: "10:22 AM", title: "Conflict resolved: Polarizer dual-source",
+      kind: "success", iconType: "check", author: "SM", detail: "Nitto Denko (primary) + LG Chem (secondary) approved." },
+    { id: "c7", date: "May 15", time: "9:30 AM", title: "Polarizer savings: $0.05/unit",
       kind: "success", iconType: "check", author: "CM", detail: "Nitto Denko price reduced $1.80 → $1.75." },
-    { id: "c5", date: "May 13", time: "2:00 PM", title: "Cost rollup completed",
+    { id: "c8", date: "May 13", time: "3:00 PM", title: "Conflict detected: Polarizer single-source",
+      kind: "error", iconType: "alert", author: "QM", detail: "QM flagged: single-source risk on critical part." },
+    { id: "c9", date: "May 13", time: "2:00 PM", title: "Cost rollup completed",
       kind: "neutral", iconType: "upload", author: "CM", detail: "v2.1 cost rollup: $42.30 total BOM cost." },
-    { id: "c6", date: "May 10", time: "11:15 AM", title: "v2.1 created",
-      kind: "neutral", iconType: "version", author: "CM", detail: "Synced from E-BOM v2.0." },
+    { id: "c10", date: "May 10", time: "11:15 AM", title: "v2.1 created",
+      kind: "neutral", iconType: "version", author: "CM", detail: "Synced from E-BOM v2.0. 60 of 84 parts have suppliers assigned." },
   ],
 };
 
@@ -289,21 +284,16 @@ const BOM_VERSION_DIFFS = {
     ],
     removed: [{ partId: "OLD-PANEL-6.5", name: "AMOLED Panel 6.5\" FHD+ 90Hz", reason: "Replaced by 6.7\" 120Hz variant" }],
   },
-  S: { current: "v1.7", previous: "v1.5",
-    added: [{ partId: "SUPPLIER-BOE", name: "BOE Technology (AMOLED Panel)", reason: "Added via RFQ" }],
-    modified: [{ partId: "UEI-Y0ZL-7UU0W", name: "Polarizer Film", change: "Single-source → Dual-source (added LG Chem)" }],
-    removed: [],
-  },
   Q: { current: "v1.4", previous: "v1.3",
     added: [{ partId: "PPAP-AMOLED", name: "AMOLED Panel PPAP Lv3", reason: "Medium risk auto-assigned" }],
     modified: [{ partId: "5ML-DR7Q-2CV44", name: "OCA Adhesive", change: "PPAP Lv2 → Approved" }],
     removed: [],
   },
   C: { current: "v2.2", previous: "v2.1",
-    added: [],
+    added: [{ partId: "SUPPLIER-BOE", name: "BOE Technology (AMOLED Panel)", reason: "Added via RFQ" }],
     modified: [
-      { partId: "EQQ-MWS6-XAG2D", name: "AMOLED Panel", change: "Quoted: — → $38.90 (BOE)" },
-      { partId: "UEI-Y0ZL-7UU0W", name: "Polarizer Film", change: "Quoted: $1.80 → $1.75" },
+      { partId: "EQQ-MWS6-XAG2D", name: "AMOLED Panel", change: "Supplier: — → BOE · Quoted: — → $38.90" },
+      { partId: "UEI-Y0ZL-7UU0W", name: "Polarizer Film", change: "Single-source → Dual-source · Quoted: $1.80 → $1.75" },
     ],
     removed: [],
   },
@@ -316,12 +306,12 @@ const BOM_VERSION_DIFFS = {
 const BOM_COLLAB_LOG = [
   { id: 1, ts: "Today 14:22", bomId: "Q", action: "PPAP Requested",
     actor: "QM", detail: "PPAP Lv3 request sent to BOE Technology", version: "v1.5" },
-  { id: 2, ts: "Today 11:30", bomId: "S", action: "Supplier Awarded",
-    actor: "SM", detail: "BOE Technology awarded ($38.90/EA)", version: "v2.1" },
+  { id: 2, ts: "Today 11:30", bomId: "C", action: "Supplier Awarded",
+    actor: "SM", detail: "BOE Technology awarded ($38.90/EA)", version: "v2.2" },
   { id: 3, ts: "Today 09:15", bomId: "C", action: "Should-cost Updated",
     actor: "CM", detail: "AMOLED Panel: $41.80 (AI recommended)", version: "v2.0" },
-  { id: 4, ts: "Yesterday 16:42", bomId: "S", action: "Sync Notification",
-    actor: "SM", detail: "AMOLED Panel added in E-BOM → S-BOM needs supplier selection", version: "v2.1" },
+  { id: 4, ts: "Yesterday 16:42", bomId: "C", action: "Sync Notification",
+    actor: "SM", detail: "AMOLED Panel added in E-BOM → C-BOM needs supplier selection", version: "v2.1" },
   { id: 5, ts: "Yesterday 14:30", bomId: "E", action: "Part Added",
     actor: "DE", detail: "Added AMOLED Panel 6.7\" FHD+ 120Hz", version: "v1.8" },
   { id: 6, ts: "Yesterday 11:15", bomId: "E", action: "Spec Updated",
@@ -342,7 +332,7 @@ const BOM_TREE = [
   // Level 1 — Root Assembly
   // ============================================================
   { id: 1, lvl: 1, partId: "SYH-OGNU-A1Y9A", desc: "ASSY,SMARTPHONE,6.7IN,5G,256GB", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2,
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2,
     children: [2, 9, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110],
     supplier: "Internal", ppap: "Lv1", category: "Final Assembly", risk: "Low" },
 
@@ -350,298 +340,298 @@ const BOM_TREE = [
   // Level 2 — Display Module branch (id 2-8)
   // ============================================================
   { id: 2, lvl: 2, partId: "XYR-YZK5-WA1A7", desc: "ASSY,DISPLAY MODULE,6.7IN,AMOLED", type: "ASSM",
-    status: { D: "warn", C: "warn", S: "warn", Q: "warn" }, comments: 8, children: [3, 7, 8],
+    status: { D: "warn", C: "warn", Q: "warn" }, comments: 8, children: [3, 7, 8],
     supplier: "Samsung Display", ppap: "Lv3", category: "Display", risk: "Med" },
   { id: 3, lvl: 3, partId: "EI2-I6DA-003WB", desc: "PANEL,AMOLED,6.7IN,FHD+,120HZ", type: "MISC",
-    status: { D: "warn", C: "block", S: "progress", Q: "block" }, comments: 14, isHero: true,
+    status: { D: "warn", C: "block", Q: "block" }, comments: 14, isHero: true,
     diff: "added", children: [4, 5, 6],
     supplier: "BOE Technology", ppap: "Lv3", category: "Display", risk: "Med" },
   { id: 4, lvl: 4, partId: "UEI-Y0ZL-7UU0W", desc: "FILM,POLARIZER,FRONT,6.7IN", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Nitto Denko", ppap: "Lv2", category: "Display", risk: "Low" },
   { id: 5, lvl: 4, partId: "5ML-DR7Q-2CV44", desc: "FILM,OCA,OPTICAL CLEAR ADHESIVE,6.7IN", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "3M", ppap: "Lv2", category: "Display", risk: "Low" },
   { id: 6, lvl: 4, partId: "1W6-4YP3-X6FU2", desc: "IC,TOUCH CONTROLLER,I2C", type: "CMDTY",
-    status: { D: "ok", C: "warn", S: "ok", Q: "ok" }, comments: 3, children: [],
+    status: { D: "ok", C: "warn", Q: "ok" }, comments: 3, children: [],
     supplier: "Synaptics", ppap: "Lv2", category: "Display", risk: "Low" },
   { id: 7, lvl: 3, partId: "GL2-7HKR-WA1Z3", desc: "GLASS,COVER,GORILLA VICTUS 2,6.7IN", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2, children: [],
     supplier: "Corning", ppap: "Lv2", category: "Display", risk: "Low" },
   { id: 8, lvl: 3, partId: "BR3-9PLK-DR4N5", desc: "BRACKET,DISPLAY,ALUMINUM,6.7IN", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Catcher Technology", ppap: "Lv1", category: "Display", risk: "Low" },
 
   // ============================================================
   // Level 2 — Fan / Cooling branch (id 9-12)
   // ============================================================
   { id: 9, lvl: 2, partId: "QE3-8DHV-XIRG8", desc: "ASSY,FAN MODULE,SMARTPHONE COOLING", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [11, 12],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [11, 12],
     supplier: "Foxconn", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 11, lvl: 3, partId: "VC1-4JTH-CHM7P", desc: "VAPOR CHAMBER,COPPER,0.4MM", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Furukawa Electric", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 12, lvl: 3, partId: "TP4-6GRT-89XQM", desc: "THERMAL PAD,GRAPHITE,COOLING", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Henkel", ppap: "Lv1", category: "Mechanical", risk: "Low" },
 
   // ============================================================
   // Level 2 — Mainboard PCB branch (id 20-31)
   // ============================================================
   { id: 20, lvl: 2, partId: "MB1-7TY5-BRDLA", desc: "ASSY,MAINBOARD,5G,SM-XXXX", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "warn" }, comments: 5, children: [10, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31],
+    status: { D: "ok", C: "ok", Q: "warn" }, comments: 5, children: [10, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31],
     supplier: "Samsung Electro-Mechanics", ppap: "Lv3", category: "PCB", risk: "High" },
   { id: 10, lvl: 3, partId: "6U8-HKJJ-JRPWM", desc: "PCB,MAINBOARD,10-LAYER,HDI", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "warn" }, comments: 3, children: [],
+    status: { D: "ok", C: "ok", Q: "warn" }, comments: 3, children: [],
     supplier: "Samsung Electro-Mechanics", ppap: "Lv3", category: "PCB", risk: "High" },
   { id: 21, lvl: 3, partId: "AP1-3KW9-QC8GN", desc: "IC,AP,SNAPDRAGON 8 GEN 3", type: "CMDTY",
-    status: { D: "ok", C: "warn", S: "ok", Q: "ok" }, comments: 4, children: [],
+    status: { D: "ok", C: "warn", Q: "ok" }, comments: 4, children: [],
     supplier: "Qualcomm", ppap: "Lv3", category: "PCB", risk: "High" },
   { id: 22, lvl: 3, partId: "MM2-5JNE-DR4VA", desc: "IC,DRAM,LPDDR5X,12GB", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2, children: [],
     supplier: "Samsung Semi", ppap: "Lv3", category: "PCB", risk: "Med" },
   { id: 23, lvl: 3, partId: "ST3-9HFR-STR91", desc: "IC,STORAGE,UFS 4.0,256GB", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Samsung Semi", ppap: "Lv3", category: "PCB", risk: "Med" },
   { id: 24, lvl: 3, partId: "PM4-2RWN-PMU3K", desc: "IC,PMIC,POWER MANAGEMENT", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Qualcomm", ppap: "Lv2", category: "PCB", risk: "Low" },
   { id: 25, lvl: 3, partId: "MD5-8KQT-MDM5G", desc: "IC,MODEM,5G SUB-6 / mmWAVE", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2, children: [],
     supplier: "Qualcomm", ppap: "Lv3", category: "PCB", risk: "Med" },
   { id: 26, lvl: 3, partId: "WF6-4LMS-WFI6E", desc: "IC,WIFI 7 + BT 5.4 COMBO", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Broadcom", ppap: "Lv2", category: "PCB", risk: "Low" },
   { id: 27, lvl: 3, partId: "AC7-6PHW-AUDIO", desc: "IC,AUDIO CODEC,32-BIT HIFI", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Cirrus Logic", ppap: "Lv2", category: "PCB", risk: "Low" },
   { id: 28, lvl: 3, partId: "NF8-3VBA-NFCCH", desc: "IC,NFC CONTROLLER + eSE", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "NXP Semiconductors", ppap: "Lv2", category: "PCB", risk: "Low" },
   { id: 29, lvl: 3, partId: "CR9-1QEB-CRYO0", desc: "CRYSTAL,OSCILLATOR,38.4MHZ", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Murata", ppap: "Lv1", category: "PCB", risk: "Low" },
   { id: 31, lvl: 3, partId: "PS1-7ZAU-PASSV", desc: "PASSIVES,SET,CAPACITOR+RESISTOR+INDUCTOR", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Murata", ppap: "Lv1", category: "PCB", risk: "Low" },
 
   // ============================================================
   // Level 2 — Battery branch (id 30-37)
   // ============================================================
   { id: 30, lvl: 2, partId: "BT1-9HGR-BATAS", desc: "ASSY,BATTERY PACK,5000mAh", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "warn", Q: "ok" }, comments: 4, children: [32, 33, 34, 35, 36, 37],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 4, children: [32, 33, 34, 35, 36, 37],
     supplier: "Samsung SDI", ppap: "Lv3", category: "Battery", risk: "High" },
   { id: 32, lvl: 3, partId: "BC1-2FYW-CELL01", desc: "BATTERY CELL,LI-POLYMER,5000mAh", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "warn", Q: "ok" }, comments: 3, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 3, children: [],
     supplier: "Samsung SDI", ppap: "Lv3", category: "Battery", risk: "High" },
   { id: 33, lvl: 3, partId: "BP2-8KEN-PROT08", desc: "PCB,BATTERY PROTECTION CIRCUIT", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "ITM Semiconductor", ppap: "Lv2", category: "Battery", risk: "Med" },
   { id: 34, lvl: 3, partId: "BF3-5NLT-FUSE12", desc: "FUSE,THERMAL,BATTERY SAFETY", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Bourns", ppap: "Lv2", category: "Battery", risk: "Med" },
   { id: 35, lvl: 3, partId: "BC4-1OZQ-CONN34", desc: "CONNECTOR,BATTERY,SPRING CONTACT", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Hirose", ppap: "Lv1", category: "Battery", risk: "Low" },
   { id: 36, lvl: 3, partId: "BA5-7AVU-ADH567", desc: "ADHESIVE,BATTERY MOUNTING,DOUBLE-SIDED", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "3M", ppap: "Lv1", category: "Battery", risk: "Low" },
   { id: 37, lvl: 3, partId: "BL6-4XYP-LBL890", desc: "LABEL,BATTERY,REGULATORY", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Avery Dennison", ppap: "Lv1", category: "Battery", risk: "Low" },
 
   // ============================================================
   // Level 2 — Camera branch (id 40-49)
   // ============================================================
   { id: 40, lvl: 2, partId: "CM1-3EHF-CAMAS", desc: "ASSY,CAMERA MODULE,REAR TRIPLE", type: "ASSM",
-    status: { D: "ok", C: "warn", S: "ok", Q: "ok" }, comments: 6, children: [41, 42, 43, 44, 45, 46, 47, 48, 49],
+    status: { D: "ok", C: "warn", Q: "ok" }, comments: 6, children: [41, 42, 43, 44, 45, 46, 47, 48, 49],
     supplier: "Samsung Electro-Mechanics", ppap: "Lv3", category: "Camera", risk: "High" },
   { id: 41, lvl: 3, partId: "CM2-9PTY-SNS200", desc: "SENSOR,IMAGE,200MP MAIN", type: "CMDTY",
-    status: { D: "ok", C: "warn", S: "ok", Q: "ok" }, comments: 4, children: [],
+    status: { D: "ok", C: "warn", Q: "ok" }, comments: 4, children: [],
     supplier: "Samsung Semi", ppap: "Lv3", category: "Camera", risk: "High" },
   { id: 42, lvl: 3, partId: "CL3-6URD-LNS200", desc: "LENS,7P,F1.7,OIS,200MP MAIN", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2, children: [],
     supplier: "Largan Precision", ppap: "Lv3", category: "Camera", risk: "Med" },
   { id: 43, lvl: 3, partId: "CS4-5AVN-SNSULT", desc: "SENSOR,IMAGE,12MP ULTRAWIDE", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Sony Semiconductor", ppap: "Lv3", category: "Camera", risk: "Med" },
   { id: 44, lvl: 3, partId: "CL4-2BWK-LNSULT", desc: "LENS,6P,F2.2,ULTRAWIDE 12MP", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Sunny Optical", ppap: "Lv2", category: "Camera", risk: "Low" },
   { id: 45, lvl: 3, partId: "CS5-7HLT-SNSTEL", desc: "SENSOR,IMAGE,10MP TELEPHOTO 3X", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Sony Semiconductor", ppap: "Lv3", category: "Camera", risk: "Med" },
   { id: 46, lvl: 3, partId: "CL5-4MGS-LNSTEL", desc: "LENS,5P,F2.4,TELEPHOTO 3X", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Largan Precision", ppap: "Lv2", category: "Camera", risk: "Low" },
   { id: 47, lvl: 3, partId: "OI6-8JXN-OIS012", desc: "ACTUATOR,OIS,VOICE COIL,MAIN", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Mitsumi", ppap: "Lv2", category: "Camera", risk: "Med" },
   { id: 48, lvl: 3, partId: "FL7-3ZBQ-FLSH09", desc: "LED,FLASH,DUAL TONE", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Lumileds", ppap: "Lv1", category: "Camera", risk: "Low" },
   { id: 49, lvl: 3, partId: "FC8-1KWE-FCAM12", desc: "ASSY,CAMERA,FRONT 12MP", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "LG Innotek", ppap: "Lv2", category: "Camera", risk: "Low" },
 
   // ============================================================
   // Level 2 — Audio branch (id 50-54)
   // ============================================================
   { id: 50, lvl: 2, partId: "AU1-6FRP-AUDAS", desc: "ASSY,AUDIO SUBSYSTEM", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2, children: [51, 52, 53, 54],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2, children: [51, 52, 53, 54],
     supplier: "AAC Technologies", ppap: "Lv2", category: "Audio", risk: "Low" },
   { id: 51, lvl: 3, partId: "SP1-9HXJ-SPK001", desc: "SPEAKER,EARPIECE,STEREO TOP", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "AAC Technologies", ppap: "Lv2", category: "Audio", risk: "Low" },
   { id: 52, lvl: 3, partId: "SP2-4VLG-SPK002", desc: "SPEAKER,LOUDSPEAKER,STEREO BOTTOM", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "AAC Technologies", ppap: "Lv2", category: "Audio", risk: "Low" },
   { id: 53, lvl: 3, partId: "MC3-7BPL-MIC003", desc: "MICROPHONE,MEMS,DUAL ARRAY", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Knowles", ppap: "Lv2", category: "Audio", risk: "Low" },
   { id: 54, lvl: 3, partId: "AM4-2QZR-AMP004", desc: "IC,AUDIO AMPLIFIER,CLASS-D", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Cirrus Logic", ppap: "Lv2", category: "Audio", risk: "Low" },
 
   // ============================================================
   // Level 2 — Connectors / Cables branch (id 60-67)
   // ============================================================
   { id: 60, lvl: 2, partId: "CN1-8GFM-CONAS", desc: "ASSY,CONNECTORS + CABLES", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [61, 62, 63, 64, 65, 66, 67],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [61, 62, 63, 64, 65, 66, 67],
     supplier: "Foxconn Interconnect", ppap: "Lv2", category: "Connectors", risk: "Low" },
   { id: 61, lvl: 3, partId: "UC1-5VHN-USBCN1", desc: "CONNECTOR,USB-C,RECEPTACLE,24-PIN", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Foxconn Interconnect", ppap: "Lv2", category: "Connectors", risk: "Low" },
   { id: 62, lvl: 3, partId: "SC2-3PLW-SIMTRY", desc: "ASSY,SIM TRAY,NANO + eSIM", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Molex", ppap: "Lv2", category: "Connectors", risk: "Low" },
   { id: 63, lvl: 3, partId: "FC3-8MJK-FLEX01", desc: "FLEX CABLE,MAINBOARD TO DISPLAY", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Sumitomo Electric", ppap: "Lv2", category: "Connectors", risk: "Low" },
   { id: 64, lvl: 3, partId: "FC4-9WBU-FLEX02", desc: "FLEX CABLE,MAINBOARD TO CAMERA", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Sumitomo Electric", ppap: "Lv2", category: "Connectors", risk: "Low" },
   { id: 65, lvl: 3, partId: "FC5-7DSQ-FLEX03", desc: "FLEX CABLE,MAINBOARD TO BATTERY", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Sumitomo Electric", ppap: "Lv2", category: "Connectors", risk: "Low" },
   { id: 66, lvl: 3, partId: "BC6-1ETR-BTNCBL", desc: "FLEX,SIDE BUTTONS (POWER+VOLUME)", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Foxconn Interconnect", ppap: "Lv1", category: "Connectors", risk: "Low" },
   { id: 67, lvl: 3, partId: "AC7-4OPY-ANTCBL", desc: "CABLE,COAXIAL,ANTENNA RF", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Murata", ppap: "Lv2", category: "Connectors", risk: "Low" },
 
   // ============================================================
   // Level 2 — Mechanical / Frame branch (id 70-79)
   // ============================================================
   { id: 70, lvl: 2, partId: "MF1-2RFL-MECHAS", desc: "ASSY,FRAME + HOUSING,ALUMINUM", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 3, children: [71, 72, 73, 74, 75, 76, 77, 78, 79],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 3, children: [71, 72, 73, 74, 75, 76, 77, 78, 79],
     supplier: "Catcher Technology", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 71, lvl: 3, partId: "MF2-8HNT-MIDFRM", desc: "MID FRAME,AL-7000 SERIES", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Catcher Technology", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 72, lvl: 3, partId: "MB3-5QGV-BCKGLS", desc: "GLASS,BACK COVER,TEMPERED", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Lens Technology", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 73, lvl: 3, partId: "MB4-7ZWA-SIDEBZ", desc: "BEZEL,SIDE,STAINLESS STEEL", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "BYD Electronics", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 74, lvl: 3, partId: "SC5-3JOM-SCRWKT", desc: "SCREW KIT,TORX T2,SET OF 12", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Würth Elektronik", ppap: "Lv1", category: "Mechanical", risk: "Low" },
   { id: 75, lvl: 3, partId: "GS6-9PUE-GASKET", desc: "GASKET,WATERPROOF,IP68,SILICONE", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Henkel", ppap: "Lv2", category: "Mechanical", risk: "Med" },
   { id: 76, lvl: 3, partId: "BR7-4LSF-BUTTON", desc: "BUTTONS,SIDE,POWER+VOLUME ASSY", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Foxconn", ppap: "Lv1", category: "Mechanical", risk: "Low" },
   { id: 77, lvl: 3, partId: "VB8-6KCD-VIBRAT", desc: "MOTOR,VIBRATION,HAPTIC FEEDBACK", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Nidec", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 78, lvl: 3, partId: "EM9-2GHB-EMSHLD", desc: "EMI SHIELD,MAINBOARD,STAMPED", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Laird", ppap: "Lv2", category: "Mechanical", risk: "Low" },
   { id: 79, lvl: 3, partId: "GP1-7AYV-GRAPH4", desc: "GRAPHITE SHEET,THERMAL,0.5MM", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Panasonic", ppap: "Lv2", category: "Mechanical", risk: "Low" },
 
   // ============================================================
   // Level 2 — Antenna / RF branch (id 80-85)
   // ============================================================
   { id: 80, lvl: 2, partId: "AN1-5HMW-ANTAS", desc: "ASSY,ANTENNA + RF FRONT-END", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2, children: [81, 82, 83, 84, 85],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2, children: [81, 82, 83, 84, 85],
     supplier: "Murata", ppap: "Lv3", category: "Antenna", risk: "Med" },
   { id: 81, lvl: 3, partId: "AN2-8FRT-ANTSUB", desc: "ANTENNA,5G SUB-6 GHz,LDS", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Pulse Electronics", ppap: "Lv3", category: "Antenna", risk: "Med" },
   { id: 82, lvl: 3, partId: "AN3-2VXR-ANTMMW", desc: "ANTENNA,mmWAVE,28GHz/39GHz", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [],
     supplier: "Murata", ppap: "Lv3", category: "Antenna", risk: "High" },
   { id: 83, lvl: 3, partId: "AN4-6KPN-ANTWIF", desc: "ANTENNA,WIFI 7 + BT,DUAL BAND", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Murata", ppap: "Lv2", category: "Antenna", risk: "Low" },
   { id: 84, lvl: 3, partId: "RF5-9QHJ-PAMSUB", desc: "IC,POWER AMPLIFIER,SUB-6 GHz", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Qorvo", ppap: "Lv3", category: "Antenna", risk: "Med" },
   { id: 85, lvl: 3, partId: "RF6-3LWA-FEMMOD", desc: "IC,RF FRONT-END MODULE", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Skyworks", ppap: "Lv3", category: "Antenna", risk: "Med" },
 
   // ============================================================
   // Level 2 — Sensors branch (id 90-96)
   // ============================================================
   { id: 90, lvl: 2, partId: "SN1-7DXT-SNRAS", desc: "ASSY,SENSORS,ENVIRONMENTAL + MOTION", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [91, 92, 93, 94, 95, 96],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [91, 92, 93, 94, 95, 96],
     supplier: "Bosch Sensortec", ppap: "Lv2", category: "Sensors", risk: "Low" },
   { id: 91, lvl: 3, partId: "SN2-4BMP-GYRO01", desc: "SENSOR,6-AXIS,GYRO + ACCEL", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Bosch Sensortec", ppap: "Lv2", category: "Sensors", risk: "Low" },
   { id: 92, lvl: 3, partId: "SN3-6HZE-MAGNET", desc: "SENSOR,MAGNETOMETER,3-AXIS", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Asahi Kasei", ppap: "Lv2", category: "Sensors", risk: "Low" },
   { id: 93, lvl: 3, partId: "SN4-1WRL-PROXLT", desc: "SENSOR,PROXIMITY + AMBIENT LIGHT", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "AMS-OSRAM", ppap: "Lv2", category: "Sensors", risk: "Low" },
   { id: 94, lvl: 3, partId: "SN5-8YCK-FNGPRT", desc: "SENSOR,FINGERPRINT,ULTRASONIC,UD", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 2, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 2, children: [],
     supplier: "Qualcomm", ppap: "Lv3", category: "Sensors", risk: "Med" },
   { id: 95, lvl: 3, partId: "SN6-3NQO-BAROPR", desc: "SENSOR,BAROMETRIC PRESSURE", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Bosch Sensortec", ppap: "Lv2", category: "Sensors", risk: "Low" },
   { id: 96, lvl: 3, partId: "SN7-5SAH-TOFLDR", desc: "SENSOR,ToF,LASER AUTOFOCUS", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "STMicroelectronics", ppap: "Lv2", category: "Sensors", risk: "Low" },
 
   // ============================================================
   // Level 2 — Power / Charging branch (id 100-103)
   // ============================================================
   { id: 100, lvl: 2, partId: "PW1-9TJG-PWRAS", desc: "ASSY,POWER + WIRELESS CHARGING", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 1, children: [101, 102, 103],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 1, children: [101, 102, 103],
     supplier: "Cirrus Logic", ppap: "Lv2", category: "Power", risk: "Low" },
   { id: 101, lvl: 3, partId: "PW2-4XCL-WPCHRG", desc: "COIL,WIRELESS CHARGING,15W Qi2", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "TDK", ppap: "Lv2", category: "Power", risk: "Low" },
   { id: 102, lvl: 3, partId: "PW3-7MAY-WPCIC0", desc: "IC,WIRELESS POWER RECEIVER", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Renesas", ppap: "Lv2", category: "Power", risk: "Low" },
   { id: 103, lvl: 3, partId: "PW4-2PWS-RVPSC4", desc: "IC,REVERSE WIRELESS CHARGING", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Renesas", ppap: "Lv1", category: "Power", risk: "Low" },
 
   // ============================================================
   // Level 2 — Packaging / Accessories branch (id 110-113)
   // ============================================================
   { id: 110, lvl: 2, partId: "PK1-5OAJ-PKGAS", desc: "ASSY,PACKAGING + ACCESSORIES", type: "ASSM",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [111, 112, 113],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [111, 112, 113],
     supplier: "Internal", ppap: "Lv1", category: "Packaging", risk: "Low" },
   { id: 111, lvl: 3, partId: "PK2-8KMU-BOXMAS", desc: "BOX,RETAIL,RECYCLED PAPER", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Internal", ppap: "Lv1", category: "Packaging", risk: "Low" },
   { id: 112, lvl: 3, partId: "PK3-2VBO-CBLUSB", desc: "CABLE,USB-C TO USB-C,1M", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Foxconn", ppap: "Lv1", category: "Packaging", risk: "Low" },
   { id: 113, lvl: 3, partId: "PK4-7DTQ-TOOLEJ", desc: "TOOL,SIM EJECTION,STAINLESS", type: "CMDTY",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" }, comments: 0, children: [],
+    status: { D: "ok", C: "ok", Q: "ok" }, comments: 0, children: [],
     supplier: "Internal", ppap: "Lv1", category: "Packaging", risk: "Low" },
 ];
 
@@ -657,14 +647,15 @@ const BOM_LIST = [
     lifecycle: "review", parties: 2, multisource: 88.2, sss: 7.1,
     collabType: "design", collabProgress: 65, collabLabel: "Design Collaboration",
     collabStatus: "Spec Reviewed" },
-  { id: "S", label: "S-BOM", name: "Sourcing BOM", version: "v2.1", parts: 78, status: "active",
-    syncDelta: 0, missing: 2, owner: "SM", description: "Supplier definition",
+  { id: "C", label: "C-BOM", name: "Cost BOM", version: "v2.0", parts: 80, status: "active",
+    syncDelta: 0, missing: 2, owner: "CM", contributor: "SM",
+    description: "Sourcing + Cost (supplier selection & cost breakdown)",
     syncNote: "2 parts missing supplier selection (including new AMOLED Panel)",
-    lastActivity: { actor: "SM", action: "Supplier awarded", ts: "Today 11:30" },
+    lastActivity: { actor: "CM", action: "Should-cost updated", ts: "Today 09:15" },
     defaults: { structure: "flat", groupBy: "supplier", overlay: "none" },
-    lifecycle: "review", parties: 3, multisource: 92.3, sss: 4.8,
-    collabType: "cost", collabProgress: 80, collabLabel: "Cost Collaboration",
-    collabStatus: "Quote Received" },
+    lifecycle: "approved", parties: 3, multisource: 96.1, sss: 6.5,
+    collabType: "cost", collabProgress: 92, collabLabel: "Source & Cost Collaboration",
+    collabStatus: "Final Review" },
   { id: "Q", label: "Q-BOM", name: "Quality BOM", version: "v1.5", parts: 76, status: "active",
     syncDelta: 1, missing: 4, owner: "QM", description: "PPAP validation subject",
     syncNote: "4 new parts not yet registered for PPAP",
@@ -673,13 +664,6 @@ const BOM_LIST = [
     lifecycle: "draft", parties: 1, multisource: 85.0, sss: 3.2,
     collabType: "quality", collabProgress: 45, collabLabel: "Quality Collaboration",
     collabStatus: "PPAP Lv3 Pending" },
-  { id: "C", label: "C-BOM", name: "Cost BOM", version: "v2.0", parts: 80, status: "active",
-    syncDelta: 0, missing: 0, owner: "CM", description: "Cost breakdown (BOM Cost Roll-up)",
-    lastActivity: { actor: "CM", action: "Should-cost updated", ts: "Today 09:15" },
-    defaults: { structure: "tree", groupBy: "category", overlay: "none" },
-    lifecycle: "approved", parties: 3, multisource: 96.1, sss: 6.5,
-    collabType: "cost", collabProgress: 92, collabLabel: "Cost Collaboration",
-    collabStatus: "Final Review" },
 ];
 
 // Archived BOMs — historical versions kept for reference (Kanban only)
@@ -687,11 +671,10 @@ const ARCHIVED_BOMS = [
   { id: "E-old", label: "E-BOM", code: "BOM260400319", versions: ["Ver 2", "Ver 1"],
     cost: { ver: "Ver 1", delta: "+$1,900", target: "$48,500", overTarget: true } },
   { id: "E-old2", label: "E-BOM", code: "BOM260300257", versions: ["Ver 1"], cost: null },
-  { id: "S-old1", label: "S-BOM", code: "BOM260400320", versions: ["Ver 3", "Ver 2", "Ver 1"],
-    cost: { ver: "Ver 2", delta: "-$300", target: "$48,500", overTarget: false } },
-  { id: "S-old2", label: "S-BOM", code: "BOM260300256", versions: ["Ver 1"], cost: null },
   { id: "C-old", label: "C-BOM", code: "BOM260300258", versions: ["Ver 2", "Ver 1"],
     cost: { ver: "Ver 1", delta: "+$420", target: "$48,500", overTarget: true } },
+  { id: "C-old2", label: "C-BOM", code: "BOM260400320", versions: ["Ver 3", "Ver 2", "Ver 1"],
+    cost: { ver: "Ver 2", delta: "-$300", target: "$48,500", overTarget: false } },
   { id: "Q-old", label: "Q-BOM", code: "BOM260300259", versions: ["Ver 1"], cost: null },
 ];
 
@@ -704,40 +687,36 @@ const ARCHIVED_BOMS = [
 // Generates BOM list state based on project phase
 function getBomListByPhase(phase, isNew) {
   const base = BOM_LIST.map(b => ({ ...b })); // clone
-  // Index map: base[0]=E, base[1]=S, base[2]=Q, base[3]=C
+  // Helpers: lookup by id so display order changes don't break phase assignments
+  const findIdx = (id) => base.findIndex(b => b.id === id);
+  const idxE = findIdx("E"), idxC = findIdx("C"), idxQ = findIdx("Q");
+  const NOT_CREATED = { version: "—", parts: 0, status: "not_created", lifecycle: null, missing: 0, syncDelta: 0, lastActivity: null };
 
   // Newly-created project: NO BOMs exist yet (user must upload or link)
   if (isNew) {
-    return base.map(b => ({
-      ...b, version: "—", parts: 0, status: "not_created", lifecycle: null,
-      missing: 0, syncDelta: 0, lastActivity: null,
-    }));
+    return base.map(b => ({ ...b, ...NOT_CREATED }));
   }
 
   if (phase === "Concept" || phase === "Incubation") {
     // New project: only E-BOM initial version exists
-    base[0] = { ...base[0], version: "v0.3", parts: 24, status: "active", lifecycle: "draft",
+    base[idxE] = { ...base[idxE], version: "v0.3", parts: 24, status: "active", lifecycle: "draft",
                 lastActivity: { actor: "DE", action: "Initial draft", ts: "Yesterday" } };
-    base[1] = { ...base[1], version: "—", parts: 0, status: "not_created", lifecycle: null, missing: 0, syncDelta: 0, lastActivity: null };
-    base[2] = { ...base[2], version: "—", parts: 0, status: "not_created", lifecycle: null, missing: 0, syncDelta: 0, lastActivity: null };
-    base[3] = { ...base[3], version: "—", parts: 0, status: "not_created", lifecycle: null, missing: 0, syncDelta: 0, lastActivity: null };
+    base[idxC] = { ...base[idxC], ...NOT_CREATED };
+    base[idxQ] = { ...base[idxQ], ...NOT_CREATED };
   } else if (phase === "Plan") {
-    // E-BOM in review, C-BOM in draft. S, Q not started yet
-    base[0] = { ...base[0], version: "v1.0", parts: 52, lifecycle: "review" };
-    base[1] = { ...base[1], version: "—", parts: 0, status: "not_created", lifecycle: null, missing: 0, syncDelta: 0, lastActivity: null };
-    base[2] = { ...base[2], version: "—", parts: 0, status: "not_created", lifecycle: null, missing: 0, syncDelta: 0, lastActivity: null };
-    base[3] = { ...base[3], version: "v0.8", parts: 50, lifecycle: "draft",
+    // E-BOM in review, C-BOM in draft (early cost estimation). Q not started
+    base[idxE] = { ...base[idxE], version: "v1.0", parts: 52, lifecycle: "review" };
+    base[idxC] = { ...base[idxC], version: "v0.8", parts: 50, lifecycle: "draft",
                 lastActivity: { actor: "CM", action: "Initial cost rollup", ts: "Yesterday" } };
+    base[idxQ] = { ...base[idxQ], ...NOT_CREATED };
   } else if (phase === "Design") {
-    // E-BOM approved. S-BOM draft. Q not yet engaged. C-BOM in review
-    base[0] = { ...base[0], version: "v2.0", parts: 72, lifecycle: "approved" };
-    base[1] = { ...base[1], version: "v0.5", parts: 60, missing: 12, lifecycle: "draft",
-                lastActivity: { actor: "SM", action: "Supplier selection started", ts: "Yesterday" } };
-    base[2] = { ...base[2], version: "—", parts: 0, status: "not_started", lifecycle: null,
+    // E-BOM approved. C-BOM in review (supplier selection + cost analysis). Q not yet engaged
+    base[idxE] = { ...base[idxE], version: "v2.0", parts: 72, lifecycle: "approved" };
+    base[idxC] = { ...base[idxC], version: "v1.5", parts: 72, lifecycle: "review" };
+    base[idxQ] = { ...base[idxQ], version: "—", parts: 0, status: "not_started", lifecycle: null,
                 lastActivity: { actor: "QM", action: "Awaiting owner", ts: "—" } };
-    base[3] = { ...base[3], version: "v1.5", parts: 72, lifecycle: "review" };
   }
-  // Develop / Verify / SOP: use base data as-is (all 4 BOMs active with their default lifecycle)
+  // Develop / Verify / SOP: use base data as-is (all 3 BOMs active with their default lifecycle)
   return base;
 }
 
@@ -746,7 +725,7 @@ const HERO_ITEM = {
   id: 3, partId: "EI2-I6DA-003WB", partName: "AMOLED Panel 6.7\" FHD+ 120Hz",
   itemCode: "1000001120", desc: "PANEL,AMOLED,6.7IN,FHD+,120HZ",
   category: "Display Module", type: "Buy & Sell", uom: "EA",
-  status: { D: "warn", C: "block", S: "progress", Q: "block" },
+  status: { D: "warn", C: "block", Q: "block" },
   spec: {
     "Display Size": "6.7 inch (changed: 6.5\" → 6.7\")",
     "Resolution": "FHD+ (2400×1080)",
@@ -792,7 +771,7 @@ const ITEM_DETAILS = {
     id: 1, partId: "SYH-OGNU-A1Y9A", partName: "Smartphone Assembly 6.7\" 5G 256GB",
     itemCode: "1000001100", desc: "ASSY,SMARTPHONE,6.7IN,5G,256GB",
     category: "Final Assembly", type: "Make", uom: "EA",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" },
+    status: { D: "ok", C: "ok", Q: "ok" },
     spec: {
       "Form Factor": "Bar / Glass back",
       "Display": "6.7\" AMOLED FHD+ 120Hz",
@@ -827,7 +806,7 @@ const ITEM_DETAILS = {
     id: 2, partId: "XYR-YZK5-WA1A7", partName: "Display Module Assembly 6.7\" AMOLED",
     itemCode: "1000001115", desc: "ASSY,DISPLAY MODULE,6.7IN,AMOLED",
     category: "Display", type: "Buy & Sell", uom: "EA",
-    status: { D: "warn", C: "warn", S: "warn", Q: "warn" },
+    status: { D: "warn", C: "warn", Q: "warn" },
     spec: {
       "Module Type": "Integrated AMOLED with Touch",
       "Size": "6.7 inch",
@@ -862,7 +841,7 @@ const ITEM_DETAILS = {
     id: 4, partId: "UEI-Y0ZL-7UU0W", partName: "Polarizer Film Front 6.7\"",
     itemCode: "1000001130", desc: "FILM,POLARIZER,FRONT,6.7IN",
     category: "Display", type: "Buy", uom: "EA",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" },
+    status: { D: "ok", C: "ok", Q: "ok" },
     spec: {
       "Film Type": "Circular Polarizer",
       "Size": "6.7 inch",
@@ -894,7 +873,7 @@ const ITEM_DETAILS = {
     id: 5, partId: "5ML-DR7Q-2CV44", partName: "OCA Optical Clear Adhesive 6.7\"",
     itemCode: "1000001135", desc: "FILM,OCA,OPTICAL CLEAR ADHESIVE,6.7IN",
     category: "Display", type: "Buy", uom: "EA",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" },
+    status: { D: "ok", C: "ok", Q: "ok" },
     spec: {
       "Adhesive Type": "Pressure-Sensitive (PSA)",
       "Size": "6.7 inch",
@@ -926,7 +905,7 @@ const ITEM_DETAILS = {
     id: 6, partId: "1W6-4YP3-X6FU2", partName: "Touch Controller IC I2C",
     itemCode: "1000001140", desc: "IC,TOUCH CONTROLLER,I2C",
     category: "Display", type: "Buy", uom: "EA",
-    status: { D: "ok", C: "warn", S: "ok", Q: "ok" },
+    status: { D: "ok", C: "warn", Q: "ok" },
     spec: {
       "IC Type": "Mutual Capacitance Touch Controller",
       "Interface": "I2C 1MHz",
@@ -960,7 +939,7 @@ const ITEM_DETAILS = {
     id: 9, partId: "QE3-8DHV-XIRG8", partName: "Fan Module Smartphone Cooling",
     itemCode: "1000001210", desc: "ASSY,FAN MODULE,SMARTPHONE COOLING",
     category: "Mechanical", type: "Make", uom: "EA",
-    status: { D: "ok", C: "ok", S: "ok", Q: "ok" },
+    status: { D: "ok", C: "ok", Q: "ok" },
     spec: {
       "Module Type": "Vapor Chamber + Micro Fan",
       "Dimensions": "28 × 28 × 1.8 mm",
@@ -994,7 +973,7 @@ const ITEM_DETAILS = {
     id: 10, partId: "6U8-HKJJ-JRPWM", partName: "Mainboard 5G SM-XXXX",
     itemCode: "1000001220", desc: "ASSY,MAINBOARD,5G,SM-XXXX",
     category: "PCB", type: "Make", uom: "EA",
-    status: { D: "ok", C: "ok", S: "ok", Q: "warn" },
+    status: { D: "ok", C: "ok", Q: "warn" },
     spec: {
       "Board Type": "12-layer HDI PCB",
       "Dimensions": "65 × 32 mm",
@@ -1109,6 +1088,84 @@ const ACTIVITY_FEED = [
     decision: true, decisionText: "Weight 198g confirmed, registered to mass-production spec" },
 ];
 
+// === ITEM ACTIVITY EVENTS ===
+// Per-item system events: spec changes, status transitions, AI analysis, file uploads, version events.
+// These complement chat messages (from ACTIVITY_FEED) to form a complete audit log per part.
+// type: spec_change | status | ai_insight | file | version | sync | ppap | supplier
+const ITEM_ACTIVITY_EVENTS = {
+  // Hero: AMOLED Panel (id 3) — full lifecycle of the scenario
+  3: [
+    { id: "h-a1", ts: "10:18", type: "spec_change", actor: "DE",
+      title: "Spec change requested", detail: "Display Size: 6.5\" → 6.7\" · Refresh Rate: 90Hz → 120Hz",
+      scenarioGate: 0 },
+    { id: "h-a2", ts: "10:24", type: "status", actor: "system",
+      title: "Status changed: Blocked", detail: "Cost (C) and Quality (Q) auto-flagged due to spec change",
+      severity: "error", scenarioGate: 0 },
+    { id: "h-a3", ts: "10:31", type: "ai_insight", actor: "AI",
+      title: "AI impact analysis", detail: "Cost +$8.50 · Lead Time +14d · 3 suppliers affected",
+      scenarioGate: 2 },
+    { id: "h-a4", ts: "10:45", type: "file", actor: "DE",
+      title: "Spec document attached", detail: "AMOLED_6.7in_120Hz_spec_v2.pdf (244 KB)",
+      scenarioGate: 2 },
+    { id: "h-a5", ts: "11:08", type: "version", actor: "DE",
+      title: "E-BOM version updated", detail: "v1.7 → v1.8 · Part: AMOLED Panel",
+      scenarioGate: 3 },
+    { id: "h-a6", ts: "11:23", type: "ai_insight", actor: "AI",
+      title: "Should-cost computed", detail: "$41.80 (AI-derived) · Market avg $42.50",
+      scenarioGate: 4 },
+    { id: "h-a7", ts: "13:42", type: "supplier", actor: "SM",
+      title: "RFQ sent", detail: "3 suppliers: Samsung Display, BOE Technology, LG Display",
+      scenarioGate: 5 },
+    { id: "h-a8", ts: "14:15", type: "ai_insight", actor: "AI",
+      title: "RFQ responses analyzed", detail: "Samsung $40.20 · BOE $38.90 · LG $41.00 — BOE best (-$2.90 vs should-cost)",
+      scenarioGate: 6 },
+    { id: "h-a9", ts: "14:22", type: "supplier", actor: "SM",
+      title: "Supplier awarded: BOE Technology", detail: "Quoted $38.90/EA · Lead time 6 weeks",
+      scenarioGate: 7 },
+    { id: "h-a10", ts: "14:30", type: "ppap", actor: "QM",
+      title: "PPAP Lv3 assigned", detail: "Medium risk · 18 deliverables · BOE Technology assigned",
+      scenarioGate: 7 },
+    { id: "h-a11", ts: "14:35", type: "sync", actor: "system",
+      title: "Q-BOM auto-synced", detail: "Part added to APQP Phase 4 (Validation) tracking",
+      scenarioGate: 7 },
+    { id: "h-a12", ts: "14:38", type: "status", actor: "system",
+      title: "Status resolved", detail: "All blockers cleared · Cost ✓ Supplier ✓ PPAP ✓",
+      severity: "success", scenarioGate: 7 },
+  ],
+  // Display Module (id 2) — minor events
+  2: [
+    { id: "p2-a1", ts: "Yesterday 09:00", type: "version", actor: "DE",
+      title: "Spec updated", detail: "Brightness 1300 nits → 1500 nits peak" },
+    { id: "p2-a2", ts: "May 14", type: "file", actor: "DE",
+      title: "Reference design attached", detail: "Display_Module_BoM_v3.xlsx (102 KB)" },
+  ],
+  // Polarizer Film (id 4)
+  4: [
+    { id: "p4-a1", ts: "May 17", type: "supplier", actor: "SM",
+      title: "Dual-source approved", detail: "Nitto Denko (primary) + LG Chem (secondary)" },
+    { id: "p4-a2", ts: "May 15", type: "ai_insight", actor: "AI",
+      title: "Savings opportunity", detail: "Nitto Denko price reduced $1.80 → $1.75 (-2.8%)" },
+    { id: "p4-a3", ts: "May 13", type: "status", actor: "QM",
+      title: "Conflict flagged", detail: "Single-source risk on critical part", severity: "warning" },
+  ],
+};
+
+// Get unified activity for an item — combines chat messages + system events
+function getItemActivity(itemId, scenarioStep, isHero) {
+  // Chat messages from ACTIVITY_FEED (existing)
+  const chatMessages = (isHero ? ACTIVITY_FEED.slice(0, scenarioStep + 1) : ACTIVITY_FEED)
+    .filter((m) => m.itemRef && m.itemRef.id === itemId)
+    .map(m => ({ ...m, source: "chat", _ts: m.ts }));
+
+  // System events from ITEM_ACTIVITY_EVENTS
+  const sysEvents = (ITEM_ACTIVITY_EVENTS[itemId] || [])
+    .filter(e => !isHero || e.scenarioGate === undefined || e.scenarioGate <= scenarioStep)
+    .map(e => ({ ...e, source: "system", _ts: e.ts }));
+
+  // Merge & return (system events first, chat after for visual mixing within same timestamp)
+  return [...sysEvents, ...chatMessages];
+}
+
 // === INBOX (Cross-project mentions & approval requests) ===
 // Inbox data: mentions/requests across projects, filtered by active persona
 const INBOX_FEED = [
@@ -1171,10 +1228,10 @@ const BLOCKING_ITEMS = [
   { ...HERO_ITEM, blockReason: "PPAP not started, Cost above target (+$7.20)" },
   { id: 10, partId: "6U8-HKJJ-JRPWM", partName: "Mainboard 5G",
     blockReason: "Quality Risk Assessment pending",
-    status: { D: "ok", C: "ok", S: "ok", Q: "warn" } },
+    status: { D: "ok", C: "ok", Q: "warn" } },
   { id: 6, partId: "1W6-4YP3-X6FU2", partName: "Touch Controller I2C",
     blockReason: "Cost variance with market price (+12%)",
-    status: { D: "ok", C: "warn", S: "ok", Q: "ok" } },
+    status: { D: "ok", C: "warn", Q: "ok" } },
 ];
 
 // === STATUS BADGE ===
@@ -1901,19 +1958,18 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
   return (
     <div className="shrink-0 flex flex-col h-full overflow-y-auto transition-[width] duration-200 ease-out"
       style={{ width: 280 }}>
-      <div className="flex flex-col gap-6 pb-4">
-      {/* === TOGGLE ROW (same position as collapsed mode) === */}
-      <div className="px-3 pt-5 flex justify-end">
+      <div className="flex flex-col gap-4 pb-4">
+      {/* === HEADER === */}
+      <div className="px-5 pt-4 flex flex-col gap-3 relative">
+        {/* Collapse toggle — absolute top-right within header */}
         <button
           onClick={() => setIsCollapsed && setIsCollapsed(true)}
-          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          className="absolute top-2 right-3 w-8 h-8 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
           title="Collapse sidebar (⌘B)"
           style={{ color: C.textSecondary }}>
           <PanelLeftClose className="w-4 h-4" />
         </button>
-      </div>
-      {/* === HEADER === */}
-      <div className="px-5 flex flex-col gap-3">
+
         {/* Avatar */}
         <div className="w-12 h-12 rounded-xl flex items-center justify-center border"
           style={{ backgroundColor: avatarBg, borderColor: C.border }}>
@@ -2327,13 +2383,13 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
       iconBg: C.primarySoft,
       iconColor: C.primary,
       headline: "Bring your team on board",
-      description: "Add team members so you can begin collaborating. Each role (DE, CM, SM, QM) brings expertise to a different BOM.",
+      description: "Add team members so you can begin collaborating. Each role brings expertise to a specific BOM.",
       sections: [
         { label: "Recommended Roles", items: [
           { label: "Design Engineer (DE) — owns E-BOM", done: false },
-          { label: "Sourcing Manager (SM) — owns S-BOM", done: false },
+          { label: "Cost Manager (CM) — owns C-BOM (Source & Cost)", done: false },
+          { label: "Sourcing Manager (SM) — contributes to C-BOM", done: false },
           { label: "Quality Manager (QM) — owns Q-BOM", done: false },
-          { label: "Cost Manager (CM) — owns C-BOM", done: false },
         ]},
       ],
       cta: "Send Invitations",
@@ -2864,13 +2920,13 @@ function PromoteBomModal({ targetBomId, onClose, onConfirm, scenarioStep }) {
   const partsToPromote = useMemo(() => {
     if (!targetMeta) return [];
     const qBomMissingIds = [3, 10, 14, 18];
-    const sBomMissingIds = [3];
+    const cBomMissingIds = [3];
     const eBomLagIds = [5, 8];
     const result = [];
     BOM_TREE.forEach((node) => {
       let status = "synced";
       if (targetBomId === "Q" && qBomMissingIds.includes(node.id) && scenarioStep < 7) status = "missing";
-      else if (targetBomId === "S" && sBomMissingIds.includes(node.id) && scenarioStep < 6) status = "missing";
+      else if (targetBomId === "C" && cBomMissingIds.includes(node.id) && scenarioStep < 6) status = "missing";
       else if (targetBomId === "E" && eBomLagIds.includes(node.id)) status = "lagged";
       result.push({ ...node, syncStatus: status });
     });
@@ -3029,18 +3085,16 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
     if (statusFilter === "atRisk") result = result.filter((p) => p.readiness < 70);
     if (statusFilter === "blocked") result = result.filter((p) => p.blocking > 0);
 
-    // Composite priority sort: NEW first → blocking desc → readiness asc → phaseDays asc
+    // Composite urgency sort: blocking desc → D-day asc → readiness asc
+    // (Most urgent first — projects that need immediate attention bubble up)
     if (sortBy === "priority") {
       result = [...result].sort((a, b) => {
-        // 1. NEW projects always on top
-        if (a.isNew && !b.isNew) return -1;
-        if (!a.isNew && b.isNew) return 1;
-        // 2. Blocking count (descending — more blocks = higher priority)
+        // 1. Blocking count (descending — more blocks = more urgent)
         if (a.blocking !== b.blocking) return b.blocking - a.blocking;
-        // 3. Readiness (ascending — lower readiness = higher priority)
-        if (a.readiness !== b.readiness) return a.readiness - b.readiness;
-        // 4. phaseDays (ascending — closer deadline = higher priority)
-        return a.phaseDays - b.phaseDays;
+        // 2. Phase days remaining (ascending — closer deadline = more urgent)
+        if (a.phaseDays !== b.phaseDays) return a.phaseDays - b.phaseDays;
+        // 3. Readiness (ascending — lower readiness = more urgent)
+        return a.readiness - b.readiness;
       });
     }
     if (sortBy === "phaseDays") result = [...result].sort((a, b) => a.phaseDays - b.phaseDays);
@@ -3130,7 +3184,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                 backgroundPosition: "right 10px center",
                 backgroundSize: "12px 12px",
               }}>
-              <option value="priority">Sort: Priority</option>
+              <option value="priority">Sort: Urgency</option>
               <option value="phaseDays">Sort: Phase D-day</option>
               <option value="readiness">Sort: Readiness</option>
               <option value="name">Sort: Name</option>
@@ -3222,8 +3276,12 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                 const { Icon: ProjectIcon, bg: avatarBg, iconColor: avatarIconColor } = getProjectAvatar(p);
                 return (
                   <tr key={p.code} onClick={() => onOpenProject(p.code)}
-                    className="cursor-pointer hover:bg-gray-50 border-b transition-colors"
-                    style={{ borderColor: C.borderLight, backgroundColor: "white" }}>
+                    className="cursor-pointer border-b transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                    style={{ borderColor: C.borderLight, backgroundColor: "white" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = C.surfaceTinted; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "white"; }}
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpenProject(p.code); } }}>
                     {/* Project cell: Avatar + name + code/product (no PM here — moved to Owner column) */}
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2.5">
@@ -3234,10 +3292,6 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5">
                             <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</span>
-                            {p.isNew && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded font-medium"
-                                style={{ backgroundColor: C.success, color: "white" }}>NEW</span>
-                            )}
                           </div>
                           <div className="text-[10px] font-mono mt-0.5" style={{ color: C.textDisabled }}>
                             {p.code} · {p.product}
@@ -3363,17 +3417,19 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView }
   // Hero project uses BLOCKING_ITEMS scenario data; others get generic placeholder
   const blockingItems = isHeroProject ? BLOCKING_ITEMS : generateGenericBlockingItems(project);
 
-  // Per-phase Gate Readiness 4 sub-indicators (weighted by actual project readiness)
+  // Per-phase Gate Readiness 3 sub-indicators (Design / Source & Cost / Quality)
+  // Sourcing is now part of C-BOM, so it's reflected in the Cost indicator (renamed for clarity)
   const subIndicators = isHeroProject
     ? (isResolved
-        ? [{ label: "Design", value: 98, color: C.info }, { label: "Cost", value: 95, color: C.warning },
-           { label: "Sourcing", value: 100, color: C.success }, { label: "Quality", value: 92, color: C.primary }]
-        : [{ label: "Design", value: 92, color: C.info }, { label: "Cost", value: 78, color: C.warning },
-           { label: "Sourcing", value: 89, color: C.success }, { label: "Quality", value: 71, color: C.primary }])
+        ? [{ label: "Design", value: 98, color: C.info },
+           { label: "Source & Cost", value: 96, color: C.warning },
+           { label: "Quality", value: 92, color: C.primary }]
+        : [{ label: "Design", value: 92, color: C.info },
+           { label: "Source & Cost", value: 81, color: C.warning },
+           { label: "Quality", value: 71, color: C.primary }])
     : [
         { label: "Design", value: Math.min(100, project.readiness + 5), color: C.info },
-        { label: "Cost", value: Math.max(20, project.readiness - 8), color: C.warning },
-        { label: "Sourcing", value: project.readiness, color: C.success },
+        { label: "Source & Cost", value: Math.max(20, project.readiness - 4), color: C.warning },
         { label: "Quality", value: Math.max(20, project.readiness - 12), color: C.primary },
       ];
 
@@ -3694,19 +3750,19 @@ function generateGenericBlockingItems(project) {
   const templates = [
     { id: 100, partId: "PART-XYZ-001", partName: "Critical Component A",
       blockReason: "Design review pending — 3 days overdue",
-      status: { D: "warn", C: "ok", S: "ok", Q: "ok" } },
+      status: { D: "warn", C: "ok", Q: "ok" } },
     { id: 101, partId: "PART-XYZ-002", partName: "Critical Component B",
       blockReason: "Cost variance with target (+8%)",
-      status: { D: "ok", C: "warn", S: "ok", Q: "ok" } },
+      status: { D: "ok", C: "warn", Q: "ok" } },
     { id: 102, partId: "PART-XYZ-003", partName: "Critical Component C",
       blockReason: "Supplier feasibility check required",
-      status: { D: "ok", C: "ok", S: "warn", Q: "ok" } },
+      status: { D: "ok", C: "ok", Q: "ok" } },
     { id: 103, partId: "PART-XYZ-004", partName: "Critical Component D",
       blockReason: "PPAP Level not yet determined",
-      status: { D: "ok", C: "ok", S: "ok", Q: "warn" } },
+      status: { D: "ok", C: "ok", Q: "warn" } },
     { id: 104, partId: "PART-XYZ-005", partName: "Critical Component E",
       blockReason: "Multiple specs changed — impact analysis needed",
-      status: { D: "block", C: "warn", S: "warn", Q: "warn" } },
+      status: { D: "block", C: "warn", Q: "warn" } },
   ];
   return templates.slice(0, project.blocking);
 }
@@ -4044,6 +4100,9 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
   // View mode: "kanban" (default) | "table"
   const [viewMode, setViewMode] = useState("kanban");
 
+  // Compare BOMs modal (new — compare any two BOM versions across types)
+  const [compareModalOpen, setCompareModalOpen] = useState(false);
+
   // Kanban filters (Party / Collab Type)
   const [partyFilters, setPartyFilters] = useState({ internal: true, external: true });
   const [collabFilters, setCollabFilters] = useState({ design: true, cost: true, quality: true });
@@ -4249,9 +4308,9 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
     const activeBoms = bomsForProject.filter(b => b.status === "active");
     // Apply collab type filter
     let filteredBoms = activeBoms.filter(b => collabFilters[b.collabType]);
-    // Apply party filter: S-BOM is external (supplier collab), others internal
+    // Apply party filter: C-BOM now includes supplier collab (formerly S-BOM)
     filteredBoms = filteredBoms.filter(b => {
-      const isExternal = b.id === "S"; // S-BOM has supplier collab
+      const isExternal = b.id === "C"; // C-BOM owns supplier-facing activities
       return isExternal ? partyFilters.external : partyFilters.internal;
     });
     // Group by lifecycle stage (workflow Kanban)
@@ -4405,12 +4464,31 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
             )}
           </div>
 
-          {/* Right side: Phase + Count (both modes) */}
-          <div className="text-[11px] flex items-center gap-2" style={{ color: C.textSecondary }}>
-            <span style={{ color: C.textDisabled }}>Phase:</span>
-            <span style={{ color: C.textPrimary, fontWeight: 500 }}>{project.phase}</span>
-            <span style={{ color: C.borderLight }}>·</span>
-            <span>{activeCount} of {bomsForProject.length} active</span>
+          {/* Right side: Compare CTA + Phase + Count */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => { if (!project.isNew) setCompareModalOpen(true); }}
+              disabled={project.isNew}
+              className="h-7 px-2.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+              style={{
+                borderColor: C.border,
+                color: project.isNew ? C.textDisabled : C.textSecondary,
+                backgroundColor: "white",
+                opacity: project.isNew ? 0.5 : 1,
+              }}
+              onMouseEnter={(e) => { if (!project.isNew) e.currentTarget.style.backgroundColor = C.bg; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "white"; }}
+              title={project.isNew ? "No previous versions to compare" : "Compare two BOM versions"}>
+              <GitCompareArrows className="w-3.5 h-3.5" />
+              Compare BOMs
+            </button>
+
+            <div className="text-[11px] flex items-center gap-2" style={{ color: C.textSecondary }}>
+              <span style={{ color: C.textDisabled }}>Phase:</span>
+              <span style={{ color: C.textPrimary, fontWeight: 500 }}>{project.phase}</span>
+              <span style={{ color: C.borderLight }}>·</span>
+              <span>{activeCount} of {bomsForProject.length} active</span>
+            </div>
           </div>
         </div>
 
@@ -4419,7 +4497,276 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
           {viewMode === "table" ? renderTableView() : renderKanbanView()}
         </div>
       </div>
+
+      {/* Compare BOMs Modal */}
+      {compareModalOpen && (
+        <CompareBomsModal
+          activeProjectCode={activeProjectCode}
+          onClose={() => setCompareModalOpen(false)}
+          onJumpToBom={(bomId) => {
+            setCompareModalOpen(false);
+            setActiveBom(bomId);
+            setView("bom");
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+// === COMPARE BOMs MODAL (BOMs page header) ===
+// Allows user to pick a BOM type and compare any 2 versions from this project.
+// Different from CompareModal (inside BomWorkspace) — that one is locked to active BOM + immediate previous version.
+function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
+  // Available BOM types to compare (filter to active ones in BOM_LIST)
+  const bomTypes = BOM_LIST.map(b => ({ id: b.id, label: b.label, name: b.name }));
+
+  // Mock version history per BOM type (in real app: fetched from version log)
+  const versionHistory = {
+    E: ["v1.8", "v1.7", "v1.5", "v1.0", "v0.5"],
+    C: ["v2.2", "v2.1", "v2.0", "v1.5", "v1.0"],
+    Q: ["v1.5", "v1.4", "v1.3", "v1.0"],
+  };
+
+  // State
+  const [selectedBom, setSelectedBom] = useState("E");
+  const versions = versionHistory[selectedBom] || [];
+  const [toVersion, setToVersion] = useState(versions[0]); // latest
+  const [fromVersion, setFromVersion] = useState(versions[1]); // previous
+
+  // Reset versions when BOM type changes
+  useEffect(() => {
+    const vs = versionHistory[selectedBom] || [];
+    setToVersion(vs[0]);
+    setFromVersion(vs[1]);
+  }, [selectedBom]);
+
+  // Resolve diff (uses BOM_VERSION_DIFFS for "latest vs previous"; otherwise show generic mock)
+  const diff = BOM_VERSION_DIFFS[selectedBom];
+  const isLatestVsPrevious =
+    diff && toVersion === diff.current && fromVersion === diff.previous;
+
+  // For non-default version combinations, generate a lighter mock (fewer changes)
+  const effectiveDiff = isLatestVsPrevious ? diff : {
+    current: toVersion, previous: fromVersion,
+    added: [], modified: [], removed: [],
+  };
+
+  const totalChanges = (effectiveDiff.added?.length || 0) + (effectiveDiff.modified?.length || 0) + (effectiveDiff.removed?.length || 0);
+  const activeBomMeta = BOM_LIST.find(b => b.id === selectedBom);
+
+  // Close on Esc
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 z-40 transition-opacity"
+        style={{ backgroundColor: "rgba(16, 24, 40, 0.4)" }}
+        onClick={onClose} />
+
+      {/* Modal */}
+      <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
+        style={{
+          transform: "translate(-50%, -50%)",
+          width: 720,
+          maxHeight: "85vh",
+        }}>
+        {/* Header */}
+        <div className="px-6 pt-5 pb-4 border-b flex items-start gap-4" style={{ borderColor: C.border }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+            style={{ backgroundColor: C.primarySoft }}>
+            <GitCompareArrows className="w-5 h-5" style={{ color: C.primary }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>
+              Compare BOM Versions
+            </div>
+            <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>
+              Select a BOM type and two versions to compare
+            </div>
+          </div>
+          <button onClick={onClose}
+            className="w-9 h-9 rounded-md flex items-center justify-center transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{ color: C.textSecondary }}>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Selectors strip */}
+        <div className="px-6 py-4 border-b" style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}>
+          {/* BOM type selector */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] uppercase tracking-wider font-semibold shrink-0 w-16" style={{ color: C.textDisabled }}>
+              BOM
+            </span>
+            <div className="flex items-center gap-1 p-0.5 rounded-md" style={{ backgroundColor: "white", border: `1px solid ${C.border}` }}>
+              {bomTypes.map(bt => (
+                <button key={bt.id}
+                  onClick={() => setSelectedBom(bt.id)}
+                  className="h-7 px-3 rounded text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                  style={{
+                    backgroundColor: selectedBom === bt.id ? C.primary : "transparent",
+                    color: selectedBom === bt.id ? "white" : C.textSecondary,
+                  }}
+                  onMouseEnter={(e) => { if (selectedBom !== bt.id) e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.03)"; }}
+                  onMouseLeave={(e) => { if (selectedBom !== bt.id) e.currentTarget.style.backgroundColor = "transparent"; }}>
+                  {bt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Version selectors */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider font-semibold shrink-0 w-12" style={{ color: C.textDisabled }}>From</span>
+              <select value={fromVersion} onChange={(e) => setFromVersion(e.target.value)}
+                className="h-8 px-2 rounded-md border text-xs bg-white outline-none focus:outline-none focus-visible:ring-2 flex-1"
+                style={{ borderColor: C.border, color: C.textPrimary }}>
+                {versions.map(v => <option key={v} value={v}>{v}</option>)}
+              </select>
+            </div>
+            <ArrowRight className="w-4 h-4 shrink-0" style={{ color: C.textDisabled }} />
+            <div className="flex-1 flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider font-semibold shrink-0 w-8" style={{ color: C.textDisabled }}>To</span>
+              <select value={toVersion} onChange={(e) => setToVersion(e.target.value)}
+                className="h-8 px-2 rounded-md border text-xs bg-white outline-none focus:outline-none focus-visible:ring-2 flex-1"
+                style={{ borderColor: C.border, color: C.textPrimary }}>
+                {versions.map(v => <option key={v} value={v}>{v}</option>)}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto px-6 py-4" style={{ maxHeight: "calc(85vh - 280px)" }}>
+          {/* Diff summary line */}
+          <div className="mb-4 flex items-center gap-2 text-xs" style={{ color: C.textSecondary }}>
+            <span><strong style={{ color: C.textPrimary }}>{totalChanges}</strong> change{totalChanges !== 1 ? "s" : ""} in {activeBomMeta?.label}</span>
+            <span style={{ color: C.borderLight }}>·</span>
+            <span><span className="font-mono">{fromVersion}</span> → <span className="font-mono">{toVersion}</span></span>
+            {!isLatestVsPrevious && totalChanges === 0 && (
+              <span className="ml-auto text-[11px]" style={{ color: C.textDisabled }}>
+                Detailed diff only available for latest vs previous
+              </span>
+            )}
+          </div>
+
+          {/* No changes state */}
+          {totalChanges === 0 && (
+            <div className="py-12 text-center">
+              <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
+              <div className="text-sm" style={{ color: C.textSecondary }}>
+                {fromVersion === toVersion
+                  ? "Same version selected on both sides."
+                  : "No changes between these versions."}
+              </div>
+            </div>
+          )}
+
+          {/* Added */}
+          {effectiveDiff.added?.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full"
+                  style={{ backgroundColor: "rgba(0,153,85,0.12)" }}>
+                  <Plus className="w-3 h-3" style={{ color: C.success }} />
+                </span>
+                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.success }}>
+                  Added · {effectiveDiff.added.length}
+                </span>
+              </div>
+              <div className="border rounded-lg divide-y" style={{ borderColor: C.borderLight }}>
+                {effectiveDiff.added.map((p, i) => (
+                  <div key={i} className="px-3 py-2.5">
+                    <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</div>
+                    <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                    <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.reason}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Modified */}
+          {effectiveDiff.modified?.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full"
+                  style={{ backgroundColor: "rgba(224,105,0,0.12)" }}>
+                  <Edit3 className="w-3 h-3" style={{ color: C.warning }} />
+                </span>
+                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.warning }}>
+                  Modified · {effectiveDiff.modified.length}
+                </span>
+              </div>
+              <div className="border rounded-lg divide-y" style={{ borderColor: C.borderLight }}>
+                {effectiveDiff.modified.map((p, i) => (
+                  <div key={i} className="px-3 py-2.5">
+                    <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</div>
+                    <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                    <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.change}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Removed */}
+          {effectiveDiff.removed?.length > 0 && (
+            <div className="mb-2">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full"
+                  style={{ backgroundColor: "rgba(211,47,47,0.12)" }}>
+                  <X className="w-3 h-3" style={{ color: C.error }} />
+                </span>
+                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.error }}>
+                  Removed · {effectiveDiff.removed.length}
+                </span>
+              </div>
+              <div className="border rounded-lg divide-y" style={{ borderColor: C.borderLight }}>
+                {effectiveDiff.removed.map((p, i) => (
+                  <div key={i} className="px-3 py-2.5">
+                    <div className="text-sm font-medium line-through" style={{ color: C.textSecondary }}>{p.name}</div>
+                    <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                    <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.reason}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-3 border-t flex items-center justify-between gap-2" style={{ borderColor: C.border }}>
+          <button
+            onClick={() => onJumpToBom(selectedBom)}
+            className="h-9 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ color: C.primary, backgroundColor: "transparent" }}>
+            <ArrowRight className="w-3.5 h-3.5" />
+            Open in BOM Collaboration
+          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={onClose}
+              className="h-9 px-4 rounded-md text-sm font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+              Close
+            </button>
+            <button
+              disabled={totalChanges === 0}
+              className="h-9 px-4 rounded-md text-sm font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ backgroundColor: C.primary }}>
+              Export Diff
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -4621,10 +4968,9 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
   const [heatLevels, setHeatLevels] = useState(null);
 
   // Overlay options per BOM family (semantic separation of concerns)
-  // E-BOM: spec only | S-BOM: supplier risk | Q-BOM: PPAP risk | C-BOM: cost
+  // E-BOM: spec only | Q-BOM: PPAP risk | C-BOM: cost (incl. sourcing)
   const OVERLAYS_BY_BOM = {
     E: ["none"],
-    S: ["none", "riskHeat"],
     Q: ["none", "riskHeat"],
     C: ["none", "costHeat"],
   };
@@ -4718,11 +5064,11 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
   const visibleNodes = useMemo(() => {
     // === Filter predicates (shared between count badges and filter application) ===
     const qBomMissingIds = [3, 10, 14, 18];
-    const sBomMissingIds = [3];
+    const cBomMissingIds = [3]; // formerly sBomMissingIds — now part of C-BOM (Source & Cost)
     const eBomLagIds = [5, 8];
     const isMissingNode = (n) => {
       if (activeBom === "Q" && qBomMissingIds.includes(n.id) && scenarioStep < 7) return true;
-      if (activeBom === "S" && sBomMissingIds.includes(n.id) && scenarioStep < 6) return true;
+      if (activeBom === "C" && cBomMissingIds.includes(n.id) && scenarioStep < 6) return true;
       if (activeBom === "E" && eBomLagIds.includes(n.id)) return true;
       return false;
     };
@@ -5109,11 +5455,11 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
             {(() => {
               // Compute filter counts from actual data
               const qBomMissingIds = [3, 10, 14, 18];
-              const sBomMissingIds = [3];
+              const cBomMissingIds = [3];
               const eBomLagIds = [5, 8];
               const missingCount =
                 activeBom === "Q" && scenarioStep < 7 ? qBomMissingIds.length :
-                activeBom === "S" && scenarioStep < 6 ? sBomMissingIds.length :
+                activeBom === "C" && scenarioStep < 6 ? cBomMissingIds.length :
                 activeBom === "E" ? eBomLagIds.length :
                 0;
               const blockedCount = BOM_TREE.filter((n) => Object.values(n.status || {}).some((s) => s === "block")).length;
@@ -5178,12 +5524,6 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                 {activeBom === "E" && (
                   <th className="text-left font-medium py-2.5 px-3 w-20">Type</th>
                 )}
-                {activeBom === "S" && (
-                  <>
-                    <th className="text-left font-medium py-2.5 px-3 w-40">Supplier</th>
-                    <th className="text-center font-medium py-2.5 px-3 w-16">PPAP</th>
-                  </>
-                )}
                 {activeBom === "Q" && (
                   <>
                     <th className="text-center font-medium py-2.5 px-3 w-16">PPAP</th>
@@ -5193,6 +5533,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                 {activeBom === "C" && (
                   <>
                     <th className="text-left font-medium py-2.5 px-3 w-36">Supplier</th>
+                    <th className="text-right font-medium py-2.5 px-3 w-20">Carryover</th>
                     <th className="text-right font-medium py-2.5 px-3 w-20">Quoted</th>
                     <th className="text-right font-medium py-2.5 px-3 w-20">Should</th>
                     <th className="text-right font-medium py-2.5 px-3 w-20">Market</th>
@@ -5289,26 +5630,33 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                 const isSelected = selectedItemId === node.id;
                 const hasChildren = node.children && node.children.length > 0;
                 const isExpanded = expandedNodes.has(node.id) || node._filterAutoExpanded;
-                // Mock cost values: quoted (RFQ), shouldCost (AI), market, target, delta vs target
+                // Mock cost values: quoted (RFQ), shouldCost (AI), market, target, carryover (last version price), delta vs target
                 // AMOLED Panel (id 3): uses scenario hero data
                 let mockCost;
                 if (node.id === 3) {
-                  // Hero AMOLED: quoted available after scenarioStep >= 7
+                  // Hero AMOLED: spec changed (6.5"→6.7"), so no carryover from previous spec
                   const quoted = scenarioStep >= 7 ? 38.90 : null;
                   mockCost = {
                     quoted, shouldCost: 41.80, market: 42.50, target: 38.00,
-                    delta: quoted !== null ? (quoted - 38.00) : (41.80 - 38.00), // vs target
+                    carryover: null, // spec change — previous variant not carried over
+                    delta: quoted !== null ? (quoted - 38.00) : (41.80 - 38.00),
                   };
                 } else {
                   // Derive deterministic mock from node.id
                   const base = 5 + (node.id % 12) * 3.4;
                   const target = base * 0.95;
                   const quoted = base + ((node.id % 5) - 2) * 0.3;
+                  // Carryover: previous BOM version's quoted price. ~80% of parts inherit from prior version
+                  const hasCarryover = (node.id % 5) !== 0;
+                  const carryover = hasCarryover
+                    ? Math.round((quoted * (1 + ((node.id % 7) - 3) * 0.015)) * 100) / 100
+                    : null;
                   mockCost = {
                     quoted: Math.round(quoted * 100) / 100,
                     shouldCost: Math.round((base * 0.98) * 100) / 100,
                     market: Math.round((base * 1.04) * 100) / 100,
                     target: Math.round(target * 100) / 100,
+                    carryover,
                     delta: Math.round((quoted - target) * 100) / 100,
                   };
                 }
@@ -5316,14 +5664,14 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
                 // BOM-specific missing parts simulation:
                 // - Q-BOM: id 3, 10, 14, 18 missing until scenarioStep >= 7 (QM resolves)
-                // - S-BOM: id 3 missing supplier until scenarioStep >= 6 (SM awards)
+                // - C-BOM: id 3 missing supplier until scenarioStep >= 6 (CM/SM awards)
                 // - E-BOM: ids 5, 8 lag by 1 week (sync needed)
                 const qBomMissingIds = [3, 10, 14, 18];
-                const sBomMissingIds = [3];
+                const cBomMissingIds = [3];
                 const eBomLagIds = [5, 8];
                 const isMissingInActiveBom =
                   (activeBom === "Q" && qBomMissingIds.includes(node.id) && scenarioStep < 7) ||
-                  (activeBom === "S" && sBomMissingIds.includes(node.id) && scenarioStep < 6);
+                  (activeBom === "C" && cBomMissingIds.includes(node.id) && scenarioStep < 6);
                 const isLaggedInActiveBom =
                   (activeBom === "E" && eBomLagIds.includes(node.id));
 
@@ -5435,22 +5783,6 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                         </span>
                       </td>
                     )}
-                    {activeBom === "S" && (
-                      <>
-                        <td className="py-2 px-3">
-                          <span className="text-[11px] truncate block" style={{ color: C.textPrimary }}
-                            title={node.supplier}>
-                            {isMissingInActiveBom ? <span style={{ color: C.error }}>— (not selected)</span> : (node.supplier || "—")}
-                          </span>
-                        </td>
-                        <td className="py-2 px-3 text-center">
-                          <span className="text-[10px] font-mono font-semibold"
-                            style={{ color: C.textSecondary }}>
-                            {node.ppap || "—"}
-                          </span>
-                        </td>
-                      </>
-                    )}
                     {activeBom === "Q" && (
                       <>
                         <td className="py-2 px-3 text-center">
@@ -5482,7 +5814,14 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                         <td className="py-2 px-3">
                           <span className="text-[11px] truncate block" style={{ color: C.textPrimary }}
                             title={node.supplier}>
-                            {node.supplier || "—"}
+                            {isMissingInActiveBom ? <span style={{ color: C.error }}>— (not selected)</span> : (node.supplier || "—")}
+                          </span>
+                        </td>
+                        <td className="py-2 px-3 text-right">
+                          <span className="font-mono text-[11px]"
+                            style={{ color: mockCost.carryover === null ? C.textDisabled : C.textSecondary }}
+                            title={mockCost.carryover === null ? "No carryover — new spec" : "Previous version price"}>
+                            {mockCost.carryover !== null ? `$${mockCost.carryover.toFixed(2)}` : "—"}
                           </span>
                         </td>
                         <td className="py-2 px-3 text-right">
@@ -6063,20 +6402,71 @@ function PromoteDropdown({ activeBom, onPromoteClick }) {
 function BomSummaryCard({ activeBomMeta, activeBom, project, isHeroProject, scenarioStep, setSelectedItemId, setFilter }) {
   // BOM-specific issue counts (mirrors row-level logic in tree)
   const qBomMissingIds = [3, 10, 14, 18];
-  const sBomMissingIds = [3];
+  const cBomMissingIds = [3];
   const eBomLagIds = [5, 8];
   const missingIds =
     activeBom === "Q" && scenarioStep < 7 ? qBomMissingIds :
-    activeBom === "S" && scenarioStep < 6 ? sBomMissingIds :
+    activeBom === "C" && scenarioStep < 6 ? cBomMissingIds :
     activeBom === "E" ? eBomLagIds :
     [];
   const issueCount = missingIds.length;
 
-  // Recent activity for this BOM (filter ACTIVITY_FEED scenarios up to current step)
+  // Recent activity for this BOM — combines BOM timeline events + relevant chat messages
+  // Returns up to 4 most recent events (timeline takes precedence, chat fills if room)
   const recentActivity = useMemo(() => {
-    const all = isHeroProject ? ACTIVITY_FEED.slice(0, scenarioStep + 1) : ACTIVITY_FEED;
-    return all.slice(-3).reverse(); // last 3 messages, newest first
-  }, [scenarioStep, isHeroProject]);
+    // BOM-specific timeline events
+    const timelineEvents = (BOM_TIMELINE_EVENTS[activeBom] || []).map(e => ({
+      source: "system",
+      id: e.id,
+      ts: e.time || e.ts || "",
+      date: e.date,
+      type: e.iconType,
+      kind: e.kind,
+      actor: e.author,
+      title: e.title,
+      detail: e.detail,
+    }));
+
+    // Chat messages relevant to this BOM (filter by channel → BOM mapping)
+    const bomChannels = BOM_TO_CHANNELS[activeBom] || [];
+    const chatMessages = (isHeroProject ? ACTIVITY_FEED.slice(0, scenarioStep + 1) : ACTIVITY_FEED)
+      .filter(m => bomChannels.includes(m.channel))
+      .map(m => ({
+        source: "chat",
+        id: m.id,
+        ts: m.ts,
+        actor: m.persona,
+        message: m.message,
+        decision: m.decision,
+        decisionText: m.decisionText,
+        itemRef: m.itemRef,
+      }));
+
+    // Hero project (active scenario): newest first, system events priority, then chat
+    // For non-hero projects, show only timeline (chat is generic)
+    const combined = isHeroProject
+      ? [...timelineEvents.slice(0, 2), ...chatMessages.slice(-2).reverse()]
+      : timelineEvents.slice(0, 4);
+
+    return combined.slice(0, 4);
+  }, [activeBom, scenarioStep, isHeroProject]);
+
+  // Icon mapping for system event types (mirrors TimelinePanel + ItemActivityTab)
+  const getSystemEventMeta = (type, kind) => {
+    const iconMap = {
+      zap: Zap, check: CheckCircle, alert: AlertTriangle, send: Send,
+      message: MessageSquare, shield: ShieldCheck, upload: Upload, version: GitBranch,
+    };
+    const Icon = iconMap[type] || Activity;
+    const colorMap = {
+      success: { bg: "rgba(0,153,85,0.10)", fg: C.success },
+      error:   { bg: "rgba(211,47,47,0.10)", fg: C.error },
+      primary: { bg: "rgba(83,45,246,0.10)", fg: C.primary },
+      neutral: { bg: "rgba(0,0,0,0.06)", fg: C.textSecondary },
+    };
+    const { bg, fg } = colorMap[kind] || colorMap.neutral;
+    return { Icon, bg, fg };
+  };
 
   // Click handler: jump to first missing part + activate Missing filter
   const goToFirstIssue = () => {
@@ -6163,19 +6553,61 @@ function BomSummaryCard({ activeBomMeta, activeBom, project, isHeroProject, scen
         </button>
       )}
 
-      {/* Recent Activity — items with itemRef are clickable */}
+      {/* Recent Activity — system events + chat (BOM-specific) */}
       {recentActivity.length > 0 && (
         <div>
           <div className="text-[10px] font-bold uppercase tracking-wide mb-2" style={{ color: C.textSecondary }}>
             Recent Activity
           </div>
           <div className="space-y-2">
-            {recentActivity.map((m) => {
+            {recentActivity.map((evt) => {
+              // === System event rendering ===
+              if (evt.source === "system") {
+                const meta = getSystemEventMeta(evt.type, evt.kind);
+                const Icon = meta.icon;
+                return (
+                  <div key={`sys-${evt.id}`}
+                    className="w-full flex items-start gap-2 p-2 rounded-md"
+                    style={{ backgroundColor: C.bg }}>
+                    <div className="w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5"
+                      style={{ backgroundColor: meta.bg }}>
+                      <Icon className="w-3 h-3" style={{ color: meta.fg }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-[11px] font-semibold" style={{ color: C.textPrimary }}>
+                          {evt.title}
+                        </span>
+                        <span className="text-[9px] ml-auto shrink-0" style={{ color: C.textDisabled }}>{evt.ts}</span>
+                      </div>
+                      {evt.detail && (
+                        <div className="text-[11px] line-clamp-2" style={{
+                          color: C.textSecondary,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}>
+                          {evt.detail}
+                        </div>
+                      )}
+                      {evt.actor && (
+                        <div className="text-[10px] mt-0.5" style={{ color: C.textDisabled }}>
+                          by {evt.actor === "AI" ? "AI Assistant" : (PERSONAS[evt.actor]?.name || evt.actor)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+
+              // === Chat message rendering (clickable if itemRef exists) ===
+              const m = evt;
               const canJump = m.itemRef && m.itemRef.id && setSelectedItemId;
               const Wrapper = canJump ? "button" : "div";
               return (
                 <Wrapper
-                  key={m.id}
+                  key={`chat-${m.id}`}
                   {...(canJump ? {
                     onClick: () => setSelectedItemId(m.itemRef.id),
                     title: `Click to view ${m.itemRef.partName || "part"}`,
@@ -6185,16 +6617,17 @@ function BomSummaryCard({ activeBomMeta, activeBom, project, isHeroProject, scen
                     backgroundColor: m.decision ? C.primarySoft : C.bg,
                     cursor: canJump ? "pointer" : "default",
                   }}>
-                  <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={20} />
+                  <PersonaAvatar p={m.actor === "AI" ? "PM" : m.actor} size={20} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <span className="text-[11px] font-semibold" style={{ color: C.textPrimary }}>
-                        {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
+                        {m.actor === "AI" ? "AI Assistant" : PERSONAS[m.actor]?.name}
                       </span>
-                      <span className="text-[9px]" style={{ color: C.textDisabled }}>{m.ts}</span>
-                      {canJump && (
-                        <ArrowRight className="w-3 h-3 ml-auto shrink-0" style={{ color: C.textDisabled }} />
+                      {m.decision && (
+                        <span className="text-[8px] px-1 py-0.5 rounded font-bold"
+                          style={{ backgroundColor: C.primary, color: "white" }}>DECISION</span>
                       )}
+                      <span className="text-[9px] ml-auto shrink-0" style={{ color: C.textDisabled }}>{m.ts}</span>
                     </div>
                     <div className="text-[11px] line-clamp-2" style={{
                       color: C.textSecondary,
@@ -6206,8 +6639,9 @@ function BomSummaryCard({ activeBomMeta, activeBom, project, isHeroProject, scen
                       {m.message}
                     </div>
                     {canJump && (
-                      <div className="text-[10px] mt-1 font-medium" style={{ color: C.primary }}>
-                        → {m.itemRef.partName || "View part"}
+                      <div className="text-[10px] mt-1 font-medium flex items-center gap-1" style={{ color: C.primary }}>
+                        <ArrowRight className="w-3 h-3" />
+                        {m.itemRef.partName || "View part"}
                       </div>
                     )}
                   </div>
@@ -6239,18 +6673,17 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
 
   // Missing/Lagged detection (matches BOM Workspace logic)
   const qBomMissingIds = [3, 10, 14, 18];
-  const sBomMissingIds = [3];
+  const cBomMissingIds = [3];
   const eBomLagIds = [5, 8];
   const isMissingInActiveBom =
     (activeBom === "Q" && qBomMissingIds.includes(item.id) && scenarioStep < 7) ||
-    (activeBom === "S" && sBomMissingIds.includes(item.id) && scenarioStep < 6);
+    (activeBom === "C" && cBomMissingIds.includes(item.id) && scenarioStep < 6);
   const isLaggedInActiveBom = activeBom === "E" && eBomLagIds.includes(item.id);
 
   // BOM-specific action label for missing item
   const missingActionMap = {
-    S: { label: "Select Supplier", icon: Building2, desc: "This part needs a supplier selection for the Sourcing BOM" },
     Q: { label: "Register for PPAP", icon: ShieldCheck, desc: "This part needs to be registered for PPAP qualification in the Quality BOM" },
-    C: { label: "Add Cost Entry", icon: DollarSign, desc: "This part needs cost information in the Cost BOM" },
+    C: { label: "Select Supplier & Quote", icon: Building2, desc: "This part needs supplier selection and cost entry in the C-BOM (Source & Cost)" },
   };
   const missingAction = missingActionMap[activeBom];
 
@@ -6964,45 +7397,123 @@ function QualityTab({ item, scenarioStep }) {
 }
 
 function ItemActivityTab({ item, scenarioStep }) {
-  // Hero (scenario part) gated by scenarioStep; other parts use full ACTIVITY_FEED
+  // Unified activity feed: system events + chat messages combined
   const isHero = item.id === 3;
-  const itemActivity = (isHero ? ACTIVITY_FEED.slice(0, scenarioStep + 1) : ACTIVITY_FEED)
-    .filter((m) => m.itemRef && m.itemRef.id === item.id);
-  return (
-    <div className="space-y-3">
-      {itemActivity.length === 0 ? (
-        <div className="text-center py-8">
-          <MessageSquare className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
-          <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>No Activity</div>
-          <div className="text-xs" style={{ color: C.textSecondary }}>
-            Use the <MessageSquare className="w-3 h-3 inline" /> chat button above to start a thread
-          </div>
+  const activity = getItemActivity(item.id, scenarioStep, isHero);
+
+  // Event type icon + color mapping for system events
+  const getEventMeta = (type, severity) => {
+    const map = {
+      spec_change: { icon: Edit3, bg: "rgba(83,45,246,0.10)", fg: C.primary, label: "Spec" },
+      status:      { icon: AlertCircle, bg: severity === "success" ? "rgba(0,153,85,0.10)" : severity === "warning" ? "rgba(224,105,0,0.10)" : "rgba(211,47,47,0.10)",
+                     fg: severity === "success" ? C.success : severity === "warning" ? C.warning : C.error, label: "Status" },
+      ai_insight:  { icon: Sparkles, bg: "rgba(83,45,246,0.10)", fg: C.primary, label: "AI" },
+      file:        { icon: Paperclip, bg: "rgba(0,0,0,0.06)", fg: C.textSecondary, label: "File" },
+      version:     { icon: GitBranch, bg: "rgba(0,0,0,0.06)", fg: C.textSecondary, label: "Version" },
+      sync:        { icon: RefreshCw, bg: "rgba(0,153,85,0.10)", fg: C.success, label: "Sync" },
+      ppap:        { icon: ShieldCheck, bg: "rgba(21,101,224,0.10)", fg: C.info, label: "PPAP" },
+      supplier:    { icon: Building2, bg: "rgba(83,45,246,0.10)", fg: C.primary, label: "Supplier" },
+    };
+    return map[type] || map.status;
+  };
+
+  if (activity.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <Activity className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
+        <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>No Activity Yet</div>
+        <div className="text-xs" style={{ color: C.textSecondary }}>
+          Activity, system events, and chat will appear here.
         </div>
-      ) : itemActivity.map((m) => (
-        <div key={m.id} className="flex items-start gap-2 p-2 rounded-md"
-          style={{ backgroundColor: m.decision ? C.primarySoft : "transparent" }}>
-          <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={24} />
-          <div className="flex-1 text-xs">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="font-medium" style={{ color: C.textPrimary }}>
-                {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
-              </span>
-              <span style={{ color: C.textDisabled }}>{m.ts}</span>
-              {m.decision && (
-                <span className="text-[9px] px-1 py-0.5 rounded font-medium"
-                  style={{ backgroundColor: C.primary, color: "white" }}>DECISION</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {/* Header summary */}
+      <div className="flex items-center justify-between mb-3 pb-2 border-b" style={{ borderColor: C.borderLight }}>
+        <div className="text-xs" style={{ color: C.textSecondary }}>
+          <span className="font-semibold" style={{ color: C.textPrimary }}>{activity.length}</span> events
+        </div>
+        <div className="text-[10px]" style={{ color: C.textDisabled }}>
+          System events + chat messages
+        </div>
+      </div>
+
+      {activity.map((item, idx) => {
+        // === System event rendering ===
+        if (item.source === "system") {
+          const meta = getEventMeta(item.type, item.severity);
+          const Icon = meta.icon;
+          return (
+            <div key={item.id} className="flex items-start gap-2.5 p-2 rounded-md transition-colors hover:bg-gray-50">
+              <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
+                style={{ backgroundColor: meta.bg }}>
+                <Icon className="w-3.5 h-3.5" style={{ color: meta.fg }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                  <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                    {meta.label}
+                  </span>
+                  <span className="text-xs font-medium" style={{ color: C.textPrimary }}>
+                    {item.title}
+                  </span>
+                  <span className="text-[10px] ml-auto shrink-0" style={{ color: C.textDisabled }}>
+                    {item.ts}
+                  </span>
+                </div>
+                <div className="text-[11px] leading-relaxed" style={{ color: C.textSecondary }}>
+                  {item.detail}
+                </div>
+                {item.actor && item.actor !== "system" && (
+                  <div className="text-[10px] mt-1" style={{ color: C.textDisabled }}>
+                    by {item.actor === "AI" ? "AI Assistant" : (PERSONAS[item.actor]?.name || item.actor)}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        // === Chat message rendering (existing style, lightly adapted) ===
+        const m = item;
+        return (
+          <div key={m.id} className="flex items-start gap-2.5 p-2 rounded-md transition-colors hover:bg-gray-50"
+            style={{ backgroundColor: m.decision ? C.primarySoft : "transparent" }}>
+            <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={28} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                  style={{ backgroundColor: "rgba(0,0,0,0.05)", color: C.textSecondary }}>
+                  Chat
+                </span>
+                <span className="text-xs font-medium" style={{ color: C.textPrimary }}>
+                  {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
+                </span>
+                {m.decision && (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded font-bold"
+                    style={{ backgroundColor: C.primary, color: "white" }}>DECISION</span>
+                )}
+                <span className="text-[10px] ml-auto shrink-0" style={{ color: C.textDisabled }}>
+                  {m.ts}
+                </span>
+              </div>
+              <div className="text-[11px] leading-relaxed" style={{ color: C.textSecondary }}>
+                {m.message}
+              </div>
+              {m.decisionText && (
+                <div className="mt-1.5 p-1.5 rounded text-[10px] font-medium"
+                  style={{ backgroundColor: "white", color: C.primary, borderLeft: `2px solid ${C.primary}` }}>
+                  ✓ {m.decisionText}
+                </div>
               )}
             </div>
-            <div style={{ color: C.textSecondary }} className="leading-relaxed">{m.message}</div>
-            {m.decisionText && (
-              <div className="mt-1.5 p-1.5 rounded text-[10px] font-medium"
-                style={{ backgroundColor: "white", color: C.primary, borderLeft: `2px solid ${C.primary}` }}>
-                ✓ {m.decisionText}
-              </div>
-            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -7015,15 +7526,14 @@ const CHANNEL_TO_BOM = {
   general: "E",
   design: "E",
   cost: "C",
-  sourcing: "S",
+  sourcing: "C",
   quality: "Q",
 };
 
 const BOM_TO_CHANNELS = {
   E: ["general", "design"],
-  S: ["sourcing"],
+  C: ["cost", "sourcing"],
   Q: ["quality"],
-  C: ["cost"],
 };
 
 function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, activeProjectCode, onClose }) {
