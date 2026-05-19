@@ -6564,7 +6564,7 @@ function BomSummaryCard({ activeBomMeta, activeBom, project, isHeroProject, scen
               // === System event rendering ===
               if (evt.source === "system") {
                 const meta = getSystemEventMeta(evt.type, evt.kind);
-                const Icon = meta.icon;
+                const Icon = meta.Icon;
                 return (
                   <div key={`sys-${evt.id}`}
                     className="w-full flex items-start gap-2 p-2 rounded-md"
