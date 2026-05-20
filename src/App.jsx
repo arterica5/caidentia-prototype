@@ -10,7 +10,7 @@ import {
   CornerDownRight, Columns3, Upload, Link2,
   LayoutDashboard, Boxes, GitMerge, BadgeCheck, PanelLeftClose, PanelLeftOpen,
   Smartphone, Watch, Headphones, Tv, Tablet, Speaker, Refrigerator, Wind, BatteryCharging,
-  History, GitCompareArrows
+  History, GitCompareArrows, Archive, Lock, MoreVertical, Trash2, Mail, Phone, MapPin, Star
 } from "lucide-react";
 
 /* ============================================================
@@ -194,46 +194,224 @@ const SHARED_FILES = [
 // === Collaborators ===
 const COLLABORATORS = [
   { persona: "PM", role: "Project Manager", active: "now", contribution: 28, owner: true,
-    email: "paige.kim@samsung.com", department: "NPI Office" },
+    email: "paige.kim@samsung.com", phone: "+82 10-2345-1001", department: "NPI Office" },
   { persona: "DE", role: "Design Engineer", active: "5 min ago", contribution: 47, owner: false,
-    email: "dean.park@samsung.com", department: "Mobile R&D" },
+    email: "dean.park@samsung.com", phone: "+82 10-2345-1002", department: "Mobile R&D" },
   { persona: "CM", role: "Cost Manager", active: "2 hours ago", contribution: 32, owner: false,
-    email: "cory.chen@samsung.com", department: "Cost Engineering" },
+    email: "cory.chen@samsung.com", phone: "+82 10-2345-1003", department: "Cost Engineering" },
   { persona: "SM", role: "Sourcing Manager", active: "Yesterday", contribution: 24, owner: false,
-    email: "sam.lee@samsung.com", department: "Strategic Sourcing" },
+    email: "sam.lee@samsung.com", phone: "+82 10-2345-1004", department: "Strategic Sourcing" },
   { persona: "QM", role: "Quality Manager", active: "3 hours ago", contribution: 18, owner: false,
-    email: "quinn.r@samsung.com", department: "Quality Assurance" },
+    email: "quinn.r@samsung.com", phone: "+82 10-2345-1005", department: "Quality Assurance" },
 ];
 
 // === External collaborators (suppliers / vendors) ===
 // Per-project external contacts — appears only when supplier engagements exist
 const EXTERNAL_COLLABORATORS = [
+  // === BOE Technology === (Selected AMOLED supplier — full team engaged)
   { id: "ext-1", name: "Chen Wei", company: "BOE Technology", role: "Account Manager",
     initial: "CW", color: "#1565E0",
     email: "chen.wei@boe.com", phone: "+86 10 6436 8888",
     contribution: "AMOLED Panel · Supplier (Selected)", active: "Today 14:22",
     bomScope: "C" },
+  { id: "ext-1b", name: "Li Mei", company: "BOE Technology", role: "Sales Engineer",
+    initial: "LM", color: "#1565E0",
+    email: "li.mei@boe.com", phone: "+86 10 6436 8901",
+    contribution: "AMOLED Panel · Technical specs", active: "Today 11:08",
+    bomScope: "C" },
+  { id: "ext-1c", name: "Zhang Hao", company: "BOE Technology", role: "Quality Lead",
+    initial: "ZH", color: "#1565E0",
+    email: "zhang.hao@boe.com", phone: "+86 10 6436 8945",
+    contribution: "AMOLED Panel · PPAP submissions", active: "Yesterday",
+    bomScope: "Q" },
+
+  // === Samsung Display === (Lost RFQ — primary contact only)
   { id: "ext-2", name: "Hideki Tanaka", company: "Samsung Display", role: "Senior Sales",
     initial: "HT", color: "#532DF6",
     email: "h.tanaka@samsungdisplay.com", phone: "+82 31 5181 2000",
     contribution: "AMOLED Panel · RFQ (Not selected)", active: "Yesterday",
     bomScope: "C" },
+  { id: "ext-2b", name: "Soo-ji Lee", company: "Samsung Display", role: "Account Director",
+    initial: "SL", color: "#532DF6",
+    email: "sj.lee@samsungdisplay.com", phone: "+82 31 5181 2055",
+    contribution: "AMOLED Panel · Commercial lead", active: "3 days ago",
+    bomScope: "C" },
+
+  // === LG Display === (Lost RFQ — primary contact only)
   { id: "ext-3", name: "Min-jun Park", company: "LG Display", role: "Key Account",
     initial: "MP", color: "#009955",
     email: "minjun.p@lgdisplay.com", phone: "+82 2 3777 1114",
     contribution: "AMOLED Panel · RFQ (Not selected)", active: "Yesterday",
     bomScope: "C" },
+  { id: "ext-3b", name: "Ji-won Kim", company: "LG Display", role: "Field App Engineer",
+    initial: "JK", color: "#009955",
+    email: "jw.kim@lgdisplay.com", phone: "+82 2 3777 1155",
+    contribution: "AMOLED Panel · Sample evaluation", active: "Last week",
+    bomScope: "C" },
+
+  // === Nitto Denko === (Selected Polarizer supplier — full team)
   { id: "ext-4", name: "Sarah Williams", company: "Nitto Denko", role: "Sales Engineer",
     initial: "SW", color: "#E06900",
     email: "s.williams@nitto.com", phone: "+1 415 778 2700",
     contribution: "Polarizer Film · Supplier (Primary)", active: "2 days ago",
     bomScope: "C" },
+  { id: "ext-4b", name: "Yuki Sato", company: "Nitto Denko", role: "Product Manager",
+    initial: "YS", color: "#E06900",
+    email: "y.sato@nitto.com", phone: "+81 6 7632 2101",
+    contribution: "Polarizer Film · Spec coordination", active: "2 days ago",
+    bomScope: "C" },
+  { id: "ext-4c", name: "Tom Becker", company: "Nitto Denko", role: "Quality Engineer",
+    initial: "TB", color: "#E06900",
+    email: "t.becker@nitto.com", phone: "+1 415 778 2715",
+    contribution: "Polarizer Film · PPAP", active: "Last week",
+    bomScope: "Q" },
+
+  // === 3M Korea === (OCA Adhesive — primary + technical)
   { id: "ext-5", name: "Robert Liu", company: "3M Korea", role: "Technical Sales",
     initial: "RL", color: "#1565E0",
     email: "r.liu@3m.com", phone: "+82 2 3771 4114",
     contribution: "OCA Adhesive · Supplier", active: "Last week",
     bomScope: "C" },
+  { id: "ext-5b", name: "Hye-jin Choi", company: "3M Korea", role: "Application Specialist",
+    initial: "HC", color: "#1565E0",
+    email: "hj.choi@3m.com", phone: "+82 2 3771 4155",
+    contribution: "OCA Adhesive · Lamination support", active: "2 days ago",
+    bomScope: "C" },
 ];
+
+// === Supplier company profiles ===
+// Used by SupplierProfilePopover when hovering a company name in External Collaborators.
+// Mock procurement history (last 7 quarters) + RFx history.
+const SUPPLIER_DETAILS = {
+  "BOE Technology": {
+    name: "BOE Technology",
+    location: "Beijing, CN",
+    badge: "Strategic Partner",
+    tags: ["Display", "AMOLED", "Tier 1 Supplier"],
+    summary: "Largest display panel manufacturer in China. Selected AMOLED supplier for Hero project. Stable credit rating, on-time delivery 96%.",
+    purchaseHistory: [
+      { quarter: "Q1 24", po: 89, rate: 0 },
+      { quarter: "Q2 24", po: 115, rate: 29 },
+      { quarter: "Q3 24", po: 102, rate: -11 },
+      { quarter: "Q4 24", po: 158, rate: 55 },
+      { quarter: "Q1 25", po: 142, rate: -10 },
+      { quarter: "Q2 25", po: 175, rate: 23 },
+      { quarter: "Q3 25", po: 108, rate: -38 },
+    ],
+    items: [
+      { category: "Display", amount: 142000, rate: 18.5, parts: [
+        { name: "AMOLED Panel 6.7\"", spec: "1080×2400, 120Hz", amount: 95000 },
+        { name: "Cover Glass", spec: "Gorilla Victus 2", amount: 28000 },
+        { name: "OLED Driver IC", spec: "DDI-2300", amount: 19000 },
+      ]},
+    ],
+    rfx: [
+      { year: 2025, org: "Mobile Procurement", requests: 14, bids: 11, bidRate: 78.6, awards: 6, awardRate: 54.5 },
+      { year: 2024, org: "Mobile Procurement", requests: 22, bids: 18, bidRate: 81.8, awards: 9, awardRate: 50.0 },
+    ],
+  },
+  "Samsung Display": {
+    name: "Samsung Display",
+    location: "Asan, KR",
+    badge: "Preferred Supplier",
+    tags: ["Display", "AMOLED", "Tier 1 Supplier"],
+    summary: "Sister company under Samsung Group. Premium AMOLED supplier. Lost recent RFQ on price competitiveness but remains preferred for high-tier products.",
+    purchaseHistory: [
+      { quarter: "Q1 24", po: 75, rate: 0 },
+      { quarter: "Q2 24", po: 92, rate: 23 },
+      { quarter: "Q3 24", po: 80, rate: -13 },
+      { quarter: "Q4 24", po: 108, rate: 35 },
+      { quarter: "Q1 25", po: 95, rate: -12 },
+      { quarter: "Q2 25", po: 88, rate: -7 },
+      { quarter: "Q3 25", po: 64, rate: -27 },
+    ],
+    items: [
+      { category: "Display", amount: 95000, rate: -8.2, parts: [
+        { name: "AMOLED Panel 6.5\"", spec: "1440×3088, 120Hz", amount: 72000 },
+        { name: "Touch Panel", spec: "Integrated Y-OCTA", amount: 23000 },
+      ]},
+    ],
+    rfx: [
+      { year: 2025, org: "Mobile Procurement", requests: 12, bids: 10, bidRate: 83.3, awards: 3, awardRate: 30.0 },
+      { year: 2024, org: "Mobile Procurement", requests: 18, bids: 16, bidRate: 88.9, awards: 7, awardRate: 43.8 },
+    ],
+  },
+  "LG Display": {
+    name: "LG Display",
+    location: "Paju, KR",
+    badge: "Approved Supplier",
+    tags: ["Display", "OLED", "Tier 1 Supplier"],
+    summary: "Major OLED supplier with strong P-OLED tech. Competitive on mid-range volume contracts. Lost recent AMOLED RFQ but active on smaller form factor.",
+    purchaseHistory: [
+      { quarter: "Q1 24", po: 58, rate: 0 },
+      { quarter: "Q2 24", po: 72, rate: 24 },
+      { quarter: "Q3 24", po: 65, rate: -10 },
+      { quarter: "Q4 24", po: 88, rate: 35 },
+      { quarter: "Q1 25", po: 78, rate: -11 },
+      { quarter: "Q2 25", po: 82, rate: 5 },
+      { quarter: "Q3 25", po: 51, rate: -38 },
+    ],
+    items: [
+      { category: "Display", amount: 78000, rate: -12.0, parts: [
+        { name: "AMOLED Panel 6.1\"", spec: "1080×2340, 90Hz", amount: 55000 },
+        { name: "Display Module", spec: "LTPO Backplane", amount: 23000 },
+      ]},
+    ],
+    rfx: [
+      { year: 2025, org: "Mobile Procurement", requests: 10, bids: 8, bidRate: 80.0, awards: 2, awardRate: 25.0 },
+    ],
+  },
+  "Nitto Denko": {
+    name: "Nitto Denko",
+    location: "Osaka, JP",
+    badge: "Strategic Partner",
+    tags: ["Optical Films", "Polarizer", "Adhesive"],
+    summary: "Global leader in polarizer films for displays. Sole-source partner for Hero project Polarizer Film. PPAP Lv3 approved.",
+    purchaseHistory: [
+      { quarter: "Q1 24", po: 32, rate: 0 },
+      { quarter: "Q2 24", po: 38, rate: 19 },
+      { quarter: "Q3 24", po: 35, rate: -8 },
+      { quarter: "Q4 24", po: 45, rate: 29 },
+      { quarter: "Q1 25", po: 42, rate: -7 },
+      { quarter: "Q2 25", po: 48, rate: 14 },
+      { quarter: "Q3 25", po: 39, rate: -19 },
+    ],
+    items: [
+      { category: "Optical Films", amount: 42000, rate: 8.5, parts: [
+        { name: "Polarizer Film", spec: "100mm × 80mm × 0.13mm", amount: 28000 },
+        { name: "Anti-reflective Coating", spec: "AR-3 grade", amount: 14000 },
+      ]},
+    ],
+    rfx: [
+      { year: 2025, org: "Mobile Procurement", requests: 6, bids: 5, bidRate: 83.3, awards: 4, awardRate: 80.0 },
+    ],
+  },
+  "3M Korea": {
+    name: "3M Korea",
+    location: "Seoul, KR",
+    badge: "Approved Supplier",
+    tags: ["Adhesive", "OCA", "Specialty Materials"],
+    summary: "Subsidiary of 3M global. Reliable OCA adhesive supplier with strong application engineering support.",
+    purchaseHistory: [
+      { quarter: "Q1 24", po: 22, rate: 0 },
+      { quarter: "Q2 24", po: 28, rate: 27 },
+      { quarter: "Q3 24", po: 25, rate: -11 },
+      { quarter: "Q4 24", po: 32, rate: 28 },
+      { quarter: "Q1 25", po: 29, rate: -9 },
+      { quarter: "Q2 25", po: 34, rate: 17 },
+      { quarter: "Q3 25", po: 26, rate: -24 },
+    ],
+    items: [
+      { category: "Adhesive", amount: 29000, rate: 5.2, parts: [
+        { name: "OCA Adhesive", spec: "200μm thickness, low-haze", amount: 19000 },
+        { name: "Foam Tape", spec: "VHB grade", amount: 10000 },
+      ]},
+    ],
+    rfx: [
+      { year: 2025, org: "Mobile Procurement", requests: 4, bids: 4, bidRate: 100.0, awards: 3, awardRate: 75.0 },
+    ],
+  },
+};
 
 // === Per-project shared files (isNew → empty; otherwise → SHARED_FILES) ===
 function getSharedFilesForProject(project) {
@@ -254,14 +432,16 @@ function getCollaboratorsForProject(project) {
 // isNew project or projects not in Develop+ phase → empty
 function getExternalCollaboratorsForProject(project) {
   if (!project || project.isNew) return [];
-  // Hero project has full supplier engagement
+  // Hero project has full supplier engagement — all contacts from all companies
   if (project.code === "BPM260400354") return EXTERNAL_COLLABORATORS;
-  // Other projects: subset based on phase (later phases have more suppliers)
+  // Other projects: pick primary contact (1 per company) based on phase progress.
+  // Primary contacts have base IDs (ext-1, ext-2, ext-3, ...). Sub-contacts have suffix (ext-1b, etc).
+  const primaries = EXTERNAL_COLLABORATORS.filter(c => !/[a-z]$/.test(c.id));
   const phaseOrder = ["Incubation", "Concept", "Plan", "Define", "Develop", "Verify", "SOP"];
   const phaseIdx = phaseOrder.indexOf(project.phase);
-  if (phaseIdx < 3) return []; // Pre-Define: no suppliers yet
-  if (phaseIdx < 4) return EXTERNAL_COLLABORATORS.slice(0, 2);
-  return EXTERNAL_COLLABORATORS.slice(0, 3);
+  if (phaseIdx < 3) return [];                  // Pre-Define: no suppliers yet
+  if (phaseIdx < 4) return primaries.slice(0, 2); // Define: 2 primary contacts
+  return primaries.slice(0, 3);                  // Develop+: 3 primary contacts
 }
 
 // === BOM Timeline Events ===
@@ -692,7 +872,7 @@ const BOM_LIST = [
   { id: "E", label: "E-BOM", name: "Engineering BOM", version: "v1.8", parts: 80, status: "active",
     syncDelta: 0, missing: 0, owner: "DE", description: "Engineering spec definition",
     lastActivity: { actor: "DE", action: "Spec updated", ts: "Yesterday 11:15" },
-    defaults: { structure: "tree", groupBy: "category", overlay: "none" },
+    defaults: { structure: "tree", groupBy: "module", overlay: "none" },
     lifecycle: "review", parties: 2, multisource: 88.2, sss: 7.1,
     collabType: "design", collabProgress: 65, collabLabel: "Design Collaboration",
     collabStatus: "Spec Reviewed" },
@@ -1902,14 +2082,16 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
         },
       ],
     },
-    {
-      label: "Quality",
-      items: [
-        {
-          id: "apqp", icon: BadgeCheck, label: "APQP", badge: null,
-        },
-      ],
-    },
+    // Quality group temporarily hidden — APQP gantt has been merged into QM Cockpit Overview.
+    // Restore by uncommenting below when APQP standalone view is re-introduced.
+    // {
+    //   label: "Quality",
+    //   items: [
+    //     {
+    //       id: "apqp", icon: BadgeCheck, label: "APQP", badge: null,
+    //     },
+    //   ],
+    // },
   ];
 
   // === COLLAPSED MODE: icon-only strip (56px wide) ===
@@ -2073,9 +2255,24 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
           <button
             onClick={() => onOpenChat && onOpenChat(null)}
             title="Chat"
-            className="w-9 h-9 rounded-full flex items-center justify-center border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            className="relative w-9 h-9 rounded-full flex items-center justify-center border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
             style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
             <MessageSquare className="w-4 h-4" />
+            {/* Unread message badge — Hero project demo: 3 unread mentions awaiting PM response.
+                Auto-hides when scenario is resolved (PM has processed all activity). */}
+            {(() => {
+              const isHero = project.code === "BPM260400354";
+              const isResolved = scenarioStep >= 8;
+              if (!isHero || isResolved) return null;
+              const unreadCount = 3;
+              return (
+                <span
+                  className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[9px] font-bold text-white border-2 border-white"
+                  style={{ backgroundColor: C.error }}>
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              );
+            })()}
           </button>
           <CollaboratorsCircleButton
             members={getCollaboratorsForProject(project)}
@@ -2227,36 +2424,49 @@ function CollaboratorsCircleButton({ members, activePersona, setActivePersona })
             {members.map((m) => {
               const isMe = activePersona === m.persona;
               return (
-                <button key={m.persona}
-                  onClick={() => { setActivePersona && setActivePersona(m.persona); setOpen(false); }}
-                  className="w-full px-4 py-2.5 flex items-center gap-3 text-left transition-colors hover:bg-gray-50"
+                <div key={m.persona}
+                  className="px-4 py-2.5 flex items-center gap-3 transition-colors hover:bg-gray-50"
                   style={{ backgroundColor: isMe ? C.primarySoft : "transparent" }}>
-                  <div className="relative shrink-0">
-                    <PersonaAvatar p={m.persona} size={32} />
-                    {m.active === "now" && (
-                      <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white"
-                        style={{ backgroundColor: C.success }} />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>
-                        {PERSONAS[m.persona]?.name}
-                      </span>
-                      {m.owner && (
-                        <span className="text-[9px] px-1 py-0.5 rounded font-bold"
-                          style={{ backgroundColor: C.warningLight, color: C.warning }}>LEAD</span>
-                      )}
-                      {isMe && (
-                        <span className="text-[9px] px-1 py-0.5 rounded font-bold"
-                          style={{ backgroundColor: C.primary, color: "white" }}>ME</span>
+                  <button
+                    onClick={() => { setActivePersona && setActivePersona(m.persona); setOpen(false); }}
+                    className="flex-1 flex items-center gap-3 text-left min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded">
+                    <div className="relative shrink-0">
+                      <PersonaAvatar p={m.persona} size={32} />
+                      {m.active === "now" && (
+                        <div className="absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white"
+                          style={{ backgroundColor: C.success }} />
                       )}
                     </div>
-                    <div className="text-[10px]" style={{ color: C.textSecondary }}>
-                      {m.role} · {m.active}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>
+                          {PERSONAS[m.persona]?.name}
+                        </span>
+                        {m.owner && (
+                          <span className="text-[9px] px-1 py-0.5 rounded font-bold"
+                            style={{ backgroundColor: C.warningLight, color: C.warning }}>LEAD</span>
+                        )}
+                        {isMe && (
+                          <span className="text-[9px] px-1 py-0.5 rounded font-bold"
+                            style={{ backgroundColor: C.primary, color: "white" }}>ME</span>
+                        )}
+                      </div>
+                      <div className="text-[10px]" style={{ color: C.textSecondary }}>
+                        {m.role} · {m.active}
+                      </div>
                     </div>
-                  </div>
-                </button>
+                  </button>
+                  {/* Message icon — hidden for self (no point messaging yourself) */}
+                  {!isMe && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); /* TODO: open chat with this persona */ }}
+                      className="w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 focus:outline-none focus-visible:ring-2 hover:scale-110"
+                      style={{ backgroundColor: C.bg, color: C.primary }}
+                      title={`Message ${PERSONAS[m.persona]?.name || m.persona}`}>
+                      <MessageSquare className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -3118,6 +3328,12 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("priority"); // priority (composite) | phaseDays | readiness | name
   const [statusFilter, setStatusFilter] = useState("all"); // all | onTrack | atRisk | blocked
+  // Hover popover state — which project's collaborators popover is open
+  const [hoveredCollabProject, setHoveredCollabProject] = useState(null);
+  const hoverTimeoutRef = useRef(null);
+  // Hover popover state — which project's blocking items popover is open
+  const [hoveredBlockingProject, setHoveredBlockingProject] = useState(null);
+  const blockingHoverTimeoutRef = useRef(null);
 
   const filtered = useMemo(() => {
     let result = PROJECTS;
@@ -3352,21 +3568,164 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                         </div>
                       </div>
                     </td>
-                    {/* Owner cell: avatar + name + (+N collaborators) */}
-                    <td className="py-3 px-2">
-                      <div className="flex items-center gap-1.5">
-                        <PersonaAvatar p={p.pm} size={20} />
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-medium truncate" style={{ color: C.textPrimary }}>
-                            {p.ownerName}
-                          </span>
-                          {p.collaborators > 1 && (
-                            <span className="text-[10px]" style={{ color: C.textSecondary }}>
-                              +{p.collaborators - 1} collaborator{p.collaborators - 1 > 1 ? "s" : ""}
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                    {/* Owner cell: avatar + name + (+N collaborators with hover popover) */}
+                    <td className="py-3 px-2" style={{ position: "relative", overflow: "visible" }}>
+                      {(() => {
+                        // Single source of truth: use the same getters that the popover uses
+                        const internalList = getCollaboratorsForProject(p);
+                        const externalList = getExternalCollaboratorsForProject(p);
+                        const totalCollaborators = internalList.length + externalList.length;
+                        const othersCount = totalCollaborators - 1; // exclude owner
+                        return (
+                          <>
+                            <div className="flex items-center gap-1.5">
+                              <PersonaAvatar p={p.pm} size={20} />
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-xs font-medium truncate" style={{ color: C.textPrimary }}>
+                                  {p.ownerName}
+                                </span>
+                                {othersCount > 0 && (
+                                  <span
+                                    className="text-[10px] cursor-default inline-flex items-center gap-1 px-1 -ml-1 rounded transition-colors"
+                                    style={{ color: C.primary, width: "fit-content" }}
+                                    onMouseEnter={(e) => {
+                                      e.stopPropagation();
+                                      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                                      hoverTimeoutRef.current = setTimeout(() => setHoveredCollabProject(p.code), 200);
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.stopPropagation();
+                                      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                                      hoverTimeoutRef.current = setTimeout(() => setHoveredCollabProject(null), 200);
+                                    }}>
+                                    <Users className="w-2.5 h-2.5" />
+                                    +{othersCount} collaborator{othersCount > 1 ? "s" : ""}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Hover popover — collaborators list */}
+                            {hoveredCollabProject === p.code && (
+                              <div
+                                onMouseEnter={() => {
+                                  if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                                }}
+                                onMouseLeave={() => {
+                                  if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                                  hoverTimeoutRef.current = setTimeout(() => setHoveredCollabProject(null), 200);
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="absolute z-30 rounded-lg shadow-xl border bg-white"
+                                style={{
+                                  borderColor: C.border,
+                                  top: "100%",
+                                  left: 0,
+                                  marginTop: 6,
+                                  width: 320,
+                                  cursor: "default",
+                                }}>
+                                {/* Header */}
+                                <div className="px-3 py-2 border-b flex items-center justify-between"
+                                  style={{ borderColor: C.borderLight }}>
+                                  <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: C.textSecondary }}>
+                                    {totalCollaborators} {totalCollaborators === 1 ? "Collaborator" : "Collaborators"}
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setActiveProjectCode(p.code);
+                                      setView("collaborators");
+                                    }}
+                                    className="text-[10px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                                    style={{ color: C.primary }}>
+                                    View all →
+                                  </button>
+                                </div>
+
+                                {/* Internal section */}
+                                <div className="py-1.5">
+                                  <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider"
+                                    style={{ color: C.textDisabled }}>
+                                    Internal · {internalList.length}
+                                  </div>
+                                  {internalList.map((c) => {
+                                    const personaMeta = PERSONAS[c.persona] || {};
+                                    return (
+                                      <div key={`int-${c.persona}`}
+                                        className="px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-gray-50">
+                                        <PersonaAvatar p={c.persona} size={24} />
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-1">
+                                            <span className="text-xs font-medium truncate" style={{ color: C.textPrimary }}>
+                                              {personaMeta.name || c.persona}
+                                            </span>
+                                            {c.owner && (
+                                              <span className="text-[8px] uppercase tracking-wide px-1 py-0.5 rounded font-bold"
+                                                style={{ backgroundColor: C.primary, color: "white" }}>
+                                                Owner
+                                              </span>
+                                            )}
+                                          </div>
+                                          <div className="text-[10px] truncate" style={{ color: C.textSecondary }}>
+                                            {c.role}
+                                          </div>
+                                        </div>
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); }}
+                                          className="w-6 h-6 rounded flex items-center justify-center transition-colors hover:bg-white border shrink-0 focus:outline-none focus-visible:ring-2"
+                                          style={{ borderColor: C.border, color: C.textSecondary }}
+                                          title={`Message ${personaMeta.name || c.persona}`}>
+                                          <MessageSquare className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+
+                                {/* External section */}
+                                {externalList.length > 0 && (
+                                  <div className="py-1.5 border-t" style={{ borderColor: C.borderLight }}>
+                                    <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider"
+                                      style={{ color: C.textDisabled }}>
+                                      External · {externalList.length}
+                                    </div>
+                                    {externalList.slice(0, 3).map((c) => (
+                                      <div key={`ext-${c.id}`}
+                                        className="px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-gray-50">
+                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0"
+                                          style={{ backgroundColor: c.color }}>
+                                          {c.initial}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="text-xs font-medium truncate" style={{ color: C.textPrimary }}>
+                                            {c.name}
+                                          </div>
+                                          <div className="text-[10px] truncate" style={{ color: C.textSecondary }}>
+                                            {c.company}
+                                          </div>
+                                        </div>
+                                        <button
+                                          onClick={(e) => { e.stopPropagation(); }}
+                                          className="w-6 h-6 rounded flex items-center justify-center transition-colors hover:bg-white border shrink-0 focus:outline-none focus-visible:ring-2"
+                                          style={{ borderColor: C.border, color: C.textSecondary }}
+                                          title={`Message ${c.name}`}>
+                                          <MessageSquare className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    ))}
+                                    {externalList.length > 3 && (
+                                      <div className="px-3 py-1 text-[10px]" style={{ color: C.textDisabled }}>
+                                        +{externalList.length - 3} more external
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
                     </td>
                     {/* Phase — label only, no dots */}
                     <td className="py-3 px-2">
@@ -3379,14 +3738,121 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                         D-{p.phaseDays}
                       </span>
                     </td>
-                    {/* Blocking count */}
-                    <td className="py-3 px-2 text-center">
+                    {/* Blocking count + hover popover */}
+                    <td className="py-3 px-2 text-center" style={{ position: "relative", overflow: "visible" }}>
                       {p.blocking > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                          style={{ backgroundColor: C.errorLight, color: C.error }}>
-                          <AlertCircle className="w-2.5 h-2.5" />
-                          {p.blocking}
-                        </span>
+                        <>
+                          <span
+                            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full cursor-default transition-colors"
+                            style={{ backgroundColor: C.errorLight, color: C.error }}
+                            onMouseEnter={(e) => {
+                              e.stopPropagation();
+                              if (blockingHoverTimeoutRef.current) clearTimeout(blockingHoverTimeoutRef.current);
+                              blockingHoverTimeoutRef.current = setTimeout(() => setHoveredBlockingProject(p.code), 200);
+                            }}
+                            onMouseLeave={(e) => {
+                              e.stopPropagation();
+                              if (blockingHoverTimeoutRef.current) clearTimeout(blockingHoverTimeoutRef.current);
+                              blockingHoverTimeoutRef.current = setTimeout(() => setHoveredBlockingProject(null), 200);
+                            }}>
+                            <XCircle className="w-2.5 h-2.5" />
+                            {p.blocking}
+                          </span>
+
+                          {/* Popover */}
+                          {hoveredBlockingProject === p.code && (() => {
+                            const isHeroP = p.code === ACTIVE_PROJECT_CODE;
+                            const blockingList = isHeroP ? BLOCKING_ITEMS : generateGenericBlockingItems(p);
+                            return (
+                              <div
+                                onMouseEnter={() => {
+                                  if (blockingHoverTimeoutRef.current) clearTimeout(blockingHoverTimeoutRef.current);
+                                }}
+                                onMouseLeave={() => {
+                                  if (blockingHoverTimeoutRef.current) clearTimeout(blockingHoverTimeoutRef.current);
+                                  blockingHoverTimeoutRef.current = setTimeout(() => setHoveredBlockingProject(null), 200);
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="absolute z-30 rounded-lg shadow-xl border bg-white text-left"
+                                style={{
+                                  borderColor: C.border,
+                                  top: "100%",
+                                  left: "50%",
+                                  transform: "translateX(-50%)",
+                                  marginTop: 6,
+                                  width: 340,
+                                  cursor: "default",
+                                }}>
+                                {/* Header */}
+                                <div className="px-3 py-2 border-b flex items-center justify-between"
+                                  style={{ borderColor: C.borderLight, backgroundColor: C.errorLight }}>
+                                  <div className="flex items-center gap-1.5">
+                                    <XCircle className="w-3.5 h-3.5" style={{ color: C.error }} />
+                                    <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: C.error }}>
+                                      {blockingList.length} Blocking Item{blockingList.length > 1 ? "s" : ""}
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setActiveProjectCode(p.code);
+                                      setView("cockpit");
+                                    }}
+                                    className="text-[10px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                                    style={{ color: C.error }}>
+                                    View all →
+                                  </button>
+                                </div>
+
+                                {/* Items list */}
+                                <div className="py-1.5 max-h-80 overflow-y-auto">
+                                  {blockingList.map((item, idx) => {
+                                    // Infer action type from blockReason
+                                    const reason = (item.blockReason || "").toLowerCase();
+                                    let actionLabel = "Resolve";
+                                    let actionColor = C.error;
+                                    if (reason.includes("not assigned") || reason.includes("no supplier") || reason.includes("rfq not")) {
+                                      actionLabel = "Assign";
+                                      actionColor = C.primary;
+                                    } else if (reason.includes("pending") || reason.includes("review") || reason.includes("spec")) {
+                                      actionLabel = "Review";
+                                      actionColor = C.warning;
+                                    }
+                                    return (
+                                      <div key={item.id || idx}
+                                        className="px-3 py-2 flex items-start gap-2.5 transition-colors hover:bg-gray-50"
+                                        style={{ borderTop: idx > 0 ? `1px solid ${C.borderLight}` : "none" }}>
+                                        <div className="w-7 h-7 rounded flex items-center justify-center shrink-0 mt-0.5"
+                                          style={{ backgroundColor: C.errorLight }}>
+                                          <Package className="w-3.5 h-3.5" style={{ color: C.error }} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="text-xs font-semibold truncate" style={{ color: C.textPrimary }}>
+                                            {item.partName || item.partId}
+                                          </div>
+                                          <div className="text-[10px] font-mono mt-0.5" style={{ color: C.textDisabled }}>
+                                            {item.partId}
+                                          </div>
+                                          <div className="text-[10px] mt-0.5 leading-snug" style={{ color: C.textSecondary }}>
+                                            {item.blockReason}
+                                          </div>
+                                        </div>
+                                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 mt-0.5"
+                                          style={{
+                                            backgroundColor: "white",
+                                            color: actionColor,
+                                            border: `1px solid ${actionColor}`,
+                                          }}>
+                                          {actionLabel}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </>
                       ) : (
                         <span className="text-[10px]" style={{ color: C.textDisabled }}>—</span>
                       )}
@@ -3690,14 +4156,14 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
               setView && setView("bom");
             }
           }}
-          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-          style={{ backgroundColor: isResolved || blocking === 0 ? C.success : C.primary }}>
-          {isResolved ? "Prepare Gate Review" : blocking === 0 ? "View Status" : "Show me"}
+          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          style={{ color: isResolved || blocking === 0 ? C.success : C.primary }}>
+          {isResolved ? "Prepare gate review →" : blocking === 0 ? "View progress →" : "Review blockers →"}
         </button>
       </div>
 
-      {/* KPI Row — PM Cockpit (5 cards: Runway / Decisions / Cost / Conflicts / Risk) */}
-      <div className="grid grid-cols-5 gap-4 mb-5">
+      {/* KPI Row — PM Cockpit (4 cards: Runway / Pending Decisions / Cost / Risk) */}
+      <div className="grid grid-cols-4 gap-4 mb-5">
         {/* Gate Runway — phase deadline */}
         <KpiCard
           icon={Clock}
@@ -3706,13 +4172,16 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
           value={`${project.phaseDays} days`}
           sub={`${project.phase} gate deadline`} />
 
-        {/* Open Decisions — pending PM action */}
+        {/* Pending Decisions — single source of truth for "PM action needed".
+            Same data as the Pending Decisions widget below (blocking items requiring PM resolution). */}
         <KpiCard
-          icon={AtSign}
-          iconColor={isResolved ? C.success : (isHeroProject ? C.primary : C.textSecondary)}
-          label="Open Decisions"
-          value={isResolved ? "0" : (isHeroProject ? "3" : "0")}
-          sub={isResolved ? "All resolved" : (isHeroProject ? "Awaiting PM review" : "Nothing pending")} />
+          icon={AlertTriangle}
+          iconColor={blocking > 0 ? C.error : C.success}
+          label="Pending Decisions"
+          value={blocking}
+          sub={blocking > 0
+            ? (isHeroProject ? "PM action needed" : "Action required")
+            : "All clear"} />
 
         {/* Cost vs Target — TMC Gap */}
         <KpiCard
@@ -3721,16 +4190,6 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
           label="Cost vs Target"
           value={tmcGap === 0 ? "—" : tmcGap > 0 ? `+$${tmcGap}k` : `-$${Math.abs(tmcGap)}k`}
           sub={tmcGap > 0 ? "Over target" : tmcGap < 0 ? "Under target" : "On target"} />
-
-        {/* BOM Conflicts — cross-BOM blocking issues */}
-        <KpiCard
-          icon={AlertTriangle}
-          iconColor={blocking > 0 ? C.error : C.success}
-          label="BOM Conflicts"
-          value={blocking}
-          sub={blocking > 0
-            ? (isHeroProject ? "AMOLED Panel" : "Action required")
-            : "All clear"} />
 
         {/* Risk Items — High risk parts (Q-BOM) */}
         <KpiCard
@@ -3767,14 +4226,23 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
         </div>
 
         <div className="col-span-2 p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
-              {isResolved ? "Recently Resolved Items" : blocking > 0 ? "Pending Decisions" : "Recent Activity"}
+          <div className="flex items-center justify-between mb-4 gap-3">
+            <div className="flex items-baseline gap-2 min-w-0">
+              <div className="text-sm font-semibold shrink-0" style={{ color: C.textPrimary }}>
+                {isResolved ? "Recently Resolved Items" : blocking > 0 ? "Pending Decisions" : "Recent Activity"}
+              </div>
+              {!isResolved && blocking > 0 && (
+                <span className="text-[11px]" style={{ color: C.textDisabled }}>
+                  · PM action needed
+                </span>
+              )}
             </div>
-            <span className="text-xs px-2 py-0.5 rounded"
-              style={{ backgroundColor: isResolved ? C.successLight : (blocking > 0 ? C.errorLight : C.bg),
-                       color: isResolved ? C.success : (blocking > 0 ? C.error : C.textSecondary) }}>
-              {isResolved ? "Last 24h" : blocking > 0 ? "Require PM action" : "All clear"}
+            <span className="text-[11px] shrink-0" style={{ color: C.textSecondary }}>
+              {isResolved
+                ? `${blockingItems.length} resolved in last 24h`
+                : blocking > 0
+                  ? `${blocking} item${blocking > 1 ? "s" : ""}`
+                  : "All caught up"}
             </span>
           </div>
           {isResolved ? (
@@ -3875,33 +4343,43 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
               </div>
             </div>
             <button onClick={() => setView("bom")}
-              className="text-xs font-medium px-3 py-1.5 rounded-md border flex items-center gap-1.5 transition-colors hover:bg-gray-50"
-              style={{ color: C.primary, borderColor: C.primaryLight, backgroundColor: "white" }}>
-              View full Activity Stream
-              <ChevronRight className="w-3.5 h-3.5" />
+              className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+              style={{ color: C.primary }}>
+              Full activity stream →
             </button>
           </div>
           {isHeroProject ? (
             <div className="space-y-3">
-              {ACTIVITY_FEED.slice(0, Math.min(scenarioStep + 1, 4)).map((m) => (
-                <div key={m.id} className="flex items-start gap-3 text-sm">
-                  <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={26} />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-medium" style={{ color: C.textPrimary }}>
-                        {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
-                      </span>
-                      <span className="text-xs" style={{ color: C.textDisabled }}>·</span>
-                      <span className="text-xs" style={{ color: C.textDisabled }}>{m.ts}</span>
-                      {m.decision && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
-                          style={{ backgroundColor: C.primaryLight, color: C.primary }}>DECISION</span>
-                      )}
+              {(() => {
+                // Activity feed mix:
+                // - Scenario messages (ids 1-8) progress with scenarioStep
+                // - History messages (ids 11+) are always-on context
+                // Always show 4 recent items: prefer latest scenario messages, fill with history
+                const scenarioMsgs = ACTIVITY_FEED.slice(0, Math.min(scenarioStep + 1, 8)); // up to 8 scenario items
+                const historyMsgs = ACTIVITY_FEED.filter(m => m.id >= 11);                  // history
+                // Latest scenario messages (descending by id) + history filler
+                const latestScenario = [...scenarioMsgs].reverse(); // most recent scenario message first
+                const mixed = [...latestScenario, ...historyMsgs].slice(0, 3);
+                return mixed.map((m) => (
+                  <div key={m.id} className="flex items-start gap-3 text-sm">
+                    <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={26} />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="font-medium" style={{ color: C.textPrimary }}>
+                          {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
+                        </span>
+                        <span className="text-xs" style={{ color: C.textDisabled }}>·</span>
+                        <span className="text-xs" style={{ color: C.textDisabled }}>{m.ts}</span>
+                        {m.decision && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                            style={{ backgroundColor: C.primaryLight, color: C.primary }}>DECISION</span>
+                        )}
+                      </div>
+                      <div className="text-xs leading-relaxed" style={{ color: C.textSecondary }}>{m.message}</div>
                     </div>
-                    <div className="text-xs leading-relaxed" style={{ color: C.textSecondary }}>{m.message}</div>
                   </div>
-                </div>
-              ))}
+                ));
+              })()}
             </div>
           ) : (
             <div className="text-center py-8">
@@ -4092,9 +4570,9 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
         <button
           onClick={() => setView && setView("bom")}
-          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
-          {isResolved ? "Open BOM" : "Open BOM workspace"}
+          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          style={{ color: isResolved ? C.success : C.primary }}>
+          {isResolved ? "Open BOM →" : "Open BOM workspace →"}
         </button>
       </div>
 
@@ -4402,9 +4880,9 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
         <button
           onClick={() => setView && setView("bom")}
-          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
-          {isResolved ? "View C-BOM" : "Open cost reconcile"}
+          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          style={{ color: isResolved ? C.success : C.primary }}>
+          {isResolved ? "View C-BOM →" : "Open cost reconcile →"}
         </button>
       </div>
 
@@ -4689,9 +5167,9 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
         <button
           onClick={() => setView && setView("bom")}
-          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
-          {isResolved ? "View C-BOM" : "Open sourcing view"}
+          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          style={{ color: isResolved ? C.success : C.primary }}>
+          {isResolved ? "View C-BOM →" : "Open sourcing view →"}
         </button>
       </div>
 
@@ -4884,6 +5362,83 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
   );
 }
 
+// === APQP GANTT CHART (reusable, always-expanded) ===
+// Standalone gantt visualization of APQP 5-phase program.
+// Embedded in QM Cockpit while the standalone APQP page is hidden.
+function ApqpGanttChart() {
+  const phases = [
+    { name: "Phase 1: Plan & Define",      start: 0,  end: 16,  status: "complete" },
+    { name: "Phase 2: Product Design",     start: 10, end: 48,  status: "complete" },
+    { name: "Phase 3: Process Design",     start: 41, end: 58,  status: "active" },
+    { name: "Phase 4: Validation",         start: 51, end: 70,  status: "active" },
+    { name: "Phase 5: Feedback & Improve", start: 70, end: 100, status: "pending" },
+  ];
+  const todayPos = 60;
+  return (
+    <div className="rounded-xl border bg-white p-5 mb-5" style={{ borderColor: C.border }}>
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>APQP Program Timeline</div>
+          <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            Advanced Product Quality Planning — 5-phase progress
+          </div>
+        </div>
+        <div className="flex items-center gap-3 text-[10px]" style={{ color: C.textSecondary }}>
+          <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: C.success }} />Complete</span>
+          <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: C.info }} />Active</span>
+          <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: C.textDisabled }} />Pending</span>
+        </div>
+      </div>
+      <div className="relative">
+        <div className="flex justify-between text-[9px] font-mono mb-1 pl-44" style={{ color: C.textDisabled }}>
+          <span>03/16</span>
+          <span>03/30</span>
+          <span>04/13</span>
+          <span>04/27</span>
+          <span>05/08</span>
+        </div>
+        {phases.map((ph, i) => {
+          const color = ph.status === "complete" ? C.success : ph.status === "active" ? C.info : C.textDisabled;
+          const lightColor = ph.status === "complete" ? C.successLight : ph.status === "active" ? C.infoLight : C.bg;
+          return (
+            <div key={i} className="flex items-center mb-1.5" style={{ height: 22 }}>
+              <div className="w-44 pr-3 text-[10px] font-medium" style={{ color: C.textPrimary }}>
+                {ph.name}
+              </div>
+              <div className="flex-1 relative rounded h-5" style={{ backgroundColor: C.bg }}>
+                <div className="absolute top-0 bottom-0 rounded flex items-center px-2"
+                  style={{
+                    left: `${ph.start}%`,
+                    width: `${ph.end - ph.start}%`,
+                    backgroundColor: lightColor,
+                    border: `1px solid ${color}`,
+                  }}>
+                  <div className="text-[9px] font-bold" style={{ color: color }}>
+                    {ph.status === "complete" ? "✓" : ph.status === "active" ? "●" : "○"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div className="absolute pointer-events-none"
+          style={{
+            left: `calc(11rem + (100% - 11rem) * ${todayPos / 100})`,
+            top: 14,
+            bottom: 0,
+            width: 0,
+          }}>
+          <div className="absolute h-full" style={{ width: 2, backgroundColor: C.primary, left: 0 }} />
+          <div className="absolute -top-3 -left-4 text-[9px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap"
+            style={{ backgroundColor: C.primary, color: "white" }}>
+            TODAY
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // === QM COCKPIT ===
 // Quality Manager-focused dashboard:
 // 5 KPIs (PPAP Items Open, PCR Requiring SQE, DVT Issues, Spec Changes to Review, New Parts No PPAP)
@@ -5010,12 +5565,15 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           </div>
         </div>
         <button
-          onClick={() => setView && setView("apqp")}
-          className="text-xs font-medium px-3 py-1.5 rounded-md text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-          style={{ backgroundColor: isResolved ? C.success : C.primary }}>
-          {isResolved ? "View APQP" : "Open APQP"}
+          onClick={() => setView && setView("bom")}
+          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          style={{ color: isResolved ? C.success : C.primary }}>
+          {isResolved ? "View Q-BOM →" : "Open Q-BOM →"}
         </button>
       </div>
+
+      {/* APQP Program Timeline — top of QM Overview (replaces standalone APQP menu) */}
+      <ApqpGanttChart />
 
       {/* KPI Row — QM-specific (5 cards) */}
       <div className="grid grid-cols-5 gap-4 mb-5">
@@ -5274,13 +5832,11 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
     ? projectFiles
     : projectFiles.filter(f => f.category === fileFilter);
 
-  const fileIconColor = (type) => {
-    if (type === "pdf") return C.error;
-    if (type === "xlsx") return C.success;
-    if (type === "docx") return C.primary;
-    if (type === "pptx") return C.warning;
-    return C.textSecondary;
-  };
+  // File icon color: unified neutral gray.
+  // Rationale: in our design system semantic colors (error/success/primary/warning) carry
+  // status meaning — using them for file types causes confusion (a red PDF looks "risky").
+  // File type is sufficiently indicated by the extension label in the metadata row.
+  const fileIconColor = () => C.textSecondary;
 
   return (
     <div className="p-6" style={{ minHeight: "100%" }}>
@@ -5288,6 +5844,43 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
 
         {/* === General Info === */}
         <div className="space-y-4">
+          {/* Phase Milestones — moved to top for at-a-glance progress overview */}
+          <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
+            <div className="text-[10px] font-semibold uppercase tracking-wide mb-3" style={{ color: C.primary }}>
+              Key Milestones
+            </div>
+            <div className="flex items-center gap-2">
+              {meta.keyMilestones.map((ms, i) => {
+                const isCompleted = ms.status === "completed";
+                const isActive = ms.status === "active";
+                const color = isCompleted ? C.success : isActive ? C.primary : C.textDisabled;
+                return (
+                  <div key={ms.phase} className="flex items-center gap-2 flex-1">
+                    <div className="flex flex-col items-center flex-1">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center mb-1"
+                        style={{
+                          backgroundColor: isCompleted ? C.successLight : isActive ? C.primaryLight : C.bg,
+                          border: `2px solid ${color}`,
+                        }}>
+                        {isCompleted ? <CheckCircle className="w-3.5 h-3.5" style={{ color }} />
+                          : isActive ? <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                          : <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color, opacity: 0.5 }} />}
+                      </div>
+                      <div className="text-[11px] font-medium" style={{ color: isActive ? C.primary : C.textPrimary }}>
+                        {ms.phase}
+                      </div>
+                      <div className="text-[9px]" style={{ color: C.textSecondary }}>{ms.date}</div>
+                    </div>
+                    {i < meta.keyMilestones.length - 1 && (
+                      <div className="h-px flex-1 mb-6"
+                        style={{ backgroundColor: meta.keyMilestones[i + 1].status === "upcoming" ? C.borderLight : C.success }} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Project Meta Card */}
           <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
             <div className="flex items-start justify-between mb-4">
@@ -5347,43 +5940,6 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
             </div>
           </div>
 
-          {/* Phase Milestones */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
-            <div className="text-[10px] font-semibold uppercase tracking-wide mb-3" style={{ color: C.primary }}>
-              Key Milestones
-            </div>
-            <div className="flex items-center gap-2">
-              {meta.keyMilestones.map((ms, i) => {
-                const isCompleted = ms.status === "completed";
-                const isActive = ms.status === "active";
-                const color = isCompleted ? C.success : isActive ? C.primary : C.textDisabled;
-                return (
-                  <div key={ms.phase} className="flex items-center gap-2 flex-1">
-                    <div className="flex flex-col items-center flex-1">
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center mb-1"
-                        style={{
-                          backgroundColor: isCompleted ? C.successLight : isActive ? C.primaryLight : C.bg,
-                          border: `2px solid ${color}`,
-                        }}>
-                        {isCompleted ? <CheckCircle className="w-3.5 h-3.5" style={{ color }} />
-                          : isActive ? <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-                          : <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color, opacity: 0.5 }} />}
-                      </div>
-                      <div className="text-[11px] font-medium" style={{ color: isActive ? C.primary : C.textPrimary }}>
-                        {ms.phase}
-                      </div>
-                      <div className="text-[9px]" style={{ color: C.textSecondary }}>{ms.date}</div>
-                    </div>
-                    {i < meta.keyMilestones.length - 1 && (
-                      <div className="h-px flex-1 mb-6"
-                        style={{ backgroundColor: meta.keyMilestones[i + 1].status === "upcoming" ? C.borderLight : C.success }} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Shared Files */}
           <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
             <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
@@ -5395,8 +5951,8 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
                   {projectFiles.length}
                 </span>
               </div>
-              <button className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1.5"
-                style={{ backgroundColor: C.primary }}>
+              <button className="px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
                 <PlusCircle className="w-3.5 h-3.5" />
                 Upload File
               </button>
@@ -5439,13 +5995,15 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0" style={{ width: 130 }}>
                     <PersonaAvatar p={f.uploadedBy} size={20} />
-                    <div className="text-right">
-                      <div className="text-[10px]" style={{ color: C.textPrimary }}>
-                        {PERSONAS[f.uploadedBy]?.role}
+                    <div className="flex flex-col text-left min-w-0">
+                      <div className="text-[10px] font-medium leading-tight truncate" style={{ color: C.textPrimary }}>
+                        {PERSONAS[f.uploadedBy]?.name}
                       </div>
-                      <div className="text-[10px]" style={{ color: C.textDisabled }}>{f.uploadedAt}</div>
+                      <div className="text-[10px] leading-tight mt-0.5 truncate" style={{ color: C.textDisabled }}>
+                        {f.uploadedAt}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -5467,6 +6025,251 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
   );
 }
 
+// === SUPPLIER PROFILE POPOVER ===
+// Compact supplier overview shown on company-name click in the External Collaborators table.
+// Displays: identity (logo, name, location, tags), purchase history bar+line chart, top items, RFx history.
+function SupplierProfilePopover({ supplier, onClose }) {
+  // ESC to close
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose && onClose(); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  if (!supplier) return null;
+
+  // Use first supplier item to derive a brand color for the avatar
+  const brandColor = ({
+    "BOE Technology": "#1565E0",
+    "Samsung Display": "#532DF6",
+    "LG Display": "#009955",
+    "Nitto Denko": "#E06900",
+    "3M Korea": "#1565E0",
+  })[supplier.name] || C.primary;
+
+  const maxPo = Math.max(...supplier.purchaseHistory.map(h => h.po));
+  const maxRate = Math.max(...supplier.purchaseHistory.map(h => Math.abs(h.rate)));
+  const chartH = 140;
+  const chartW = 520;
+  const padding = 32;
+  const innerW = chartW - padding * 2;
+  const barCount = supplier.purchaseHistory.length;
+  const barSlot = innerW / barCount;
+  const barW = 28;
+
+  return (
+    <>
+      <div onClick={onClose} className="fixed inset-0 transition-opacity"
+        style={{ backgroundColor: "rgba(0,0,0,0.32)", zIndex: 100 }} />
+      <div className="fixed top-0 bottom-0 right-0 bg-white shadow-2xl overflow-y-auto"
+        style={{ width: 600, zIndex: 110 }}>
+        {/* Header */}
+        <div className="px-6 pt-5 pb-4 border-b" style={{ borderColor: C.borderLight }}>
+          <div className="flex items-start justify-between mb-3">
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Supplier Details</div>
+            <button onClick={onClose} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center"
+              style={{ color: C.textSecondary }}>
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
+              style={{ backgroundColor: brandColor + "20" }}>
+              <Building2 className="w-5 h-5" style={{ color: brandColor }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="text-lg font-semibold" style={{ color: C.textPrimary }}>{supplier.name}</div>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1"
+                  style={{ backgroundColor: C.primaryLight, color: C.primary }}>
+                  <ShieldCheck className="w-3 h-3" />
+                  {supplier.badge}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] mt-1 flex-wrap" style={{ color: C.textSecondary }}>
+                <MapPin className="w-3 h-3" />
+                <span>{supplier.location}</span>
+                <span className="mx-1" style={{ color: C.textDisabled }}>·</span>
+                <div className="flex items-center gap-1 flex-wrap">
+                  {supplier.tags.map(t => (
+                    <span key={t} className="text-[10px] px-1.5 py-0.5 rounded"
+                      style={{ backgroundColor: C.bg, color: C.textSecondary }}>{t}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <button className="w-7 h-7 rounded hover:bg-gray-100 flex items-center justify-center" style={{ color: C.textSecondary }} title="Favorite">
+                <Star className="w-3.5 h-3.5" />
+              </button>
+              <button className="w-7 h-7 rounded hover:bg-gray-100 flex items-center justify-center" style={{ color: C.textSecondary }} title="Email">
+                <Mail className="w-3.5 h-3.5" />
+              </button>
+              <button className="w-7 h-7 rounded hover:bg-gray-100 flex items-center justify-center" style={{ color: C.textSecondary }} title="Call">
+                <Phone className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+          {/* AI summary */}
+          <div className="mt-3 px-3 py-2 rounded-md flex items-start gap-2"
+            style={{ backgroundColor: C.primarySoft }}>
+            <Sparkles className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: C.primary }} />
+            <div className="text-[11px] leading-relaxed" style={{ color: C.primary }}>{supplier.summary}</div>
+          </div>
+        </div>
+
+        {/* Purchase History — combo chart (bar + line) */}
+        <div className="px-6 pt-4 pb-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Purchase History</div>
+            <div className="flex items-center gap-3 text-[10px]" style={{ color: C.textSecondary }}>
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-2 rounded-sm" style={{ backgroundColor: C.primaryLight }} />
+                PO Amount
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-0.5 rounded" style={{ backgroundColor: C.primary }} />
+                Increase Rate
+              </span>
+            </div>
+          </div>
+          <div className="rounded-lg border p-3" style={{ borderColor: C.border }}>
+            <svg width="100%" viewBox={`0 0 ${chartW} ${chartH + 30}`} style={{ overflow: "visible" }}>
+              {/* Y-axis grid lines */}
+              {[0, 50, 100, 150, 200].map(v => {
+                const y = chartH - (v / 200) * chartH;
+                return (
+                  <g key={v}>
+                    <line x1={padding} x2={chartW - padding} y1={y} y2={y}
+                      stroke={C.borderLight} strokeDasharray="2 2" />
+                    <text x={padding - 6} y={y + 3} textAnchor="end"
+                      style={{ fontSize: 9, fill: C.textDisabled }}>{v}K</text>
+                  </g>
+                );
+              })}
+              {/* Bars (PO Amount) */}
+              {supplier.purchaseHistory.map((h, i) => {
+                const x = padding + barSlot * i + (barSlot - barW) / 2;
+                const barH = (h.po / 200) * chartH;
+                return (
+                  <g key={i}>
+                    <rect x={x} y={chartH - barH} width={barW} height={barH}
+                      fill={C.primaryLight} rx={3} />
+                    <text x={x + barW / 2} y={chartH + 14} textAnchor="middle"
+                      style={{ fontSize: 9, fill: C.textSecondary }}>{h.quarter}</text>
+                  </g>
+                );
+              })}
+              {/* Line (Increase Rate) — normalized to chart height */}
+              {(() => {
+                const points = supplier.purchaseHistory.map((h, i) => {
+                  const x = padding + barSlot * i + barSlot / 2;
+                  // Map rate -50%..+60% to chartH..0
+                  const normalized = Math.max(-50, Math.min(60, h.rate));
+                  const y = chartH - ((normalized + 50) / 110) * chartH;
+                  return `${x},${y}`;
+                }).join(" ");
+                return <polyline points={points} fill="none" stroke={C.primary} strokeWidth={2} />;
+              })()}
+              {/* Line points */}
+              {supplier.purchaseHistory.map((h, i) => {
+                const x = padding + barSlot * i + barSlot / 2;
+                const normalized = Math.max(-50, Math.min(60, h.rate));
+                const y = chartH - ((normalized + 50) / 110) * chartH;
+                return <circle key={`pt-${i}`} cx={x} cy={y} r={3.5} fill={C.primary} />;
+              })}
+            </svg>
+          </div>
+        </div>
+
+        {/* Items breakdown */}
+        <div className="px-6 pb-4">
+          <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.textSecondary }}>
+            Top Items
+          </div>
+          <div className="rounded-lg border overflow-hidden" style={{ borderColor: C.border }}>
+            <table className="w-full text-xs">
+              <thead style={{ backgroundColor: C.bg }}>
+                <tr style={{ color: C.textSecondary }}>
+                  <th className="text-left font-medium py-1.5 px-3">Category / Item</th>
+                  <th className="text-left font-medium py-1.5 px-3">Spec</th>
+                  <th className="text-right font-medium py-1.5 px-3">PO Amount (USD)</th>
+                  <th className="text-right font-medium py-1.5 px-3">Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {supplier.items.map((item) => (
+                  <React.Fragment key={item.category}>
+                    <tr style={{ borderTop: `1px solid ${C.borderLight}`, backgroundColor: C.surfaceTinted }}>
+                      <td className="py-1.5 px-3 text-[11px] font-semibold" style={{ color: C.textPrimary }}>{item.category}</td>
+                      <td className="py-1.5 px-3"></td>
+                      <td className="py-1.5 px-3 text-[11px] text-right font-semibold tabular-nums" style={{ color: C.textPrimary }}>
+                        {item.amount.toLocaleString()}
+                      </td>
+                      <td className="py-1.5 px-3 text-[11px] text-right font-semibold tabular-nums"
+                        style={{ color: item.rate >= 0 ? C.success : C.error }}>
+                        {item.rate >= 0 ? "+" : ""}{item.rate.toFixed(1)}%
+                      </td>
+                    </tr>
+                    {item.parts.map((p) => (
+                      <tr key={p.name} style={{ borderTop: `1px solid ${C.borderLight}` }}>
+                        <td className="py-1.5 px-3 text-[11px] pl-6" style={{ color: C.textPrimary }}>{p.name}</td>
+                        <td className="py-1.5 px-3 text-[11px]" style={{ color: C.textSecondary }}>{p.spec}</td>
+                        <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textSecondary }}>
+                          {p.amount.toLocaleString()}
+                        </td>
+                        <td></td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* RFx History */}
+        <div className="px-6 pb-6">
+          <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.textSecondary }}>
+            RFx History
+          </div>
+          <div className="rounded-lg border overflow-hidden" style={{ borderColor: C.border }}>
+            <table className="w-full text-xs">
+              <thead style={{ backgroundColor: C.bg }}>
+                <tr style={{ color: C.textSecondary }}>
+                  <th className="text-left font-medium py-1.5 px-3">Year</th>
+                  <th className="text-left font-medium py-1.5 px-3">Operation Org.</th>
+                  <th className="text-right font-medium py-1.5 px-3">RFx</th>
+                  <th className="text-right font-medium py-1.5 px-3">Bids</th>
+                  <th className="text-right font-medium py-1.5 px-3">Bid Rate</th>
+                  <th className="text-right font-medium py-1.5 px-3">Awards</th>
+                  <th className="text-right font-medium py-1.5 px-3">Award Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {supplier.rfx.map((row, i) => (
+                  <tr key={i} style={{ borderTop: `1px solid ${C.borderLight}` }}>
+                    <td className="py-1.5 px-3 text-[11px]" style={{ color: C.textPrimary }}>{row.year}</td>
+                    <td className="py-1.5 px-3 text-[11px]" style={{ color: C.textPrimary }}>{row.org}</td>
+                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textSecondary }}>{row.requests}</td>
+                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textSecondary }}>{row.bids}</td>
+                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textPrimary }}>{row.bidRate}%</td>
+                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textPrimary }}>{row.awards}</td>
+                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums font-semibold"
+                      style={{ color: row.awardRate >= 50 ? C.success : C.textPrimary }}>
+                      {row.awardRate}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // === SCREEN: COLLABORATORS ===
 // Groups: Internal (5 personas) + External (suppliers).
 // Supports multi-select with bulk action toolbar for Share / Send Update / Invite to Meeting.
@@ -5475,10 +6278,76 @@ function CollaboratorsScreen({ activeProjectCode }) {
   const internalList = getCollaboratorsForProject(project);
   const externalList = getExternalCollaboratorsForProject(project);
 
+  // ===== Access Permissions =====
+  // 6 access areas, 3 permission levels (edit / view / none).
+  // Default permissions follow role-based access control:
+  // - PM (Owner): edit on everything
+  // - DE: edit on E-BOM & Files; view on others; no Decisions edit
+  // - CM: edit on C-BOM & Files; view on others
+  // - SM: edit on C-BOM & Files; view on others (sourcing collaborates via C-BOM)
+  // - QM: edit on Q-BOM & APQP & Files; view on others
+  // - External: view on C-BOM & Files only (supplier-facing surfaces)
+  const ACCESS_AREAS = [
+    { id: "ebom",      label: "E-BOM" },
+    { id: "cbom",      label: "C-BOM" },
+    { id: "qbom",      label: "Q-BOM" },
+    { id: "apqp",      label: "APQP" },
+    { id: "files",     label: "Files" },
+    { id: "decisions", label: "Decisions" },
+  ];
+
+  const defaultPermissionsFor = (key, isExternal) => {
+    if (isExternal) {
+      // External suppliers — restricted: only see what they need to quote/respond
+      return { ebom: "none", cbom: "view", qbom: "none", apqp: "none", files: "view", decisions: "none" };
+    }
+    // Internal: by persona role
+    const defaults = {
+      PM: { ebom: "edit", cbom: "edit", qbom: "edit", apqp: "edit", files: "edit", decisions: "edit" },
+      DE: { ebom: "edit", cbom: "view", qbom: "view", apqp: "view", files: "edit", decisions: "view" },
+      CM: { ebom: "view", cbom: "edit", qbom: "view", apqp: "view", files: "edit", decisions: "view" },
+      SM: { ebom: "view", cbom: "edit", qbom: "view", apqp: "view", files: "edit", decisions: "view" },
+      QM: { ebom: "view", cbom: "view", qbom: "edit", apqp: "edit", files: "edit", decisions: "view" },
+    };
+    return defaults[key] || { ebom: "view", cbom: "view", qbom: "view", apqp: "view", files: "view", decisions: "view" };
+  };
+
+  // Permissions state — keyed by member id (int-PM, ext-1, etc).
+  // Initialized lazily on first render based on the default matrix.
+  const [permissions, setPermissions] = useState(() => {
+    const initial = {};
+    internalList.forEach(c => { initial[`int-${c.persona}`] = defaultPermissionsFor(c.persona, false); });
+    externalList.forEach(c => { initial[`ext-${c.id}`] = defaultPermissionsFor(null, true); });
+    return initial;
+  });
+
+  // Active permission editor — id of the row whose permissions are being edited (popover)
+  const [editingPermissions, setEditingPermissions] = useState(null);
+
+  const cyclePermission = (memberId, areaId) => {
+    setPermissions(prev => {
+      const current = prev[memberId]?.[areaId] || "none";
+      const next = current === "edit" ? "view" : current === "view" ? "none" : "edit";
+      return {
+        ...prev,
+        [memberId]: { ...(prev[memberId] || {}), [areaId]: next },
+      };
+    });
+  };
+
+  // Permission chip metadata (cycles edit → view → none → edit)
+  const permMeta = {
+    edit: { label: "Edit", short: "E", bg: C.primary,        fg: "white",          border: C.primary },
+    view: { label: "View", short: "V", bg: C.bg,             fg: C.textSecondary,  border: C.border },
+    none: { label: "None", short: "—", bg: "transparent",    fg: C.textDisabled,   border: C.borderLight },
+  };
+
   // Multi-select state — keyed by unique IDs (persona for internal, id for external)
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeAction, setActiveAction] = useState(null); // null | "update" | "meeting" | "share"
+  const [activeAction, setActiveAction] = useState(null); // null | "update" | "access" | "meeting" | "share"
+  const [openMenuId, setOpenMenuId] = useState(null); // row id whose context menu is open
+  const [supplierProfileOpen, setSupplierProfileOpen] = useState(null); // supplier name whose profile drawer is open
   const [addMode, setAddMode] = useState(null); // null | "internal" | "external"
 
   const toggleId = (id) => {
@@ -5518,277 +6387,300 @@ function CollaboratorsScreen({ activeProjectCode }) {
   const hasExternal = externalList.length > 0;
 
   return (
-    <div className="p-6" style={{ minHeight: "100%" }}>
-      <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-        {/* Toolbar */}
-        <div className="px-5 py-3 border-b flex items-center justify-between flex-wrap gap-3" style={{ borderColor: C.border }}>
-          <div className="flex items-center gap-3 flex-wrap">
-            {/* Search */}
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: C.textDisabled }} />
-              <input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search name, role, or company..."
-                className="h-8 pl-8 pr-3 rounded-md border text-xs outline-none focus:outline-none focus-visible:ring-2"
-                style={{ borderColor: C.border, backgroundColor: C.surfaceTinted, width: 280, color: C.textPrimary }} />
-            </div>
-            <div className="text-[11px] flex items-center gap-2" style={{ color: C.textSecondary }}>
-              <span style={{ color: C.textDisabled }}>Total:</span>
-              <span style={{ color: C.textPrimary, fontWeight: 500 }}>{internalList.length} internal · {externalList.length} external</span>
-            </div>
+    <div className="p-6 space-y-4" style={{ minHeight: "100%" }}>
+      {/* === Header / toolbar (shared above both tables) === */}
+      <div className="rounded-xl border bg-white px-5 py-3 flex items-center justify-between flex-wrap gap-3" style={{ borderColor: C.border }}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
+            Collaborators
+            <span className="text-xs font-normal ml-2" style={{ color: C.textSecondary }}>
+              Internal {filteredInternal.length} · External {filteredExternal.length}
+            </span>
           </div>
-
-          <div className="text-[11px]" style={{ color: C.textSecondary }}>
-            <span style={{ color: C.textDisabled }}>Project:</span>{" "}
-            <span style={{ color: C.textPrimary, fontWeight: 500 }}>{project.code}</span>
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: C.textDisabled }} />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              className="h-7 pl-7 pr-3 rounded-md border text-xs outline-none focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, backgroundColor: C.surfaceTinted, width: 220, color: C.textPrimary }} />
           </div>
         </div>
-
-        {/* Bulk action bar (appears when items selected) */}
-        {selectedCount > 0 && (
-          <div className="px-5 py-2.5 border-b flex items-center justify-between" style={{ borderColor: C.border, backgroundColor: C.primarySoft }}>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold" style={{ color: C.primary }}>
-                {selectedCount} selected
-              </span>
-              <button onClick={clearSelection}
-                className="text-[11px] underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                style={{ color: C.textSecondary }}>
-                Clear
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setActiveAction("update")}
-                className="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2"
-                style={{ backgroundColor: C.primary, color: "white" }}>
-                <Send className="w-3.5 h-3.5" />
-                Send Update
-              </button>
-              <button onClick={() => setActiveAction("share")}
-                className="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors border hover:bg-white focus:outline-none focus-visible:ring-2"
-                style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
-                <Paperclip className="w-3.5 h-3.5" />
-                Share Document
-              </button>
-              <button onClick={() => setActiveAction("meeting")}
-                className="h-8 px-3 rounded-md text-xs font-medium inline-flex items-center gap-1.5 transition-colors border hover:bg-white focus:outline-none focus-visible:ring-2"
-                style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
-                <Clock className="w-3.5 h-3.5" />
-                Invite to Meeting
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Body */}
-        <div className="p-5 space-y-6">
-          {/* === INTERNAL GROUP === */}
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: C.primarySoft }}>
-                  <UsersRound className="w-4 h-4" style={{ color: C.primary }} />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Internal Team</div>
-                  <div className="text-[11px]" style={{ color: C.textSecondary }}>{filteredInternal.length} member{filteredInternal.length !== 1 ? "s" : ""} from Samsung</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {filteredInternal.length > 0 && (
-                  <button onClick={() => toggleGroup(internalIds, allInternalSelected)}
-                    className="text-[11px] font-medium underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                    style={{ color: C.primary }}>
-                    {allInternalSelected ? "Deselect all" : "Select all"}
-                  </button>
-                )}
-                <button onClick={() => setAddMode("internal")}
-                  className="h-7 px-2.5 rounded-md text-[11px] font-medium inline-flex items-center gap-1 border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                  style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
-                  <Plus className="w-3 h-3" />
-                  Add Member
-                </button>
-              </div>
-            </div>
-
-            {filteredInternal.length === 0 ? (
-              <div className="text-center py-6 text-sm rounded-lg border" style={{ color: C.textSecondary, borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
-                No internal members match this search.
-              </div>
-            ) : (
-              <div className="border rounded-lg divide-y" style={{ borderColor: C.borderLight }}>
-                {filteredInternal.map(c => {
-                  const personaMeta = PERSONAS[c.persona] || {};
-                  const id = `int-${c.persona}`;
-                  const isSelected = selectedIds.has(id);
-                  return (
-                    <label key={id}
-                      className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-gray-50"
-                      style={{ backgroundColor: isSelected ? C.primarySoft : "transparent" }}>
-                      <input type="checkbox" checked={isSelected} onChange={() => toggleId(id)}
-                        className="w-4 h-4 rounded accent-current cursor-pointer"
-                        style={{ accentColor: C.primary }} />
-                      <PersonaAvatar p={c.persona} size={36} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>{personaMeta.name || c.persona}</span>
-                          <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: C.bg, color: C.textSecondary }}>{c.persona}</span>
-                          {c.owner && (
-                            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: C.primary, color: "white" }}>Owner</span>
-                          )}
-                        </div>
-                        <div className="text-xs mt-0.5" style={{ color: C.textSecondary }}>
-                          {c.role} · {c.department}
-                        </div>
-                        <div className="text-[11px] mt-0.5 flex items-center gap-3" style={{ color: C.textDisabled }}>
-                          <span>{c.email}</span>
-                          <span>·</span>
-                          <span>Last active: {c.active}</span>
-                          <span>·</span>
-                          <span>{c.contribution} contributions</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
-                          style={{ borderColor: C.border, color: C.textSecondary }}
-                          onClick={(e) => e.preventDefault()}
-                          title="Chat">
-                          <MessageSquare className="w-3.5 h-3.5" />
-                        </button>
-                        <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
-                          style={{ borderColor: C.border, color: C.textSecondary }}
-                          onClick={(e) => e.preventDefault()}
-                          title="Email">
-                          <Send className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-
-          {/* === EXTERNAL GROUP === */}
-          {hasExternal && (
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: "rgba(21,101,224,0.10)" }}>
-                    <Building2 className="w-4 h-4" style={{ color: C.info }} />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>External Partners</div>
-                    <div className="text-[11px]" style={{ color: C.textSecondary }}>{filteredExternal.length} supplier contact{filteredExternal.length !== 1 ? "s" : ""}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {filteredExternal.length > 0 && (
-                    <button onClick={() => toggleGroup(externalIds, allExternalSelected)}
-                      className="text-[11px] font-medium underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                      style={{ color: C.primary }}>
-                      {allExternalSelected ? "Deselect all" : "Select all"}
-                    </button>
-                  )}
-                  <button onClick={() => setAddMode("external")}
-                    className="h-7 px-2.5 rounded-md text-[11px] font-medium inline-flex items-center gap-1 border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                    style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
-                    <Plus className="w-3 h-3" />
-                    Add Partner
-                  </button>
-                </div>
-              </div>
-
-              {filteredExternal.length === 0 ? (
-                <div className="text-center py-6 text-sm rounded-lg border" style={{ color: C.textSecondary, borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
-                  No external partners match this search.
-                </div>
-              ) : (
-                <div className="border rounded-lg divide-y" style={{ borderColor: C.borderLight }}>
-                  {filteredExternal.map(c => {
-                    const id = `ext-${c.id}`;
-                    const isSelected = selectedIds.has(id);
-                    return (
-                      <label key={id}
-                        className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-gray-50"
-                        style={{ backgroundColor: isSelected ? C.primarySoft : "transparent" }}>
-                        <input type="checkbox" checked={isSelected} onChange={() => toggleId(id)}
-                          className="w-4 h-4 rounded accent-current cursor-pointer"
-                          style={{ accentColor: C.primary }} />
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0"
-                          style={{ backgroundColor: c.color }}>
-                          {c.initial}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>{c.name}</span>
-                            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(21,101,224,0.10)", color: C.info }}>External</span>
-                          </div>
-                          <div className="text-xs mt-0.5" style={{ color: C.textSecondary }}>
-                            {c.role} · {c.company}
-                          </div>
-                          <div className="text-[11px] mt-0.5 flex items-center gap-3 flex-wrap" style={{ color: C.textDisabled }}>
-                            <span>{c.email}</span>
-                            <span>·</span>
-                            <span>Last active: {c.active}</span>
-                          </div>
-                          <div className="text-[11px] mt-1" style={{ color: C.textSecondary }}>
-                            {c.contribution}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
-                            style={{ borderColor: C.border, color: C.textSecondary }}
-                            onClick={(e) => e.preventDefault()}
-                            title="Email">
-                            <Send className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-          )}
-
-          {/* Empty state for new project */}
-          {!hasExternal && project.isNew && (
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
-                    <Building2 className="w-4 h-4" style={{ color: C.textDisabled }} />
-                  </div>
-                  <div className="text-sm font-semibold" style={{ color: C.textDisabled }}>External Partners</div>
-                </div>
-                <button onClick={() => setAddMode("external")}
-                  className="h-7 px-2.5 rounded-md text-[11px] font-medium inline-flex items-center gap-1 border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
-                  style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
-                  <Plus className="w-3 h-3" />
-                  Add Partner
-                </button>
-              </div>
-              <div className="text-center py-8 rounded-lg border-2 border-dashed" style={{ borderColor: C.borderLight }}>
-                <div className="text-sm mb-1" style={{ color: C.textPrimary }}>No external partners yet</div>
-                <div className="text-xs" style={{ color: C.textSecondary }}>Suppliers will appear here once added to the C-BOM.</div>
-              </div>
-            </section>
-          )}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setActiveAction("update")}
+            disabled={selectedCount === 0}
+            className="h-7 px-3 rounded-md text-xs font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+            Send Message
+          </button>
+          <button
+            disabled={selectedCount === 0}
+            onClick={() => setActiveAction("access")}
+            className="h-7 px-3 rounded-md text-xs font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 focus:outline-none focus-visible:ring-2 inline-flex items-center gap-1"
+            style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+            <Lock className="w-3 h-3" />
+            Access Setting
+          </button>
+          <button
+            onClick={() => setAddMode("internal")}
+            className="h-7 px-3 rounded-md text-xs font-medium text-white transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2"
+            style={{ backgroundColor: C.primary }}>
+            Invite
+          </button>
         </div>
       </div>
 
-      {/* Bulk action modals */}
+      {/* === INTERNAL TABLE === */}
+      <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+        <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+          <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.textSecondary }}>
+            Internal · {filteredInternal.length}
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead style={{ backgroundColor: C.bg }}>
+              <tr style={{ color: C.textSecondary, borderBottom: `1px solid ${C.border}` }}>
+                <th className="text-center font-medium py-2 px-3 w-8">
+                  <input type="checkbox" className="rounded"
+                    checked={filteredInternal.length > 0 && filteredInternal.every(c => selectedIds.has(`int-${c.persona}`))}
+                    onChange={(e) => {
+                      const ids = filteredInternal.map(c => `int-${c.persona}`);
+                      toggleGroup(ids, !e.target.checked);
+                    }} />
+                </th>
+                <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
+                <th className="text-left font-medium py-2 px-3 w-32">Name</th>
+                <th className="text-left font-medium py-2 px-3 w-28">Role</th>
+                <th className="text-left font-medium py-2 px-3 w-40">Access</th>
+                <th className="text-left font-medium py-2 px-3">Associated BOMs</th>
+                <th className="text-left font-medium py-2 px-3 w-48">Email</th>
+                <th className="text-left font-medium py-2 px-3 w-24">Contact</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredInternal.map((c) => {
+                const memberId = `int-${c.persona}`;
+                const isSelected = selectedIds.has(memberId);
+                const meta = PERSONAS[c.persona] || {};
+                const perms = permissions[memberId] || {};
+                const accessAreas = ACCESS_AREAS.filter(a =>
+                  perms[a.id] === "edit" && !["files", "decisions"].includes(a.id)
+                ).map(a => a.label);
+                const associatedBoms = ACCESS_AREAS.filter(a =>
+                  (perms[a.id] === "edit" || perms[a.id] === "view") && ["ebom", "cbom", "qbom"].includes(a.id)
+                ).map(a => a.label);
+                const orgLabel = ({
+                  PM: "[PMO] Project Office",
+                  DE: "[E-BOM] Engineering",
+                  CM: "[C-BOM] Cost Engineering",
+                  SM: "[C-BOM] Sourcing",
+                  QM: "[Q-BOM] Quality Assurance",
+                })[c.persona] || meta.department || "Internal";
+                return (
+                  <tr key={memberId}
+                    className="transition-colors hover:bg-gray-50"
+                    style={{
+                      borderBottom: `1px solid ${C.borderLight}`,
+                      backgroundColor: isSelected ? C.primarySoft : "white",
+                    }}>
+                    <td className="py-2 px-3 text-center">
+                      <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" />
+                    </td>
+                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>{orgLabel}</td>
+                    <td className="py-2 px-3">
+                      <div className="flex items-center gap-1.5">
+                        <PersonaAvatar p={c.persona} size={18} />
+                        <span className="text-[11px] font-medium" style={{ color: C.textPrimary }}>{meta.name}</span>
+                        {c.owner && (
+                          <span className="text-[8px] uppercase font-bold px-1 py-0.5 rounded"
+                            style={{ backgroundColor: C.primary, color: "white" }}>Owner</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>{c.role}</td>
+                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>
+                      {accessAreas.length > 0 ? accessAreas.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
+                    </td>
+                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textSecondary }}>
+                      {associatedBoms.length > 0 ? associatedBoms.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
+                    </td>
+                    <td className="py-2 px-3 text-[11px] font-mono" style={{ color: C.textSecondary }}>
+                      {meta.email || `${meta.name?.toLowerCase().replace(/[ .]/g, '.')}@samsung.com`}
+                    </td>
+                    <td className="py-2 px-3">
+                      <div className="flex items-center gap-1">
+                        <button className="w-6 h-6 rounded flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
+                          style={{ borderColor: C.border, color: C.textSecondary }} title="Chat">
+                          <MessageSquare className="w-3 h-3" />
+                        </button>
+                        <button className="w-6 h-6 rounded flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
+                          style={{ borderColor: C.border, color: C.textSecondary }} title="Email">
+                          <Mail className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filteredInternal.length === 0 && (
+                <tr><td colSpan={8} className="py-8 text-center text-[11px]" style={{ color: C.textDisabled }}>No internal members.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* === EXTERNAL TABLE === */}
+      <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
+        <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+          <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.textSecondary }}>
+            External · {filteredExternal.length}
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead style={{ backgroundColor: C.bg }}>
+              <tr style={{ color: C.textSecondary, borderBottom: `1px solid ${C.border}` }}>
+                <th className="text-center font-medium py-2 px-3 w-8">
+                  <input type="checkbox" className="rounded"
+                    checked={filteredExternal.length > 0 && filteredExternal.every(c => selectedIds.has(`ext-${c.id}`))}
+                    onChange={(e) => {
+                      const ids = filteredExternal.map(c => `ext-${c.id}`);
+                      toggleGroup(ids, !e.target.checked);
+                    }} />
+                </th>
+                <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
+                <th className="text-left font-medium py-2 px-3 w-32">Name</th>
+                <th className="text-left font-medium py-2 px-3 w-28">Role</th>
+                <th className="text-left font-medium py-2 px-3 w-40">Access</th>
+                <th className="text-left font-medium py-2 px-3">Associated BOMs</th>
+                <th className="text-left font-medium py-2 px-3 w-48">Email</th>
+                <th className="text-left font-medium py-2 px-3 w-24">Contact</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(() => {
+                // Group external by company
+                const bySupplier = {};
+                filteredExternal.forEach(c => {
+                  if (!bySupplier[c.company]) bySupplier[c.company] = [];
+                  bySupplier[c.company].push(c);
+                });
+                const supplierGroups = Object.entries(bySupplier).sort(([a], [b]) => a.localeCompare(b));
+                return supplierGroups.map(([company, members]) => (
+                  <React.Fragment key={`sup-${company}`}>
+                    <tr style={{ borderBottom: `1px solid ${C.borderLight}`, backgroundColor: "#FAFBFC" }}>
+                      <td colSpan={8} className="py-1.5 px-3">
+                        <div className="flex items-center gap-2 pl-3">
+                          <div className="w-1 h-3 rounded-sm" style={{ backgroundColor: members[0]?.color || C.textDisabled }} />
+                          <button
+                            onClick={() => SUPPLIER_DETAILS[company] && setSupplierProfileOpen(company)}
+                            className="text-[10px] font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded inline-flex items-center gap-1"
+                            style={{ color: C.textPrimary, cursor: SUPPLIER_DETAILS[company] ? "pointer" : "default" }}
+                            title={SUPPLIER_DETAILS[company] ? "View supplier details" : undefined}>
+                            {company}
+                            <span className="font-normal" style={{ color: C.textDisabled }}>({members.length})</span>
+                            {SUPPLIER_DETAILS[company] && (
+                              <Info className="w-2.5 h-2.5 opacity-50" />
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {members.map((c) => {
+                      const memberId = `ext-${c.id}`;
+                      const isSelected = selectedIds.has(memberId);
+                      const perms = permissions[memberId] || {};
+                      const accessAreas = ACCESS_AREAS.filter(a =>
+                        perms[a.id] === "edit" && !["files", "decisions"].includes(a.id)
+                      ).map(a => a.label);
+                      const associatedBoms = ACCESS_AREAS.filter(a =>
+                        (perms[a.id] === "edit" || perms[a.id] === "view") && ["ebom", "cbom", "qbom"].includes(a.id)
+                      ).map(a => a.label);
+                      return (
+                        <tr key={memberId}
+                          className="transition-colors hover:bg-gray-50"
+                          style={{
+                            borderBottom: `1px solid ${C.borderLight}`,
+                            backgroundColor: isSelected ? C.primarySoft : "white",
+                          }}>
+                          <td className="py-2 px-3 text-center">
+                            <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" />
+                          </td>
+                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>
+                            {SUPPLIER_DETAILS[c.company] ? (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setSupplierProfileOpen(c.company); }}
+                                className="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded text-left"
+                                style={{ color: C.textPrimary }}>
+                                {c.company}
+                              </button>
+                            ) : c.company}
+                          </td>
+                          <td className="py-2 px-3">
+                            <div className="flex items-center gap-1.5">
+                              <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold text-white shrink-0"
+                                style={{ backgroundColor: c.color }}>
+                                {c.initial}
+                              </div>
+                              <span className="text-[11px] font-medium" style={{ color: C.textPrimary }}>{c.name}</span>
+                            </div>
+                          </td>
+                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>{c.role}</td>
+                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>
+                            {accessAreas.length > 0 ? accessAreas.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
+                          </td>
+                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textSecondary }}>
+                            {associatedBoms.length > 0 ? associatedBoms.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
+                          </td>
+                          <td className="py-2 px-3 text-[11px] font-mono" style={{ color: C.textSecondary }}>{c.email}</td>
+                          <td className="py-2 px-3">
+                            <div className="flex items-center gap-1">
+                              <button className="w-6 h-6 rounded flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
+                                style={{ borderColor: C.border, color: C.textSecondary }} title="Chat">
+                                <MessageSquare className="w-3 h-3" />
+                              </button>
+                              <button className="w-6 h-6 rounded flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
+                                style={{ borderColor: C.border, color: C.textSecondary }} title="Email">
+                                <Mail className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </React.Fragment>
+                ));
+              })()}
+              {filteredExternal.length === 0 && (
+                <tr><td colSpan={8} className="py-8 text-center text-[11px]" style={{ color: C.textDisabled }}>No external partners.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Bulk action modal */}
       {activeAction && (
         <BulkActionModal
           action={activeAction}
           selectedCount={selectedCount}
-          onClose={() => setActiveAction(null)}
+          onClose={() => { setActiveAction(null); clearSelection(); }}
         />
       )}
 
-      {/* Add Collaborator modal */}
+      {/* Supplier profile drawer */}
+      {supplierProfileOpen && SUPPLIER_DETAILS[supplierProfileOpen] && (
+        <SupplierProfilePopover
+          supplier={SUPPLIER_DETAILS[supplierProfileOpen]}
+          onClose={() => setSupplierProfileOpen(null)}
+        />
+      )}
+
+      {/* Add collaborator modal */}
       {addMode && (
         <AddCollaboratorModal
           mode={addMode}
@@ -5800,15 +6692,28 @@ function CollaboratorsScreen({ activeProjectCode }) {
 }
 
 // === BULK ACTION MODAL ===
-// Shared modal for Send Update / Share Document / Invite to Meeting
+// Shared modal for Send message / Share document / Manage access
 function BulkActionModal({ action, selectedCount, onClose }) {
   const config = {
-    update: { title: "Send Update", icon: Send, cta: "Send", placeholder: "Type your update message..." },
-    share:  { title: "Share Document", icon: Paperclip, cta: "Share", placeholder: "Add a note (optional)..." },
-    meeting:{ title: "Invite to Meeting", icon: Clock, cta: "Send Invite", placeholder: "Meeting agenda..." },
+    update: { title: "Send message", icon: MessageSquare, cta: "Send", placeholder: "Type your message..." },
+    share:  { title: "Share document", icon: Paperclip, cta: "Share", placeholder: "Add a note (optional)..." },
+    access: { title: "Manage access", icon: ShieldCheck, cta: "Apply changes", placeholder: null },
   };
   const cfg = config[action] || config.update;
   const Icon = cfg.icon;
+
+  // Access modal state — one permission per access area (default: View)
+  const [accessLevels, setAccessLevels] = useState({ spec: "view", cost: "view", quality: "view" });
+  const accessAreas = [
+    { id: "spec",    label: "Specification", desc: "BOM specs, design data, drawings" },
+    { id: "cost",    label: "Cost",          desc: "Should-cost, quoted prices, target" },
+    { id: "quality", label: "Quality",       desc: "PPAP, risk assessment, DVT" },
+  ];
+  const accessOptions = [
+    { id: "edit", label: "Edit",  desc: "Can view & modify" },
+    { id: "view", label: "View",  desc: "Read-only" },
+    { id: "none", label: "None",  desc: "No access" },
+  ];
 
   useEffect(() => {
     const handler = (e) => { if (e.key === "Escape") onClose(); };
@@ -5820,7 +6725,7 @@ function BulkActionModal({ action, selectedCount, onClose }) {
     <>
       <div className="fixed inset-0 z-40" style={{ backgroundColor: "rgba(16, 24, 40, 0.4)" }} onClick={onClose} />
       <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
-        style={{ transform: "translate(-50%, -50%)", width: 560 }}>
+        style={{ transform: "translate(-50%, -50%)", width: action === "access" ? 600 : 560 }}>
         <div className="px-6 pt-5 pb-4 border-b flex items-start gap-4" style={{ borderColor: C.border }}>
           <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: C.primarySoft }}>
             <Icon className="w-5 h-5" style={{ color: C.primary }} />
@@ -5828,7 +6733,9 @@ function BulkActionModal({ action, selectedCount, onClose }) {
           <div className="flex-1 min-w-0">
             <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>{cfg.title}</div>
             <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>
-              Sending to <strong style={{ color: C.textPrimary }}>{selectedCount}</strong> recipient{selectedCount !== 1 ? "s" : ""}
+              {action === "access"
+                ? <>Edit access for <strong style={{ color: C.textPrimary }}>{selectedCount}</strong> selected collaborator{selectedCount !== 1 ? "s" : ""}</>
+                : <>Sending to <strong style={{ color: C.textPrimary }}>{selectedCount}</strong> recipient{selectedCount !== 1 ? "s" : ""}</>}
             </div>
           </div>
           <button onClick={onClose}
@@ -5837,22 +6744,76 @@ function BulkActionModal({ action, selectedCount, onClose }) {
             <X className="w-4 h-4" />
           </button>
         </div>
-        <div className="px-6 py-4 space-y-3">
-          {action === "update" && (
-            <div>
-              <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Subject</label>
-              <input className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
-                style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}
-                placeholder="e.g. AMOLED Panel spec update" />
+
+        {/* Body — branches on action type */}
+        {action === "access" ? (
+          <div className="px-6 py-5 space-y-4">
+            {accessAreas.map((area) => (
+              <div key={area.id} className="rounded-lg border p-3"
+                style={{ borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
+                <div className="mb-2">
+                  <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{area.label}</div>
+                  <div className="text-[11px]" style={{ color: C.textSecondary }}>{area.desc}</div>
+                </div>
+                <div className="flex gap-2">
+                  {accessOptions.map((opt) => {
+                    const isSelected = accessLevels[area.id] === opt.id;
+                    return (
+                      <label key={opt.id}
+                        className="flex-1 cursor-pointer rounded-md border p-2 transition-all hover:bg-white"
+                        style={{
+                          borderColor: isSelected ? C.primary : C.border,
+                          backgroundColor: isSelected ? "white" : "transparent",
+                          boxShadow: isSelected ? `0 0 0 1px ${C.primary}` : "none",
+                        }}>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name={`access-${area.id}`}
+                            checked={isSelected}
+                            onChange={() => setAccessLevels(prev => ({ ...prev, [area.id]: opt.id }))}
+                            className="w-3.5 h-3.5"
+                            style={{ accentColor: C.primary }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs font-semibold" style={{ color: isSelected ? C.primary : C.textPrimary }}>
+                              {opt.label}
+                            </div>
+                            <div className="text-[10px]" style={{ color: C.textDisabled }}>
+                              {opt.desc}
+                            </div>
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+            <div className="flex items-center gap-2 px-2 text-[11px]" style={{ color: C.textSecondary }}>
+              <Info className="w-3 h-3 shrink-0" style={{ color: C.textDisabled }} />
+              Owner permissions are locked and won't change. Existing settings for other selected users will be overwritten.
             </div>
-          )}
-          <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Message</label>
-            <textarea rows={4} placeholder={cfg.placeholder}
-              className="px-3 py-2 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 resize-none"
-              style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
           </div>
-        </div>
+        ) : (
+          <div className="px-6 py-4 space-y-3">
+            {action === "update" && (
+              <div>
+                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Subject</label>
+                <input className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
+                  style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}
+                  placeholder="e.g. AMOLED Panel spec update" />
+              </div>
+            )}
+            <div>
+              <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Message</label>
+              <textarea rows={4} placeholder={cfg.placeholder}
+                className="px-3 py-2 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 resize-none"
+                style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
+            </div>
+          </div>
+        )}
+
         <div className="px-6 py-3 border-t flex items-center justify-end gap-2" style={{ borderColor: C.border }}>
           <button onClick={onClose}
             className="h-9 px-4 rounded-md text-sm font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
@@ -6095,7 +7056,25 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
   }
 
   // === Helper renderers ===
-  const renderTableView = () => (
+  const renderTableView = () => {
+    // Build rows: active/draft/review/approved BOMs + archived (Hero only).
+    // Archived rows are normalized to match the main BOM row shape so the same renderer can handle both.
+    const archivedRows = isHeroProject ? ARCHIVED_BOMS.map(a => ({
+      id: a.id,
+      label: a.label,
+      name: `${a.label} (archived)`,
+      version: a.versions[0] || "—",
+      parts: null,
+      status: "archived",
+      lifecycle: "archived",
+      missing: 0,
+      syncDelta: 0,
+      lastActivity: null,
+      owner: a.label === "E-BOM" ? "DE" : a.label === "C-BOM" ? "CM" : "QM",
+      collabType: "internal",
+    })) : [];
+    const tableRows = [...bomsForProject, ...archivedRows];
+    return (
     <div className="rounded-xl border bg-white overflow-hidden" style={{ borderColor: C.border }}>
       <table className="w-full text-xs">
         <thead className="border-b" style={{ borderColor: C.border, backgroundColor: C.bg }}>
@@ -6108,11 +7087,12 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
           </tr>
         </thead>
         <tbody>
-          {bomsForProject.map((b) => {
+          {tableRows.map((b) => {
             const hasIssue = b.syncDelta > 0 || b.missing > 0;
             const isInactive = b.status !== "active";
+            const isArchived = b.status === "archived";
             // Use subtle background instead of opacity for accessibility
-            const rowBg = isInactive ? "#FAFAFA" : "white";
+            const rowBg = isArchived ? "#F5F5F5" : isInactive ? "#FAFAFA" : "white";
 
             return (
               <tr key={b.id}
@@ -6191,7 +7171,9 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                   )}
                 </td>
 
-                {/* Status + Action — Status pill OR Action button (mutually exclusive) */}
+                {/* Status — lifecycle-aligned with Kanban (Draft / In Review / Approved / Archived).
+                    Special cases (not_created → Create from M, not_started → Start) preserved as actionable buttons.
+                    Sync issues shown as a small warning dot next to the status pill. */}
                 <td className="py-3 px-4 text-right">
                   {b.status === "not_created" ? (
                     <button
@@ -6210,20 +7192,36 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                       <Play className="w-3 h-3" />
                       Start
                     </button>
-                  ) : hasIssue ? (
+                  ) : b.status === "archived" ? (
                     <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                      style={{ backgroundColor: C.warningLight, color: C.warning, border: `1px solid ${C.warning}` }}
-                      title={b.syncNote}>
-                      <AlertTriangle className="w-3 h-3" />
-                      {b.missing > 0 ? `${b.missing} need sync` : "Delayed"}
+                      style={{ backgroundColor: C.bg, color: C.textDisabled, border: `1px solid ${C.borderLight}` }}>
+                      <Archive className="w-3 h-3" />
+                      Archived
                     </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                      style={{ backgroundColor: C.successLight, color: C.success, border: `1px solid ${C.success}` }}>
-                      <CheckCircle className="w-3 h-3" />
-                      Synced
-                    </span>
-                  )}
+                  ) : (() => {
+                    // Active BOM: map lifecycle → label/color (mirrors Kanban columns)
+                    const lifecycleMeta = {
+                      draft:    { label: "Draft",     color: C.textSecondary, bg: C.bg,           icon: Edit3 },
+                      review:   { label: "In Review", color: C.info,          bg: "rgba(21,101,224,0.08)", icon: Eye },
+                      approved: { label: "Approved",  color: C.success,       bg: C.successLight, icon: CheckCircle },
+                    }[b.lifecycle] || { label: "Active", color: C.textSecondary, bg: C.bg, icon: Circle };
+                    const StatusIcon = lifecycleMeta.icon;
+                    return (
+                      <div className="inline-flex items-center gap-1.5">
+                        {/* Sync warning dot — small visual flag if sync issue exists, without overtaking the lifecycle status */}
+                        {hasIssue && (
+                          <span title={b.syncNote || `${b.missing} parts need sync`}>
+                            <AlertTriangle className="w-3 h-3" style={{ color: C.warning }} />
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                          style={{ backgroundColor: lifecycleMeta.bg, color: lifecycleMeta.color, border: `1px solid ${lifecycleMeta.color}` }}>
+                          <StatusIcon className="w-3 h-3" />
+                          {lifecycleMeta.label}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </td>
               </tr>
             );
@@ -6231,7 +7229,8 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
         </tbody>
       </table>
     </div>
-  );
+    );
+  };
 
   const renderKanbanView = () => {
     // Filter only active BOMs (not_created/not_started don't appear in Kanban)
@@ -6892,6 +7891,36 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
   const [groupBy, setGroupBy] = useState("supplier"); // supplier | ppap | category | risk
   const [overlay, setOverlay] = useState("none"); // none | costHeat | riskHeat
 
+  // Module filter (E-BOM only) — null = show all modules; otherwise restrict to that module name
+  const [moduleFilter, setModuleFilter] = useState(null);
+
+  // Category → Module mapping (shared between filter toolbar and grouping logic).
+  // Module = high-level smartphone subsystem (Display / Mainboard / Camera / Battery / Audio / Mechanical / Other).
+  const categoryToModule = (cat) => {
+    if (!cat) return "Other";
+    const c = cat.toLowerCase();
+    if (c.includes("display")) return "Display Module";
+    if (c.includes("pcb") || c.includes("antenna")) return "Mainboard";
+    if (c.includes("camera") || c.includes("sensor")) return "Camera Module";
+    if (c.includes("battery") || c.includes("power")) return "Battery Module";
+    if (c.includes("audio")) return "Audio Module";
+    if (c.includes("mechanical") || c.includes("packaging") || c.includes("connector") || c.includes("assembly")) return "Mechanical";
+    return "Other";
+  };
+
+  // Distinct modules present in the BOM (for the filter pill row).
+  // Ordered: most-common first (Mechanical typically largest), then alphabetical.
+  const moduleOptions = useMemo(() => {
+    const counts = {};
+    BOM_TREE.forEach((n) => {
+      const m = categoryToModule(n.category);
+      counts[m] = (counts[m] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  }, []);
+
   // Heatmap level filter — which severity levels to show
   // Cost heat: { high, med, under, neutral } | Risk heat: { high, med, low }
   // null = show all (default)
@@ -6975,6 +8004,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
     setGroupBy(d.groupBy);
     setOverlay(d.overlay);
     setSelectedItemId(null); // Reset selection when switching BOM
+    setModuleFilter(null);   // Reset module filter when switching BOM
   }, [activeBom]);
 
   // Always start with Spec tab when an item is selected
@@ -7059,7 +8089,12 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
     }
 
     // Flat mode: flatten all nodes + apply groupBy + insert group headers
-    const flatNodes = BOM_TREE.map((n) => ({ ...n, lvl: 1, _groupKey: n[groupBy] || "Unknown" }));
+    // Special: groupBy="module" uses the categoryToModule mapping (defined at component scope above).
+    const flatNodes = BOM_TREE.map((n) => ({
+      ...n,
+      lvl: 1,
+      _groupKey: groupBy === "module" ? categoryToModule(n.category) : (n[groupBy] || "Unknown"),
+    }));
 
     if (groupBy === "none") {
       // No grouping — return flat list directly, no group headers
@@ -7120,15 +8155,103 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
     // Filter (flat mode): preserve group headers, filter items by predicate
     if (filter !== "all") {
-      return result.filter((n) => n._isGroupHeader || matchesFilter(n));
+      result = result.filter((n) => n._isGroupHeader || matchesFilter(n));
     }
-    return result;
-  }, [expandedNodes, filter, structure, groupBy, activeBom, scenarioStep, heatLevels, overlay]);
 
-  // Per-part detail: Hero (id 3) is scenario subject; others come from ITEM_DETAILS map
-  const selectedItem = selectedItemId === 3
-    ? HERO_ITEM
-    : ITEM_DETAILS[selectedItemId] || BOM_TREE.find((n) => n.id === selectedItemId);
+    // Module filter (E-BOM only) — restrict to one subsystem.
+    // In tree mode, keep only matching nodes + their ancestors (so the hierarchy stays navigable).
+    // In flat mode, keep group headers + matching nodes.
+    if (activeBom === "E" && moduleFilter !== null) {
+      if (structure === "tree") {
+        const ancestorMap = {};
+        BOM_TREE.forEach((n) => (n.children || []).forEach((cid) => { ancestorMap[cid] = n.id; }));
+        const keepIds = new Set();
+        BOM_TREE.forEach((n) => {
+          if (categoryToModule(n.category) === moduleFilter) {
+            keepIds.add(n.id);
+            let pid = ancestorMap[n.id];
+            while (pid !== undefined) { keepIds.add(pid); pid = ancestorMap[pid]; }
+          }
+        });
+        // Root always kept so children can render
+        keepIds.add(1);
+        result = result.filter((n) => keepIds.has(n.id));
+      } else {
+        result = result.filter((n) => n._isGroupHeader
+          ? n._groupKey === moduleFilter || (groupBy !== "module")
+          : categoryToModule(n.category) === moduleFilter);
+      }
+    }
+
+    return result;
+  }, [expandedNodes, filter, structure, groupBy, activeBom, scenarioStep, heatLevels, overlay, moduleFilter]);
+
+  // Per-part detail: Hero (id 3) is scenario subject; others come from ITEM_DETAILS map.
+  // For any BOM_TREE node not in ITEM_DETAILS, synthesize a minimal mock so the Item 360 drawer
+  // renders consistently across E/C/Q BOM views (spec/cost/suppliers/quality sections all present).
+  const selectedItem = useMemo(() => {
+    if (selectedItemId === null) return null;
+    if (selectedItemId === 3) return HERO_ITEM;
+    if (ITEM_DETAILS[selectedItemId]) return ITEM_DETAILS[selectedItemId];
+    // Fallback: derive from BOM_TREE node with synthesized detail fields
+    const node = BOM_TREE.find((n) => n.id === selectedItemId);
+    if (!node) return null;
+    // Deterministic derived values (same pattern as mockCost in the table)
+    const base = 5 + (node.id % 12) * 3.4;
+    const target = base * 0.95;
+    const quoted = base + ((node.id % 5) - 2) * 0.3;
+    const shouldCost = base * 0.98;
+    const market = base * 1.04;
+    const historical = base * 1.02;
+    const hasCarryover = (node.id % 5) !== 0;
+    const carryover = hasCarryover ? Math.round((quoted * (1 + ((node.id % 7) - 3) * 0.015)) * 100) / 100 : null;
+    // Risk derivation aligned with BOM Workspace logic
+    const risk = node.id === 10 ? "High" : node.id === 6 ? "Med" : "Low";
+    const ppapLevel = risk === "High" ? 3 : risk === "Med" ? 2 : 1;
+    return {
+      id: node.id,
+      partId: node.partId,
+      partName: node.partName || node.desc,
+      itemCode: node.itemCode || "N/A",
+      desc: node.desc,
+      category: node.category || "—",
+      type: node.type || "—",
+      uom: node.uom || "EA",
+      supplier: node.supplier,
+      status: node.status || { D: "ok", C: "ok", Q: "ok" },
+      // Synthesized spec (sparse — actual specs only for documented parts)
+      spec: {
+        "Part Type": node.type || "—",
+        "Category": node.category || "—",
+        "Unit of Measure": node.uom || "EA",
+        ...(node.supplier ? { "Current Supplier": node.supplier } : {}),
+      },
+      cost: {
+        target: Math.round(target * 100) / 100,
+        current: Math.round(quoted * 100) / 100,
+        historical: Math.round(historical * 100) / 100,
+        market: Math.round(market * 100) / 100,
+        shouldCost: Math.round(shouldCost * 100) / 100,
+        quoted: Math.round(quoted * 100) / 100,
+        carryover,
+        delta: Math.round((quoted - target) * 100) / 100,
+      },
+      suppliers: node.supplier
+        ? [{ name: node.supplier, risk, capability: 90, performance: 88, recommended: true }]
+        : [],
+      quality: {
+        riskLevel: risk,
+        ppapLevel,
+        progress: risk === "High" ? 30 : risk === "Med" ? 65 : 95,
+        deliverables: [
+          { name: "Design Records", status: "submitted" },
+          { name: "Process Flow Diagram", status: risk === "High" ? "pending" : "submitted" },
+          { name: "PFMEA", status: risk === "High" ? "pending" : "submitted" },
+          { name: "Control Plan", status: risk !== "Low" ? "pending" : "submitted" },
+        ],
+      },
+    };
+  }, [selectedItemId]);
 
   // === Empty state: newly-created project with no BOMs yet ===
   if (project.isNew) {
@@ -7205,14 +8328,21 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
               </button>
             ))}
           </div>
-          {structure === "flat" && (
-            <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}
-              className="h-7 px-2 rounded-md border text-[11px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-              style={{ borderColor: C.border, color: C.textPrimary }}>
+          {/* Group dropdown — visible in both tree and flat. Disabled in tree (hierarchy already groups). */}
+          <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}
+            disabled={structure === "tree"}
+            title={structure === "tree" ? "Switch to Flat view to apply grouping" : undefined}
+            className="h-7 px-2 rounded-md border text-[11px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+            style={{
+              borderColor: C.border,
+              color: structure === "tree" ? C.textDisabled : C.textPrimary,
+              backgroundColor: structure === "tree" ? C.bg : "white",
+            }}>
               {/* E-BOM: engineering perspective (no supplier/risk/ppap — those are downstream) */}
               {activeBom === "E" && (
                 <>
                   <option value="none">Group: None</option>
+                  <option value="module">Group: Module</option>
                   <option value="category">Group: Category</option>
                   <option value="type">Group: Part Type</option>
                 </>
@@ -7235,7 +8365,6 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                 </>
               )}
             </select>
-          )}
 
           {/* Heatmap toggle — segmented-style (matches Structure visually) */}
           {availableOverlays.length > 1 && (() => {
@@ -7469,6 +8598,40 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
           </div>
 
           <div className="flex-1 overflow-auto">
+          {/* E-BOM module filter pills — quick subsystem-level filtering */}
+          {activeBom === "E" && (
+            <div className="px-4 py-2 border-b flex items-center gap-1.5 flex-wrap"
+              style={{ borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider mr-1" style={{ color: C.textDisabled }}>
+                Module:
+              </span>
+              <button
+                onClick={() => setModuleFilter(null)}
+                className="h-6 px-2.5 rounded-full text-[10px] font-medium transition-colors border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                style={{
+                  backgroundColor: moduleFilter === null ? C.primary : "white",
+                  color: moduleFilter === null ? "white" : C.textSecondary,
+                  borderColor: moduleFilter === null ? C.primary : C.border,
+                }}>
+                All <span className="opacity-70 ml-0.5">{BOM_TREE.length}</span>
+              </button>
+              {moduleOptions.map((m) => {
+                const active = moduleFilter === m.name;
+                return (
+                  <button key={m.name}
+                    onClick={() => setModuleFilter(active ? null : m.name)}
+                    className="h-6 px-2.5 rounded-full text-[10px] font-medium transition-colors border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                    style={{
+                      backgroundColor: active ? C.primary : "white",
+                      color: active ? "white" : C.textSecondary,
+                      borderColor: active ? C.primary : C.border,
+                    }}>
+                    {m.name} <span className="opacity-70 ml-0.5">{m.count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
           {/* C-BOM Final price source legend */}
           {activeBom === "C" && (
             <div className="px-4 py-2 border-b flex items-center gap-3 flex-wrap text-[10px]"
@@ -8015,16 +9178,30 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
           )}
         </div>
 
-        {/* Timeline Panel — slides in from right (overlay on Item 360 area) */}
+        {/* Timeline Panel — viewport-level overlay drawer.
+            Positioned fixed so it floats above the entire app (LNB, GNB, content) — not just the BOM workspace pane. */}
         {timelineOpen && (
-          <TimelinePanel
-            activeBom={activeBom}
-            activeBomMeta={activeBomMeta}
-            events={project.isNew ? [] : (BOM_TIMELINE_EVENTS[activeBom] || [])}
-            expandedEvent={expandedTimelineEvent}
-            setExpandedEvent={setExpandedTimelineEvent}
-            onClose={() => setTimelineOpen(false)}
-          />
+          <>
+            {/* Scrim — full-viewport dim; clicking dismisses */}
+            <div
+              onClick={() => setTimelineOpen(false)}
+              className="fixed inset-0 transition-opacity"
+              style={{ backgroundColor: "rgba(0,0,0,0.32)", zIndex: 100 }}
+            />
+            {/* Drawer — fixed to viewport's right edge, full height */}
+            <div
+              className="fixed top-0 bottom-0 right-0 shadow-2xl"
+              style={{ width: 420, zIndex: 110 }}>
+              <TimelinePanel
+                activeBom={activeBom}
+                activeBomMeta={activeBomMeta}
+                events={project.isNew ? [] : (BOM_TIMELINE_EVENTS[activeBom] || [])}
+                expandedEvent={expandedTimelineEvent}
+                setExpandedEvent={setExpandedTimelineEvent}
+                onClose={() => setTimelineOpen(false)}
+              />
+            </div>
+          </>
         )}
       </div>
 
@@ -8043,6 +9220,13 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
 // === TIMELINE PANEL ===
 function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExpandedEvent, onClose }) {
+  // ESC to close — drawer convention
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose && onClose(); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
   // Group events by date (preserves order)
   const grouped = [];
   let lastDate = null;
@@ -8072,8 +9256,8 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
   };
 
   return (
-    <div className="bg-white border-l flex flex-col overflow-hidden"
-      style={{ borderColor: C.border, width: 360, flex: "0 0 360px" }}>
+    <div className="bg-white border-l flex flex-col overflow-hidden h-full"
+      style={{ borderColor: C.border }}>
       {/* Header */}
       <div className="px-4 pt-4 pb-3 border-b flex items-start gap-2"
         style={{ borderColor: C.border }}>
@@ -9475,6 +10659,14 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
   const [itemContext, setItemContext] = useState(context); // when scope === "item"
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Visibility (who can see the next message) — default to Internal team for safety
+  // Audiences keyed by id, summarized in composer chip; edited via modal
+  const [messageVisibility, setMessageVisibility] = useState({
+    groups: ["internal"], // "internal" | "external"
+    users: [],             // additional individual users
+  });
+  const [visibilityModalOpen, setVisibilityModalOpen] = useState(false);
+
   // Sync from external context prop
   useEffect(() => {
     if (context) {
@@ -9747,11 +10939,30 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
       </div>
 
       {/* Composer */}
-      <div className="p-3 border-t bg-white" style={{ borderColor: C.border }}>
-        {/* Scope indicator */}
-        <div className="text-[10px] mb-1.5 flex items-center gap-1.5" style={{ color: C.textSecondary }}>
-          <CornerDownRight className="w-3 h-3" />
-          Posting to <strong style={{ color: C.textPrimary }}>{composerCtx.label}</strong>
+      <div className="p-3 border-t bg-white relative" style={{ borderColor: C.border }}>
+        {/* Top row: scope indicator + visibility chip */}
+        <div className="text-[10px] mb-1.5 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5" style={{ color: C.textSecondary }}>
+            <CornerDownRight className="w-3 h-3" />
+            Posting to <strong style={{ color: C.textPrimary }}>{composerCtx.label}</strong>
+          </div>
+          {/* Visibility chip — click to open audience picker */}
+          <button
+            onClick={() => setVisibilityModalOpen(true)}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-medium transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
+            <Eye className="w-2.5 h-2.5" />
+            Visible to {(() => {
+              const g = messageVisibility.groups.length;
+              const u = messageVisibility.users.length;
+              if (g === 0 && u === 0) return "no one";
+              const parts = [];
+              if (g > 0) parts.push(`${g} group${g > 1 ? "s" : ""}`);
+              if (u > 0) parts.push(`${u} user${u > 1 ? "s" : ""}`);
+              return parts.join(" + ");
+            })()}
+            <ChevronDown className="w-2.5 h-2.5" />
+          </button>
         </div>
         <div className="rounded-md border flex items-center gap-2 p-2"
           style={{ borderColor: scope === "item" ? C.primary : C.border }}>
@@ -9768,14 +10979,185 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
             Send
           </button>
         </div>
+
+        {/* Visibility picker modal — opens above composer, popover-style */}
+        {visibilityModalOpen && (
+          <VisibilityPicker
+            value={messageVisibility}
+            onChange={setMessageVisibility}
+            onClose={() => setVisibilityModalOpen(false)}
+            project={project}
+          />
+        )}
       </div>
     </div>
+  );
+}
+
+// === VISIBILITY PICKER ===
+// Modal that lets the sender choose who can see the next message.
+// Two layers: Team Groups (Internal / External) + Specific Users (optional overlay).
+function VisibilityPicker({ value, onChange, onClose, project }) {
+  const internalList = getCollaboratorsForProject(project);
+  const externalList = getExternalCollaboratorsForProject(project);
+  const groups = [
+    {
+      id: "internal", label: "Internal Team", count: internalList.length,
+      preview: internalList.slice(0, 3).map(c => PERSONAS[c.persona]?.name).join(", ") + (internalList.length > 3 ? "..." : ""),
+    },
+    {
+      id: "external", label: "External Partners", count: externalList.length,
+      preview: externalList.length > 0
+        ? externalList.slice(0, 3).map(c => c.name).join(", ") + (externalList.length > 3 ? "..." : "")
+        : "No external partners",
+      disabled: externalList.length === 0,
+    },
+  ];
+
+  const [localGroups, setLocalGroups] = useState(value.groups);
+  const [localUsers, setLocalUsers] = useState(value.users);
+
+  const toggleGroup = (gId) => {
+    setLocalGroups(prev => prev.includes(gId) ? prev.filter(x => x !== gId) : [...prev, gId]);
+  };
+  const removeUser = (uId) => {
+    setLocalUsers(prev => prev.filter(x => x !== uId));
+  };
+
+  const apply = () => {
+    onChange({ groups: localGroups, users: localUsers });
+    onClose();
+  };
+
+  // ESC to close
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <>
+      <div className="fixed inset-0 z-40" style={{ backgroundColor: "rgba(0,0,0,0.32)" }} onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
+        style={{ transform: "translate(-50%, -50%)", width: 460 }}>
+        {/* Header */}
+        <div className="px-5 pt-4 pb-3 border-b flex items-start justify-between gap-3" style={{ borderColor: C.border }}>
+          <div>
+            <div className="text-base font-semibold" style={{ color: C.textPrimary }}>Visible to</div>
+            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              Choose who can see this message
+            </div>
+          </div>
+          <button onClick={onClose}
+            className="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ color: C.textSecondary }}>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Team Groups section */}
+        <div className="px-5 py-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wide mb-2" style={{ color: C.textDisabled }}>
+            Team Groups
+          </div>
+          <div className="space-y-2">
+            {groups.map((g) => {
+              const isSelected = localGroups.includes(g.id);
+              return (
+                <button
+                  key={g.id}
+                  onClick={() => !g.disabled && toggleGroup(g.id)}
+                  disabled={g.disabled}
+                  className="w-full text-left rounded-lg border px-3 py-2.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+                  style={{
+                    borderColor: isSelected ? C.primary : C.border,
+                    backgroundColor: isSelected ? C.primarySoft : "white",
+                    opacity: g.disabled ? 0.5 : 1,
+                  }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                      style={{ borderColor: isSelected ? C.primary : C.border, backgroundColor: isSelected ? C.primary : "white" }}>
+                      {isSelected && <CheckCircle className="w-4 h-4" style={{ color: "white" }} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>{g.label}</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium inline-flex items-center gap-0.5"
+                          style={{ backgroundColor: C.bg, color: C.textSecondary }}>
+                          <Users className="w-2.5 h-2.5" />
+                          {g.count}
+                        </span>
+                      </div>
+                      <div className="text-[11px] mt-0.5 truncate" style={{ color: C.textSecondary }}>
+                        {g.preview}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Specific Users section */}
+        <div className="px-5 pb-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wide mb-2 flex items-center justify-between" style={{ color: C.textDisabled }}>
+            <span>Specific Users</span>
+            <button className="text-[10px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center gap-0.5"
+              style={{ color: C.primary }}>
+              <Plus className="w-2.5 h-2.5" />
+              Add
+            </button>
+          </div>
+          {localUsers.length === 0 ? (
+            <div className="text-[11px] italic" style={{ color: C.textDisabled }}>
+              No additional users selected
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {localUsers.map((u) => (
+                <span key={u}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium"
+                  style={{ backgroundColor: C.bg, color: C.textPrimary }}>
+                  {u}
+                  <button onClick={() => removeUser(u)} className="hover:opacity-70 focus:outline-none">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer actions */}
+        <div className="px-5 py-3 border-t flex items-center justify-end gap-2" style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}>
+          <button onClick={onClose}
+            className="h-8 px-3 rounded-md text-xs font-medium border transition-colors hover:bg-white focus:outline-none focus-visible:ring-2"
+            style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+            Close
+          </button>
+          <button onClick={apply}
+            disabled={localGroups.length === 0 && localUsers.length === 0}
+            className="h-8 px-3 rounded-md text-xs font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: C.primary }}>
+            Confirm
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
 
 // === CHAT MESSAGE — individual message render ===
 function ChatMessage({ message: m, onOpenItem, showItemChip }) {
   const isAI = m.persona === "AI";
+  // Visibility — for mock data we infer from channel:
+  // - sourcing/cost channels often include external suppliers; show "2 groups"
+  // - others default to internal only ("Internal")
+  const visibility = m.visibility || (
+    m.channel === "sourcing" ? { label: "2 Groups", external: true } : { label: "Internal", external: false }
+  );
 
   return (
     <div className="flex items-start gap-2 p-2 rounded-md"
@@ -9797,6 +11179,13 @@ function ChatMessage({ message: m, onOpenItem, showItemChip }) {
               #{m.channel}
             </span>
           )}
+          {/* Visibility indicator — pushed to right edge of header */}
+          <span className="ml-auto inline-flex items-center gap-1 text-[10px]"
+            style={{ color: visibility.external ? C.warning : C.textDisabled }}
+            title={`Visible to: ${visibility.label}`}>
+            <Eye className="w-2.5 h-2.5" />
+            <span>{visibility.label}</span>
+          </span>
         </div>
         <div className="text-xs leading-relaxed mb-1" style={{ color: C.textPrimary }}>
           {m.message}
@@ -10819,11 +12208,29 @@ export default function App() {
     });
   };
 
-  // Auto-switch default BOM per persona
+  // === Persona → default BOM mapping ===
+  // Single source of truth. Used:
+  //  1. When activePersona changes (auto-switch to their owned BOM)
+  //  2. When user enters BOM Collaboration view (apply persona default rather than stale activeBom)
+  // Note: PM/DE default to E-BOM (the engineering starting point); SM and CM share C-BOM (cost & supplier).
+  const defaultBomForPersona = (p) => ({
+    PM: "E", DE: "E",  // Engineering-leaning
+    CM: "C", SM: "C",  // Cost & Sourcing share C-BOM
+    QM: "Q",           // Quality
+  })[p] || "E";
+
+  // Auto-switch default BOM when persona changes
   useEffect(() => {
-    const bomByPersona = { PM: "M", DE: "M", CM: "C", SM: "S", QM: "Q" };
-    if (bomByPersona[activePersona]) setActiveBom(bomByPersona[activePersona]);
+    setActiveBom(defaultBomForPersona(activePersona));
   }, [activePersona]);
+
+  // Apply persona default whenever user navigates INTO BOM Collaboration view
+  // (handles the case where stale activeBom from a previous session would otherwise show)
+  useEffect(() => {
+    if (view === "bom") {
+      setActiveBom(defaultBomForPersona(activePersona));
+    }
+  }, [view]);
 
   // Keyboard shortcut: Cmd/Ctrl + B → toggle LNB
   useEffect(() => {
