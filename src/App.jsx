@@ -10,7 +10,7 @@ import {
   CornerDownRight, Columns3, Upload, Link2,
   LayoutDashboard, Boxes, GitMerge, BadgeCheck, PanelLeftClose, PanelLeftOpen,
   Smartphone, Watch, Headphones, Tv, Tablet, Speaker, Refrigerator, Wind, BatteryCharging,
-  History, GitCompareArrows, Archive, Lock, MoreVertical, Trash2, Mail, Phone, MapPin, Star
+  History, GitCompareArrows, Archive, Lock, MoreVertical, Trash2, Mail, Phone, MapPin, Star, Download, Calendar, Bookmark, RotateCcw
 } from "lucide-react";
 
 /* ============================================================
@@ -21,40 +21,44 @@ import {
    ============================================================ */
 
 // === DESIGN TOKENS (per 06_design-system.md) ===
+// === Color tokens — aligned to Caidentia 2.0 theme (caidentia-theme.js) ===
+// Palette main/dark values mirror the MUI theme exactly. The *Light/*Soft tints
+// are background surfaces (kept light for legibility), re-hued to match each new main.
+// Container scale (containerSecondary..Quinary) added per the new design system.
 const C = {
-  primary: "#532DF6",
-  primaryDark: "#3D1FD4",
-  primaryLight: "#EDE9FE",
-  primarySoft: "#F5F2FF",
-  secondary: "#4B5565",
-  secondaryDark: "#333C48",
-  secondaryLight: "#E9EAEC",
-  error: "#D32F2F",
-  errorLight: "#FFEBEE",
-  warning: "#E06900",
-  warningLight: "#FFF3E0",
-  info: "#1565E0",
-  infoLight: "#E3F2FD",
-  success: "#009955",
-  successLight: "#E8F5E9",
-  bg: "#E8ECF8",
-  surface: "#FFFFFF",
-  surface2: "#FAFAFA",
-  surfaceTinted: "#F5F8FB",
-  border: "#E0E0E0",
-  borderLight: "#EEEEEE",
-  textPrimary: "#1A1A1A",
-  textSecondary: "#6B7280",
-  textDisabled: "#9CA3AF",
+  primary: "#532df6",        // theme.palette.primary.main
+  primaryDark: "#4827d5",    // primary.dark
+  primaryLight: "#ece9fd",   // tint of primary (background use)
+  primarySoft: "#f4f5ff",    // background.containerQuinary (primary-toned surface)
+  secondary: "#4b5565",      // secondary.main
+  secondaryDark: "#364152",  // secondary.dark
+  secondaryLight: "#eceef1", // tint of secondary
+  error: "#d92d20",          // error.main
+  errorLight: "#fef3f2",     // error tint (surface)
+  warning: "#dc6803",        // warning.main
+  warningLight: "#fffaeb",   // warning tint (surface)
+  info: "#1570ef",           // info.main
+  infoLight: "#eff8ff",      // info tint (surface)
+  success: "#039855",        // success.main
+  successLight: "#ecfdf3",   // success tint (surface)
+  bg: "#e8ecf8",             // background.surfaceUnderlay
+  surface: "#ffffff",        // background.paper
+  surface2: "#fcfcfd",       // background.containerSecondary
+  surfaceTinted: "#f6f8f9",  // background.containerTertiary
+  border: "#e4e7ec",         // visible divider (between containerQuaternary and divider 0.12)
+  borderLight: "#f2f4f7",    // background.containerQuaternary (subtle divider)
+  textPrimary: "#101828",    // text.primary
+  textSecondary: "#475467",  // text.secondary
+  textDisabled: "#8b94a5",   // text.disabled
 };
 
 // === MOCK DATA: scenario-driven ===
 const PERSONAS = {
-  PM: { name: "Paige Kim", role: "Project Manager", initial: "PK", color: "#532DF6" },
-  DE: { name: "Dean Park", role: "Design Engineer", initial: "DP", color: "#1565E0" },
-  CM: { name: "Cory Chen", role: "Cost Manager", initial: "CC", color: "#E06900" },
-  SM: { name: "Sam Lee", role: "Sourcing Manager", initial: "SL", color: "#009955" },
-  QM: { name: "Quinn R.", role: "Quality Manager", initial: "QR", color: "#7C3AED" },
+  PM: { name: "Paige Kim", role: "Project Manager", initial: "PK", color: "#532df6" },
+  DE: { name: "Dean Park", role: "Design Engineer", initial: "DP", color: "#1570ef" },
+  CM: { name: "Cory Chen", role: "Cost Manager", initial: "CC", color: "#dc6803" },
+  SM: { name: "Sam Lee", role: "Sourcing Manager", initial: "SL", color: "#039855" },
+  QM: { name: "Quinn R.", role: "Quality Manager", initial: "QR", color: "#7c3aed" },
 };
 
 const PROJECT = {
@@ -210,70 +214,70 @@ const COLLABORATORS = [
 const EXTERNAL_COLLABORATORS = [
   // === BOE Technology === (Selected AMOLED supplier — full team engaged)
   { id: "ext-1", name: "Chen Wei", company: "BOE Technology", role: "Account Manager",
-    initial: "CW", color: "#1565E0",
+    initial: "CW", color: "#1570ef",
     email: "chen.wei@boe.com", phone: "+86 10 6436 8888",
     contribution: "AMOLED Panel · Supplier (Selected)", active: "Today 14:22",
     bomScope: "C" },
   { id: "ext-1b", name: "Li Mei", company: "BOE Technology", role: "Sales Engineer",
-    initial: "LM", color: "#1565E0",
+    initial: "LM", color: "#1570ef",
     email: "li.mei@boe.com", phone: "+86 10 6436 8901",
     contribution: "AMOLED Panel · Technical specs", active: "Today 11:08",
     bomScope: "C" },
   { id: "ext-1c", name: "Zhang Hao", company: "BOE Technology", role: "Quality Lead",
-    initial: "ZH", color: "#1565E0",
+    initial: "ZH", color: "#1570ef",
     email: "zhang.hao@boe.com", phone: "+86 10 6436 8945",
     contribution: "AMOLED Panel · PPAP submissions", active: "Yesterday",
     bomScope: "Q" },
 
   // === Samsung Display === (Lost RFQ — primary contact only)
   { id: "ext-2", name: "Hideki Tanaka", company: "Samsung Display", role: "Senior Sales",
-    initial: "HT", color: "#532DF6",
+    initial: "HT", color: "#532df6",
     email: "h.tanaka@samsungdisplay.com", phone: "+82 31 5181 2000",
     contribution: "AMOLED Panel · RFQ (Not selected)", active: "Yesterday",
     bomScope: "C" },
   { id: "ext-2b", name: "Soo-ji Lee", company: "Samsung Display", role: "Account Director",
-    initial: "SL", color: "#532DF6",
+    initial: "SL", color: "#532df6",
     email: "sj.lee@samsungdisplay.com", phone: "+82 31 5181 2055",
     contribution: "AMOLED Panel · Commercial lead", active: "3 days ago",
     bomScope: "C" },
 
   // === LG Display === (Lost RFQ — primary contact only)
   { id: "ext-3", name: "Min-jun Park", company: "LG Display", role: "Key Account",
-    initial: "MP", color: "#009955",
+    initial: "MP", color: "#039855",
     email: "minjun.p@lgdisplay.com", phone: "+82 2 3777 1114",
     contribution: "AMOLED Panel · RFQ (Not selected)", active: "Yesterday",
     bomScope: "C" },
   { id: "ext-3b", name: "Ji-won Kim", company: "LG Display", role: "Field App Engineer",
-    initial: "JK", color: "#009955",
+    initial: "JK", color: "#039855",
     email: "jw.kim@lgdisplay.com", phone: "+82 2 3777 1155",
     contribution: "AMOLED Panel · Sample evaluation", active: "Last week",
     bomScope: "C" },
 
   // === Nitto Denko === (Selected Polarizer supplier — full team)
   { id: "ext-4", name: "Sarah Williams", company: "Nitto Denko", role: "Sales Engineer",
-    initial: "SW", color: "#E06900",
+    initial: "SW", color: "#dc6803",
     email: "s.williams@nitto.com", phone: "+1 415 778 2700",
     contribution: "Polarizer Film · Supplier (Primary)", active: "2 days ago",
     bomScope: "C" },
   { id: "ext-4b", name: "Yuki Sato", company: "Nitto Denko", role: "Product Manager",
-    initial: "YS", color: "#E06900",
+    initial: "YS", color: "#dc6803",
     email: "y.sato@nitto.com", phone: "+81 6 7632 2101",
     contribution: "Polarizer Film · Spec coordination", active: "2 days ago",
     bomScope: "C" },
   { id: "ext-4c", name: "Tom Becker", company: "Nitto Denko", role: "Quality Engineer",
-    initial: "TB", color: "#E06900",
+    initial: "TB", color: "#dc6803",
     email: "t.becker@nitto.com", phone: "+1 415 778 2715",
     contribution: "Polarizer Film · PPAP", active: "Last week",
     bomScope: "Q" },
 
   // === 3M Korea === (OCA Adhesive — primary + technical)
   { id: "ext-5", name: "Robert Liu", company: "3M Korea", role: "Technical Sales",
-    initial: "RL", color: "#1565E0",
+    initial: "RL", color: "#1570ef",
     email: "r.liu@3m.com", phone: "+82 2 3771 4114",
     contribution: "OCA Adhesive · Supplier", active: "Last week",
     bomScope: "C" },
   { id: "ext-5b", name: "Hye-jin Choi", company: "3M Korea", role: "Application Specialist",
-    initial: "HC", color: "#1565E0",
+    initial: "HC", color: "#1570ef",
     email: "hj.choi@3m.com", phone: "+82 2 3771 4155",
     contribution: "OCA Adhesive · Lamination support", active: "2 days ago",
     bomScope: "C" },
@@ -449,63 +453,82 @@ function getExternalCollaboratorsForProject(project) {
 // Event types: created, uploaded, review, approved, conflict, discussion, rfq, ppap, cost, sync, version
 // kind controls icon + color: success | error | primary | neutral
 const BOM_TIMELINE_EVENTS = {
+  // E-BOM current version = v1.8. History: v1.8 → v1.7 → v1.5 → v1.0 → v0.5
   E: [
     { id: "e1", date: "Today, May 18", time: "5:20 PM", title: "Spec change: 6.5\" → 6.7\", 90Hz → 120Hz",
-      kind: "primary", iconType: "zap", author: "DE", detail: "AMOLED Panel spec updated by Dean Park. AI impact analysis triggered." },
+      kind: "primary", iconType: "zap", author: "DE", phase: "Develop", version: "v1.8", detail: "AMOLED Panel spec updated by Dean Park. AI impact analysis triggered." },
     { id: "e2", date: "Today, May 18", time: "10:24 AM", title: "PM raised blocker: AMOLED Panel",
-      kind: "error", iconType: "alert", author: "PM", detail: "Cost & PPAP blocked on new spec." },
+      kind: "error", iconType: "alert", author: "PM", phase: "Develop", version: "v1.8", detail: "Cost & PPAP blocked on new spec." },
     { id: "e3", date: "May 16", time: "3:42 PM", title: "Review approved by PM",
-      kind: "success", iconType: "check", author: "PM", detail: "v2.0 approved for downstream BOM sync." },
+      kind: "success", iconType: "check", author: "PM", phase: "Develop", version: "v1.8", detail: "v1.8 approved for downstream BOM sync." },
     { id: "e4", date: "May 16", time: "11:08 AM", title: "Submitted for review",
-      kind: "neutral", iconType: "send", author: "DE", detail: null },
+      kind: "neutral", iconType: "send", author: "DE", phase: "Develop", version: "v1.8", detail: null },
     { id: "e5", date: "May 14", time: "4:15 PM", title: "Internal Review Completed",
-      kind: "success", iconType: "check", author: "DE", detail: null },
+      kind: "success", iconType: "check", author: "DE", phase: "Develop", version: "v1.8", detail: null },
     { id: "e6", date: "May 14", time: "9:00 AM", title: "CAD update synced",
-      kind: "neutral", iconType: "upload", author: "DE", detail: "84 parts imported from PLM." },
-    { id: "e7", date: "May 10", time: "2:30 PM", title: "v2.0 created",
-      kind: "neutral", iconType: "version", author: "DE", detail: "Branched from v1.5." },
+      kind: "neutral", iconType: "upload", author: "DE", phase: "Develop", version: "v1.8", detail: "80 parts imported from PLM." },
+    { id: "e7", date: "May 10", time: "2:30 PM", title: "v1.8 created",
+      kind: "neutral", iconType: "version", author: "DE", phase: "Develop", version: "v1.8", isVersionMark: true, detail: "Branched from v1.7. AMOLED Panel 6.7\" added, Display module revised (8 changes)." },
+    { id: "e8", date: "May 5", time: "10:15 AM", title: "v1.7 created",
+      kind: "neutral", iconType: "version", author: "DE", phase: "Define", version: "v1.7", isVersionMark: true, detail: "Branched from v1.5. Camera & battery modules finalized (12 changes)." },
+    { id: "e9", date: "Apr 20", time: "11:00 AM", title: "v1.5 created",
+      kind: "neutral", iconType: "version", author: "DE", phase: "Plan", version: "v1.5", isVersionMark: true, detail: "Branched from v1.0. Initial component selection (20 changes)." },
+    { id: "e10", date: "Apr 10", time: "9:30 AM", title: "v1.0 created",
+      kind: "neutral", iconType: "version", author: "DE", phase: "Concept", version: "v1.0", isVersionMark: true, detail: "Branched from v0.5. Mainboard & SoC baseline set." },
+    { id: "e11", date: "Apr 2", time: "3:00 PM", title: "v0.5 created",
+      kind: "neutral", iconType: "version", author: "PM", phase: "Concept", version: "v0.5", isVersionMark: true, detail: "Cloned from Smartphone A1 Template." },
   ],
+  // Q-BOM current version = v1.5. History: v1.5 → v1.4 → v1.3 → v1.0
   Q: [
     { id: "q1", date: "Today, May 18", time: "2:22 PM", title: "PPAP Lv3 assigned: AMOLED Panel → BOE",
-      kind: "primary", iconType: "shield", author: "QM", detail: "Risk Assessment auto-completed. Medium risk." },
+      kind: "primary", iconType: "shield", author: "QM", phase: "Develop", version: "v1.5", detail: "Risk Assessment auto-completed. Medium risk." },
     { id: "q2", date: "Today, May 18", time: "8:45 AM", title: "Q-BOM auto-sync confirmed",
-      kind: "success", iconType: "check", author: "QM", detail: "Synced from C-BOM v2.2." },
+      kind: "success", iconType: "check", author: "QM", phase: "Develop", version: "v1.5", detail: "Synced from C-BOM v2.0." },
     { id: "q3", date: "May 17", time: "1:15 PM", title: "PFMEA draft updated",
-      kind: "neutral", iconType: "upload", author: "QM", detail: "Display Module bonding process — Critical entry added." },
-    { id: "q4", date: "May 15", time: "11:30 AM", title: "PPAP Lv2 approved: OCA Adhesive",
-      kind: "success", iconType: "check", author: "QM", detail: "3M OCA — UV 1000h test passed." },
-    { id: "q5", date: "May 12", time: "10:00 AM", title: "v1.3 created",
-      kind: "neutral", iconType: "version", author: "QM", detail: "Synced from E-BOM v1.8." },
+      kind: "neutral", iconType: "upload", author: "QM", phase: "Develop", version: "v1.5", detail: "Display Module bonding process — Critical entry added." },
+    { id: "q4", date: "May 16", time: "9:40 AM", title: "v1.5 created",
+      kind: "neutral", iconType: "version", author: "QM", phase: "Develop", version: "v1.5", isVersionMark: true, detail: "Synced from E-BOM v1.8. PPAP plan updated for AMOLED Panel." },
+    { id: "q5", date: "May 15", time: "11:30 AM", title: "PPAP Lv2 approved: OCA Adhesive",
+      kind: "success", iconType: "check", author: "QM", phase: "Develop", version: "v1.4", detail: "3M OCA — UV 1000h test passed." },
+    { id: "q6", date: "May 13", time: "10:00 AM", title: "v1.4 created",
+      kind: "neutral", iconType: "version", author: "QM", phase: "Develop", version: "v1.4", isVersionMark: true, detail: "PFMEA expanded to 10 critical parts." },
+    { id: "q7", date: "May 12", time: "10:00 AM", title: "v1.3 created",
+      kind: "neutral", iconType: "version", author: "QM", phase: "Develop", version: "v1.3", isVersionMark: true, detail: "Synced from E-BOM v1.7. PPAP plan initialized for 10 parts." },
+    { id: "q8", date: "May 6", time: "3:20 PM", title: "v1.0 created",
+      kind: "neutral", iconType: "version", author: "QM", phase: "Define", version: "v1.0", isVersionMark: true, detail: "Quality plan initialized from E-BOM v1.5." },
   ],
+  // C-BOM current version = v2.0. History: v2.0 → v1.5 → v1.0
   C: [
     // Source & Cost combined timeline — events from both supplier selection (SM) and cost analysis (CM)
     { id: "c1", date: "Today, May 18", time: "2:35 PM", title: "BOE quote applied: $38.90",
-      kind: "success", iconType: "check", author: "CM", detail: "Best of 3 quotes. Δ vs Should-cost: -$2.90." },
+      kind: "success", iconType: "check", author: "CM", phase: "Develop", version: "v2.0", detail: "Best of 3 quotes. Δ vs Should-cost: -$2.90." },
     { id: "c2", date: "Today, May 18", time: "2:15 PM", title: "RFQ sent: AMOLED Panel",
-      kind: "primary", iconType: "send", author: "SM", detail: "3 suppliers: Samsung Display, BOE, LG Display." },
+      kind: "primary", iconType: "send", author: "SM", phase: "Develop", version: "v2.0", detail: "3 suppliers: Samsung Display, BOE, LG Display." },
     { id: "c3", date: "Today, May 18", time: "11:08 AM", title: "Should-cost analysis: AMOLED Panel",
-      kind: "primary", iconType: "zap", author: "CM", detail: "$41.80 confirmed. Market: $42.50. Supplier selection requested." },
+      kind: "primary", iconType: "zap", author: "CM", phase: "Develop", version: "v2.0", detail: "$41.80 confirmed. Market: $42.50. Supplier selection requested." },
     { id: "c4", date: "May 17", time: "5:42 PM", title: "Cost target locked: $38.00",
-      kind: "primary", iconType: "shield", author: "CM", detail: "Approved by PM." },
+      kind: "primary", iconType: "shield", author: "CM", phase: "Develop", version: "v2.0", detail: "Approved by PM." },
     { id: "c5", date: "May 17", time: "4:30 PM", title: "Pre-qualification updated",
-      kind: "success", iconType: "check", author: "SM", detail: "BOE Technology added to qualified vendor list." },
+      kind: "success", iconType: "check", author: "SM", phase: "Develop", version: "v2.0", detail: "BOE Technology added to qualified vendor list." },
     { id: "c6", date: "May 15", time: "10:22 AM", title: "Conflict resolved: Polarizer dual-source",
-      kind: "success", iconType: "check", author: "SM", detail: "Nitto Denko (primary) + LG Chem (secondary) approved." },
+      kind: "success", iconType: "check", author: "SM", phase: "Develop", version: "v2.0", detail: "Nitto Denko (primary) + LG Chem (secondary) approved." },
     { id: "c7", date: "May 15", time: "9:30 AM", title: "Polarizer savings: $0.05/unit",
-      kind: "success", iconType: "check", author: "CM", detail: "Nitto Denko price reduced $1.80 → $1.75." },
+      kind: "success", iconType: "check", author: "CM", phase: "Develop", version: "v2.0", detail: "Nitto Denko price reduced $1.80 → $1.75." },
     { id: "c8", date: "May 13", time: "3:00 PM", title: "Conflict detected: Polarizer single-source",
-      kind: "error", iconType: "alert", author: "QM", detail: "QM flagged: single-source risk on critical part." },
-    { id: "c9", date: "May 13", time: "2:00 PM", title: "Cost rollup completed",
-      kind: "neutral", iconType: "upload", author: "CM", detail: "v2.1 cost rollup: $42.30 total BOM cost." },
-    { id: "c10", date: "May 10", time: "11:15 AM", title: "v2.1 created",
-      kind: "neutral", iconType: "version", author: "CM", detail: "Synced from E-BOM v2.0. 60 of 84 parts have suppliers assigned." },
+      kind: "error", iconType: "alert", author: "QM", phase: "Develop", version: "v2.0", detail: "QM flagged: single-source risk on critical part." },
+    { id: "c9", date: "May 10", time: "11:15 AM", title: "v2.0 created",
+      kind: "neutral", iconType: "version", author: "CM", phase: "Develop", version: "v2.0", isVersionMark: true, detail: "Synced from E-BOM v1.8. Cost rollup $42.30. 60 of 80 parts have suppliers assigned." },
+    { id: "c10", date: "May 2", time: "9:00 AM", title: "v1.5 created",
+      kind: "neutral", iconType: "version", author: "CM", phase: "Define", version: "v1.5", isVersionMark: true, detail: "Synced from E-BOM v1.7. Initial cost rollup $44.10." },
+    { id: "c11", date: "Apr 22", time: "10:30 AM", title: "v1.0 created",
+      kind: "neutral", iconType: "version", author: "CM", phase: "Plan", version: "v1.0", isVersionMark: true, detail: "Cost structure initialized from E-BOM v1.5." },
   ],
 };
 
 // === BOM Version Compare Data ===
 // Mock diff between current and previous version
 const BOM_VERSION_DIFFS = {
-  E: { current: "v2.0", previous: "v1.5",
+  E: { current: "v1.8", previous: "v1.7",
     added: [{ partId: "EQQ-MWS6-XAG2D", name: "AMOLED Panel 6.7\" FHD+ 120Hz", reason: "New spec requested" }],
     modified: [
       { partId: "XYR-YZK5-WA1A7", name: "Display Module 6.7\"", change: "Size: 6.5\" → 6.7\"" },
@@ -513,12 +536,12 @@ const BOM_VERSION_DIFFS = {
     ],
     removed: [{ partId: "OLD-PANEL-6.5", name: "AMOLED Panel 6.5\" FHD+ 90Hz", reason: "Replaced by 6.7\" 120Hz variant" }],
   },
-  Q: { current: "v1.4", previous: "v1.3",
+  Q: { current: "v1.5", previous: "v1.4",
     added: [{ partId: "PPAP-AMOLED", name: "AMOLED Panel PPAP Lv3", reason: "Medium risk auto-assigned" }],
     modified: [{ partId: "5ML-DR7Q-2CV44", name: "OCA Adhesive", change: "PPAP Lv2 → Approved" }],
     removed: [],
   },
-  C: { current: "v2.2", previous: "v2.1",
+  C: { current: "v2.0", previous: "v1.5",
     added: [{ partId: "SUPPLIER-BOE", name: "BOE Technology (AMOLED Panel)", reason: "Added via RFQ" }],
     modified: [
       { partId: "EQQ-MWS6-XAG2D", name: "AMOLED Panel", change: "Supplier: — → BOE · Quoted: — → $38.90" },
@@ -536,11 +559,11 @@ const BOM_COLLAB_LOG = [
   { id: 1, ts: "Today 14:22", bomId: "Q", action: "PPAP Requested",
     actor: "QM", detail: "PPAP Lv3 request sent to BOE Technology", version: "v1.5" },
   { id: 2, ts: "Today 11:30", bomId: "C", action: "Supplier Awarded",
-    actor: "SM", detail: "BOE Technology awarded ($38.90/EA)", version: "v2.2" },
+    actor: "SM", detail: "BOE Technology awarded ($38.90/EA)", version: "v2.0" },
   { id: 3, ts: "Today 09:15", bomId: "C", action: "Should-cost Updated",
     actor: "CM", detail: "AMOLED Panel: $41.80 (AI recommended)", version: "v2.0" },
   { id: 4, ts: "Yesterday 16:42", bomId: "C", action: "Sync Notification",
-    actor: "SM", detail: "AMOLED Panel added in E-BOM → C-BOM needs supplier selection", version: "v2.1" },
+    actor: "SM", detail: "AMOLED Panel added in E-BOM → C-BOM needs supplier selection", version: "v2.0" },
   { id: 5, ts: "Yesterday 14:30", bomId: "E", action: "Part Added",
     actor: "DE", detail: "Added AMOLED Panel 6.7\" FHD+ 120Hz", version: "v1.8" },
   { id: 6, ts: "Yesterday 11:15", bomId: "E", action: "Spec Updated",
@@ -1465,11 +1488,11 @@ const BLOCKING_ITEMS = [
 
 // === STATUS BADGE ===
 const STATUS_MAP = {
-  ok:       { color: "#009955", bg: "#E8F5E9", label: "OK" },
-  progress: { color: "#1565E0", bg: "#E3F2FD", label: "In Progress" },
-  warn:     { color: "#E06900", bg: "#FFF3E0", label: "Attention" },
-  block:    { color: "#D32F2F", bg: "#FFEBEE", label: "Blocked" },
-  done:     { color: "#009955", bg: "#E8F5E9", label: "Done" },
+  ok:       { color: "#039855", bg: "#ecfdf3", label: "OK" },
+  progress: { color: "#1570ef", bg: "#eff8ff", label: "In Progress" },
+  warn:     { color: "#dc6803", bg: "#fffaeb", label: "Attention" },
+  block:    { color: "#d92d20", bg: "#fef3f2", label: "Blocked" },
+  done:     { color: "#039855", bg: "#ecfdf3", label: "Done" },
 };
 
 function StatusDot({ kind = "ok", size = 8 }) {
@@ -1498,7 +1521,7 @@ function PersonaAvatar({ p, size = 28 }) {
     <div className="rounded-full flex items-center justify-center text-white font-medium text-xs shrink-0"
       style={{ width: size, height: size, backgroundColor: persona.color }}
       title={`${persona.name} · ${persona.role}`}>
-      {persona.initial}
+      {persona.initial?.charAt(0)}
     </div>
   );
 }
@@ -1526,12 +1549,9 @@ function GNB({ activePersona, setActivePersona, view, setView, scenarioStep, tot
               <path d="M3 6h18M3 12h18M3 18h18" stroke="#101828" strokeWidth="2" strokeLinecap="round"/>
             </svg>
           </button>
-          {/* Logo: SAMSUNG SDS Caidentia */}
+          {/* Logo: Caidentia */}
           <div className="flex items-center gap-2 select-none">
-            <span className="text-[14px] font-bold tracking-tight" style={{ color: "#101828" }}>
-              SAMSUNG SDS
-            </span>
-            <span className="text-[14px] font-medium tracking-tight" style={{ color: C.primary }}>
+            <span className="text-[14px] font-bold tracking-tight" style={{ color: C.primary }}>
               Caidentia
             </span>
           </div>
@@ -1557,7 +1577,7 @@ function GNB({ activePersona, setActivePersona, view, setView, scenarioStep, tot
               <path d="M2 8h12M8 2c1.5 1.6 2.5 3.7 2.5 6S9.5 12.4 8 14M8 2C6.5 3.6 5.5 5.7 5.5 8S6.5 12.4 8 14"
                 stroke="#4B5565" strokeWidth="1.2" strokeLinecap="round"/>
             </svg>
-            <span className="text-[12px] font-semibold whitespace-nowrap" style={{ color: "#4B5565" }}>
+            <span className="text-[12px] font-medium whitespace-nowrap" style={{ color: "#4B5565" }}>
               Eastern Time (USA)
             </span>
           </button>
@@ -1576,7 +1596,7 @@ function GNB({ activePersona, setActivePersona, view, setView, scenarioStep, tot
                   title="Notifications">
                   <Bell className="w-[22px] h-[22px]" style={{ color: "#4B5565" }} strokeWidth={1.5} />
                   {myUnreadCount > 0 && (
-                    <span className="absolute top-0 right-0 text-[9px] font-bold text-white rounded-full flex items-center justify-center"
+                    <span className="absolute top-0 right-0 text-[10px] font-medium text-white rounded-full flex items-center justify-center"
                       style={{ backgroundColor: C.error, minWidth: 14, height: 14, padding: "0 3px" }}>
                       {myUnreadCount}
                     </span>
@@ -1607,7 +1627,7 @@ function GNB({ activePersona, setActivePersona, view, setView, scenarioStep, tot
                 return !m.read;
               }).length;
               return total > 0 ? (
-                <span className="absolute -top-0.5 -right-0.5 text-[9px] font-bold text-white rounded-full flex items-center justify-center"
+                <span className="absolute -top-0.5 -right-0.5 text-[10px] font-medium text-white rounded-full flex items-center justify-center"
                   style={{ backgroundColor: C.error, minWidth: 14, height: 14, padding: "0 3px" }}>
                   {total}
                 </span>
@@ -1721,10 +1741,10 @@ function CollaboratorsStack({ members, leadName, setActivePersona, activePersona
         <div className="absolute top-full mt-2 left-0 rounded-lg border bg-white shadow-2xl z-50"
           style={{ borderColor: C.border, width: 320 }}>
           <div className="px-4 py-3 border-b" style={{ borderColor: C.border }}>
-            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide" style={{ color: C.textSecondary }}>
               Collaborators
             </div>
-            <div className="text-sm font-semibold mt-0.5" style={{ color: C.textPrimary }}>
+            <div className="text-sm font-medium mt-0.5" style={{ color: C.textPrimary }}>
               {total} members
             </div>
           </div>
@@ -1748,15 +1768,15 @@ function CollaboratorsStack({ members, leadName, setActivePersona, activePersona
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>
+                      <span className="text-xs font-medium" style={{ color: C.textPrimary }}>
                         {PERSONAS[m.persona]?.name}
                       </span>
                       {m.owner && (
-                        <span className="text-[9px] px-1 py-0.5 rounded font-bold"
-                          style={{ backgroundColor: C.warningLight, color: C.warning }}>LEAD</span>
+                        <span className="text-[10px] px-1 py-0.5 rounded font-medium"
+                          style={{ backgroundColor: C.warningLight, color: C.warning }}>Lead</span>
                       )}
                       {isMe && (
-                        <span className="text-[9px] px-1 py-0.5 rounded font-bold"
+                        <span className="text-[10px] px-1 py-0.5 rounded font-medium"
                           style={{ backgroundColor: C.primary, color: "white" }}>ME</span>
                       )}
                     </div>
@@ -1769,7 +1789,7 @@ function CollaboratorsStack({ members, leadName, setActivePersona, activePersona
             })}
           </div>
           <div className="px-4 py-2 border-t" style={{ borderColor: C.borderLight }}>
-            <button className="text-[11px] font-medium hover:underline" style={{ color: C.primary }}>
+            <button className="text-[12px] font-medium hover:underline" style={{ color: C.primary }}>
               + Invite member
             </button>
           </div>
@@ -1822,7 +1842,7 @@ function BodyShell({ breadcrumbs = [], title, subtext = [], actions = [], avatar
               {/* Title + Subtext */}
               <div className="flex-1 min-w-0 flex flex-col gap-1">
                 <div className="flex items-center gap-2 w-full">
-                  <h1 className="text-[32px] font-semibold leading-10 truncate"
+                  <h1 className="text-[32px] font-medium leading-10 truncate"
                     style={{ color: C.textPrimary, letterSpacing: "-0.01em" }}>
                     {title}
                   </h1>
@@ -1835,7 +1855,7 @@ function BodyShell({ breadcrumbs = [], title, subtext = [], actions = [], avatar
                       let element;
                       if (item.kind === "badge") {
                         element = (
-                          <span className="text-[12px] font-semibold px-2 py-0.5 rounded leading-5"
+                          <span className="text-[12px] font-medium px-2 py-0.5 rounded leading-5"
                             style={{
                               backgroundColor: item.bg || C.bg,
                               color: item.color || C.textPrimary,
@@ -1889,7 +1909,7 @@ function BodyShell({ breadcrumbs = [], title, subtext = [], actions = [], avatar
                     if (a.variant === "primary") {
                       return (
                         <button key={i} onClick={a.onClick}
-                          className="h-9 px-4 rounded-md flex items-center gap-1.5 text-[13px] font-semibold text-white transition-opacity hover:opacity-90 shadow-sm"
+                          className="h-9 px-4 rounded-md flex items-center gap-1.5 text-[14px] font-medium text-white transition-opacity hover:opacity-90 shadow-sm"
                           style={{ backgroundColor: C.primary }}>
                           {a.icon && <a.icon className="w-4 h-4" />}
                           {a.label}
@@ -1908,12 +1928,12 @@ function BodyShell({ breadcrumbs = [], title, subtext = [], actions = [], avatar
                     }
                     return (
                       <button key={i} onClick={a.onClick}
-                        className="h-9 px-3 rounded-md flex items-center gap-1.5 text-[13px] font-medium border transition-colors hover:bg-gray-50"
+                        className="h-9 px-3 rounded-md flex items-center gap-1.5 text-[14px] font-medium border transition-colors hover:bg-gray-50"
                         style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
                         {a.icon && <a.icon className="w-4 h-4" />}
                         {a.label}
                         {a.badge !== undefined && a.badge !== null && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
                             style={{ backgroundColor: C.primary, color: "white", minWidth: 18, textAlign: "center", lineHeight: 1 }}>
                             {a.badge}
                           </span>
@@ -1977,15 +1997,15 @@ function PageHeader({ breadcrumbs = [], title, starable = false, onStar, isStarr
         <div className="flex-1 min-w-0 flex flex-col gap-1">
           {/* Title row */}
           <div className="flex items-center gap-2 w-full">
-            <h1 className="text-2xl font-semibold leading-8 truncate"
+            <h1 className="text-2xl font-medium leading-8 truncate"
               style={{ color: C.textPrimary, letterSpacing: "-0.01em" }}>
               {title}
             </h1>
             {starable && (
               <button onClick={onStar}
                 className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <svg width="20" height="20" viewBox="0 0 16 16" fill={isStarred ? "#FFC84A" : "none"}
-                  stroke={isStarred ? "#FFC84A" : "#4B5565"} strokeWidth="1.5">
+                <svg width="20" height="20" viewBox="0 0 16 16" fill={isStarred ? "#fec84b" : "none"}
+                  stroke={isStarred ? "#fec84b" : "#4B5565"} strokeWidth="1.5">
                   <path d="M8 1.5l1.85 4.16 4.55.4-3.4 3.04 1 4.4L8 11.27 3.99 13.5l1-4.4-3.4-3.04 4.55-.4L8 1.5z"
                     strokeLinejoin="round" strokeLinecap="round" />
                 </svg>
@@ -2036,18 +2056,6 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
   // Avatar
   const { Icon: ProjectIcon, bg: avatarBg, iconColor: avatarIconColor } = getProjectAvatar(project);
 
-  // Phase color
-  const phaseColors = {
-    "Concept": { bg: C.bg, color: C.textSecondary },
-    "Incubation": { bg: C.bg, color: C.textSecondary },
-    "Plan": { bg: C.infoLight, color: C.info },
-    "Design": { bg: C.infoLight, color: C.info },
-    "Develop": { bg: C.primaryLight, color: C.primary },
-    "Verify": { bg: C.warningLight, color: C.warning },
-    "SOP": { bg: C.successLight, color: C.success },
-  };
-  const ph = phaseColors[project.phase] || phaseColors["Develop"];
-
   // D-day color
   const ddayColor = dDay <= 7 ? C.error : dDay <= 30 ? C.warning : C.textSecondary;
 
@@ -2068,18 +2076,18 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
       items: [
         { id: "cockpit", icon: LayoutDashboard, label: "Overview", badge: null },
         { id: "info", icon: Info, label: "Project Info", badge: null },
-        { id: "collaborators", icon: UsersRound, label: "Collaborators", badge: null },
       ],
     },
     {
       label: "BOM",
       items: [
-        { id: "bomlist", icon: Boxes, label: "BOMs", badge: null },
+        { id: "bomlist", icon: Boxes, label: "BOM List", badge: null },
         {
           id: "bom", icon: GitMerge, label: "BOM Collaboration",
           badge: isHeroProject && scenarioStep >= 1 && scenarioStep <= 6 ? { value: "●", color: C.warning, tooltip: "Active collaboration" } : null,
           expandable: true,
         },
+        { id: "collaborators", icon: UsersRound, label: "Collaborators", badge: null },
       ],
     },
     // Quality group temporarily hidden — APQP gantt has been merged into QM Cockpit Overview.
@@ -2158,7 +2166,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
                         <button key={bom.id}
                           onClick={() => { if (!isDisabled && setActiveBom) setActiveBom(bom.id); }}
                           disabled={isDisabled}
-                          className="w-8 h-7 rounded flex items-center justify-center text-[10px] font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed relative"
+                          className="w-8 h-7 rounded flex items-center justify-center text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed relative"
                           style={{
                             backgroundColor: isBomActive ? C.primary : "transparent",
                             color: isBomActive ? "white" : C.textSecondary,
@@ -2211,7 +2219,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
         {/* D-day ≤ 7 days: filled red (urgent action needed); otherwise all outlined */}
         <div className="flex flex-wrap gap-1">
           {/* Priority — outlined (info, not urgent action). Label only (HIGH/MED/LOW) — "Priority" word redundant */}
-          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full leading-4 border"
+          <span className="text-[12px] font-medium px-2 py-0.5 rounded-full leading-4 border"
             style={{
               backgroundColor: "white",
               color: priorityConfig.color,
@@ -2221,7 +2229,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
             {priorityConfig.label}
           </span>
           {/* D-day — filled only when urgent (≤ 7 days), otherwise outlined */}
-          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full leading-4 border"
+          <span className="text-[12px] font-medium px-2 py-0.5 rounded-full leading-4 border"
             style={{
               backgroundColor: dDay <= 7 ? ddayColor : "white",
               color: dDay <= 7 ? "white" : ddayColor,
@@ -2229,12 +2237,11 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
             }}>
             D-{dDay}
           </span>
-          {/* Phase — outlined (status indicator, not urgent) */}
-          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full leading-4 border"
+          {/* Phase — primary color chip (matches list & info phase chips) */}
+          <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-full leading-4"
             style={{
-              backgroundColor: "white",
-              color: ph.color,
-              borderColor: ph.color,
+              backgroundColor: C.primaryLight,
+              color: C.primary,
             }}>
             {project.phase}
           </span>
@@ -2242,10 +2249,10 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
 
         {/* Title + Code */}
         <div className="flex flex-col gap-0.5">
-          <div className="text-[20px] font-bold leading-7 tracking-tight" style={{ color: C.textPrimary }}>
+          <div className="text-[20px] font-medium leading-7 tracking-tight" style={{ color: C.textPrimary }}>
             {project.name}
           </div>
-          <div className="text-[12px] font-mono" style={{ color: C.textSecondary }}>
+          <div className="text-[12px] tabular-nums" style={{ color: C.textSecondary }}>
             {project.code}
           </div>
         </div>
@@ -2267,7 +2274,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
               const unreadCount = 3;
               return (
                 <span
-                  className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[9px] font-bold text-white border-2 border-white"
+                  className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[10px] font-medium text-white border-2 border-white"
                   style={{ backgroundColor: C.error }}>
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
@@ -2278,30 +2285,6 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
             members={getCollaboratorsForProject(project)}
             activePersona={activePersona}
             setActivePersona={setActivePersona} />
-          {/* Primary CTA — Phase-aware; expanded with label for discoverability */}
-          {primaryCta && (() => {
-            // Short label for compact display
-            const shortLabel = {
-              "Invite Team": "Invite Team",
-              "Upload E-BOM": "Upload BOM",
-              "Define Exit Criteria": "Exit Criteria",
-              "Run Phase 1 Gate": "Phase Gate",
-              "Run Cost Review": "Cost Review",
-              "Request Gate Review": "Gate Review",
-              "Approve PPAP": "Approve PPAP",
-              "Mark Released": "Release",
-            }[primaryCta.label] || primaryCta.label;
-            return (
-              <button
-                onClick={primaryCta.onClick}
-                title={primaryCta.label}
-                className="h-9 px-3 rounded-full flex items-center gap-1.5 transition-opacity hover:opacity-90 shadow-sm ml-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                style={{ backgroundColor: C.primary, color: "white" }}>
-                {primaryCta.icon && <primaryCta.icon className="w-4 h-4 shrink-0" />}
-                <span className="text-[11px] font-semibold whitespace-nowrap">{shortLabel}</span>
-              </button>
-            );
-          })()}
         </div>
       </div>
 
@@ -2351,21 +2334,21 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
                           onMouseEnter={(e) => { if (!isBomActive && !isDisabled) e.currentTarget.style.backgroundColor = C.bg; }}
                           onMouseLeave={(e) => { if (!isBomActive) e.currentTarget.style.backgroundColor = "transparent"; }}
                           title={isNotCreated ? `${bom.name} not yet created` : isNotStarted ? `${bom.name} promoted, awaiting owner` : (bom.syncNote || `${bom.name} · sync OK`)}>
-                          <span className={`text-[12px] flex-1 min-w-0 truncate ${isBomActive ? "font-semibold" : "font-normal"}`}
+                          <span className={`text-[12px] flex-1 min-w-0 truncate ${isBomActive ? "font-medium" : "font-normal"}`}
                             style={{ color: isBomActive ? C.primary : (isDisabled ? C.textDisabled : C.textPrimary) }}>
                             {bom.label}
                           </span>
                           {isNotCreated ? (
-                            <span className="text-[9px] shrink-0 italic" style={{ color: C.textDisabled }}>
+                            <span className="text-[10px] shrink-0 italic" style={{ color: C.textDisabled }}>
                               not created
                             </span>
                           ) : isNotStarted ? (
-                            <span className="text-[9px] shrink-0 italic" style={{ color: C.warning }}>
+                            <span className="text-[10px] shrink-0 italic" style={{ color: C.warning }}>
                               awaiting
                             </span>
                           ) : (
                             <>
-                              <span className="text-[9px] font-mono shrink-0"
+                              <span className="text-[10px] tabular-nums shrink-0"
                                 style={{ color: isBomActive ? C.primary : C.textDisabled, opacity: isBomActive ? 0.8 : 1 }}>
                                 {bom.version}
                               </span>
@@ -2413,10 +2396,10 @@ function CollaboratorsCircleButton({ members, activePersona, setActivePersona })
         <div className="absolute top-full left-0 mt-2 rounded-lg border bg-white shadow-2xl z-50"
           style={{ borderColor: C.border, width: 280 }}>
           <div className="px-4 py-3 border-b" style={{ borderColor: C.border }}>
-            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide" style={{ color: C.textSecondary }}>
               Collaborators
             </div>
-            <div className="text-sm font-semibold mt-0.5" style={{ color: C.textPrimary }}>
+            <div className="text-sm font-medium mt-0.5" style={{ color: C.textPrimary }}>
               {members.length} members
             </div>
           </div>
@@ -2439,15 +2422,15 @@ function CollaboratorsCircleButton({ members, activePersona, setActivePersona })
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>
+                        <span className="text-xs font-medium" style={{ color: C.textPrimary }}>
                           {PERSONAS[m.persona]?.name}
                         </span>
                         {m.owner && (
-                          <span className="text-[9px] px-1 py-0.5 rounded font-bold"
-                            style={{ backgroundColor: C.warningLight, color: C.warning }}>LEAD</span>
+                          <span className="text-[10px] px-1 py-0.5 rounded font-medium"
+                            style={{ backgroundColor: C.warningLight, color: C.warning }}>Lead</span>
                         )}
                         {isMe && (
-                          <span className="text-[9px] px-1 py-0.5 rounded font-bold"
+                          <span className="text-[10px] px-1 py-0.5 rounded font-medium"
                             style={{ backgroundColor: C.primary, color: "white" }}>ME</span>
                         )}
                       </div>
@@ -2480,7 +2463,7 @@ function CollaboratorsCircleButton({ members, activePersona, setActivePersona })
                 <Plus className="w-4 h-4" style={{ color: C.primary }} />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold" style={{ color: C.primary }}>
+                <div className="text-xs font-medium" style={{ color: C.primary }}>
                   Invite new member
                 </div>
                 <div className="text-[10px]" style={{ color: C.textSecondary }}>
@@ -2715,11 +2698,11 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
             <IconComp className="w-6 h-6" style={{ color: config.iconColor }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-wide mb-1"
+            <div className="text-[10px] font-medium tracking-wide mb-1"
               style={{ color: C.textSecondary }}>
               {project.phase} Phase Action
             </div>
-            <div className="text-lg font-semibold mb-1" style={{ color: C.textPrimary }}>
+            <div className="text-lg font-medium mb-1" style={{ color: C.textPrimary }}>
               {config.headline}
             </div>
             <div className="text-xs" style={{ color: C.textSecondary }}>
@@ -2736,7 +2719,7 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
           {config.sections.map((section, idx) => (
             <div key={idx}>
-              <div className="text-[10px] font-bold uppercase tracking-wide mb-2"
+              <div className="text-[10px] font-medium tracking-wide mb-2"
                 style={{ color: C.textSecondary }}>
                 {section.label}
               </div>
@@ -2769,7 +2752,7 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
                   {section.kvPairs.map((kv, i) => (
                     <div key={i} className="px-3 py-2.5 flex items-center justify-between text-xs">
                       <span style={{ color: C.textSecondary }}>{kv.label}</span>
-                      <span className="font-semibold"
+                      <span className="font-medium"
                         style={{ color: kv.warning ? C.warning : C.textPrimary }}>
                         {kv.value}
                       </span>
@@ -2785,7 +2768,7 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
                     <div key={p} className="flex items-center gap-1.5 px-2 py-1 rounded-full border"
                       style={{ borderColor: C.border, backgroundColor: C.bg }}>
                       <PersonaAvatar p={p} size={20} />
-                      <span className="text-[11px] font-medium" style={{ color: C.textPrimary }}>
+                      <span className="text-[12px] font-medium" style={{ color: C.textPrimary }}>
                         {PERSONAS[p]?.name}
                       </span>
                     </div>
@@ -2801,14 +2784,14 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
                       style={{ borderColor: C.border }}>
                       <FlaskConical className="w-4 h-4 shrink-0" style={{ color: C.primary }} />
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs font-semibold" style={{ color: C.textPrimary }}>
+                        <div className="text-xs font-medium" style={{ color: C.textPrimary }}>
                           {p.part}
                         </div>
                         <div className="text-[10px]" style={{ color: C.textSecondary }}>
                           {p.supplier} · PPAP {p.level}
                         </div>
                       </div>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
                         style={{
                           backgroundColor: p.status === "In Review" ? C.warningLight : C.infoLight,
                           color: p.status === "In Review" ? C.warning : C.info,
@@ -2826,7 +2809,7 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
         {/* Footer */}
         <div className="px-6 py-4 border-t flex items-center justify-between gap-3"
           style={{ borderColor: C.border }}>
-          <div className="text-[11px]" style={{ color: C.textDisabled }}>
+          <div className="text-[12px]" style={{ color: C.textDisabled }}>
             {project.code} · {project.phase} Phase
           </div>
           <div className="flex items-center gap-2">
@@ -2836,7 +2819,7 @@ function PrimaryActionModal({ project, scenarioStep, onClose, onConfirm }) {
               Cancel
             </button>
             <button onClick={onConfirm}
-              className="px-4 py-2 rounded-md text-xs font-semibold text-white hover:opacity-90 transition-opacity inline-flex items-center gap-1.5"
+              className="px-4 py-2 rounded-md text-xs font-medium text-white hover:opacity-90 transition-opacity inline-flex items-center gap-1.5"
               style={{ backgroundColor: C.primary }}>
               <IconComp className="w-3.5 h-3.5" />
               {config.cta}
@@ -2862,7 +2845,7 @@ function NavItem({ item, view, setView, isExpanded, onClick }) {
       onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = C.bg; }}
       onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = "transparent"; }}>
       <div className="flex-1 min-w-0 flex items-center gap-1">
-        <span className={`text-[14px] leading-5 ${isActive ? "font-semibold" : "font-normal"}`}
+        <span className={`text-[14px] leading-5 ${isActive ? "font-medium" : "font-normal"}`}
           style={{ color: isActive ? C.primary : C.textPrimary }}>
           {item.label}
         </span>
@@ -2881,7 +2864,7 @@ function NavItem({ item, view, setView, isExpanded, onClick }) {
             style={{ backgroundColor: item.badge.color }} />
         ) : (
           <span title={item.badge.tooltip || ""}
-            className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+            className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0"
             style={{ backgroundColor: item.badge.color, color: "white", minWidth: 18, textAlign: "center" }}>
             {item.badge.value}
           </span>
@@ -2943,14 +2926,14 @@ function InboxScreen({ activePersona, setActiveProjectCode, setView, scenarioSte
             <div className="flex items-center gap-2 text-[14px] mb-1" style={{ color: C.textSecondary }}>
               <span>Inbox</span>
             </div>
-            <h1 className="text-[32px] font-semibold leading-10 truncate"
+            <h1 className="text-[32px] font-medium leading-10 truncate"
               style={{ color: C.textPrimary, letterSpacing: "-0.01em" }}>
               Mentions & Approval Requests
             </h1>
             <div className="text-sm mt-1 flex items-center gap-1.5 flex-wrap" style={{ color: C.textSecondary }}>
               <span>Across all projects, items addressed to</span>
               <PersonaAvatar p={activePersona} size={16} />
-              <span className="font-semibold" style={{ color: C.primary }}>
+              <span className="font-medium" style={{ color: C.primary }}>
                 {PERSONAS[activePersona].role}
               </span>
               <span>are collected here.</span>
@@ -2981,12 +2964,12 @@ function InboxScreen({ activePersona, setActiveProjectCode, setView, scenarioSte
             }}>
             <div className="flex items-center justify-between mb-2">
               <f.icon className="w-4 h-4" style={{ color: f.color }} />
-              <span className="text-[10px] uppercase tracking-wide font-medium"
+              <span className="text-[10px] tracking-wide font-medium"
                 style={{ color: filter === f.id ? f.color : C.textSecondary }}>
                 {f.label}
               </span>
             </div>
-            <div className="text-2xl font-bold" style={{ color: f.color }}>{f.count}</div>
+            <div className="text-2xl font-medium" style={{ color: f.color }}>{f.count}</div>
           </button>
         ))}
       </div>
@@ -3010,7 +2993,7 @@ function InboxScreen({ activePersona, setActiveProjectCode, setView, scenarioSte
               style={{
                 borderColor: C.border,
                 borderBottomWidth: idx === filtered.length - 1 ? 0 : 1,
-                backgroundColor: !m.read ? "#FAFAFE" : "white",
+                backgroundColor: !m.read ? "#fcfcfd" : "white",
               }}>
               {/* Unread dot */}
               <div className="pt-1 shrink-0">
@@ -3027,7 +3010,7 @@ function InboxScreen({ activePersona, setActiveProjectCode, setView, scenarioSte
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>
+                  <span className="text-sm font-medium" style={{ color: C.textPrimary }}>
                     {PERSONAS[m.from]?.name}
                   </span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
@@ -3037,14 +3020,14 @@ function InboxScreen({ activePersona, setActiveProjectCode, setView, scenarioSte
                     }}>
                     {m.type === "approval" ? "Approvals" : "@Mentions"}
                   </span>
-                  <span className="text-[11px]" style={{ color: C.textSecondary }}>
+                  <span className="text-[12px]" style={{ color: C.textSecondary }}>
                     {m.projectName}
                   </span>
-                  <span className="text-[11px] ml-auto shrink-0" style={{ color: C.textDisabled }}>
+                  <span className="text-[12px] ml-auto shrink-0" style={{ color: C.textDisabled }}>
                     {m.time}
                   </span>
                 </div>
-                <div className={`text-sm mb-1.5 ${!m.read ? "font-semibold" : "font-medium"}`}
+                <div className={`text-sm mb-1.5 ${!m.read ? "font-medium" : "font-medium"}`}
                   style={{ color: C.textPrimary }}>
                   {m.title}
                 </div>
@@ -3052,10 +3035,10 @@ function InboxScreen({ activePersona, setActiveProjectCode, setView, scenarioSte
                   {m.snippet}
                 </div>
                 {m.itemRef && (
-                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-[11px] border"
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-[12px] border"
                     style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: C.bg }}>
                     <Box className="w-3 h-3" />
-                    <span className="font-mono">{m.itemRef.partId}</span>
+                    <span className="tabular-nums">{m.itemRef.partId}</span>
                     <span style={{ color: C.textPrimary }}>{m.itemRef.partName}</span>
                   </div>
                 )}
@@ -3100,8 +3083,8 @@ function NotificationDropdown({ activePersona, setActiveProjectCode, setView, sc
       <div className="px-4 py-3 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4" style={{ color: C.primary }} />
-          <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>Notifications</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded font-bold"
+          <span className="text-sm font-medium" style={{ color: C.textPrimary }}>Notifications</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
             style={{ backgroundColor: C.errorLight, color: C.error }}>
             {myInbox.filter((m) => !m.read).length}
           </span>
@@ -3124,15 +3107,15 @@ function NotificationDropdown({ activePersona, setActiveProjectCode, setView, sc
               style={{
                 borderColor: C.border,
                 borderBottomWidth: idx === myInbox.length - 1 ? 0 : 1,
-                backgroundColor: !m.read ? "#FAFAFE" : "white",
+                backgroundColor: !m.read ? "#fcfcfd" : "white",
               }}>
               <PersonaAvatar p={m.from} size={28} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="text-xs font-semibold truncate" style={{ color: C.textPrimary }}>
+                  <span className="text-xs font-medium truncate" style={{ color: C.textPrimary }}>
                     {PERSONAS[m.from]?.name}
                   </span>
-                  <span className="text-[9px] px-1 py-0.5 rounded font-medium"
+                  <span className="text-[10px] px-1 py-0.5 rounded font-medium"
                     style={{
                       backgroundColor: m.type === "approval" ? C.warningLight : C.infoLight,
                       color: m.type === "approval" ? C.warning : C.info,
@@ -3213,7 +3196,7 @@ function PromoteBomModal({ targetBomId, onClose, onConfirm, scenarioStep }) {
                 style={{ backgroundColor: C.primaryLight }}>
                 <ChevronsRight className="w-4 h-4" style={{ color: C.primary }} />
               </div>
-              <h2 className="text-[18px] font-semibold" style={{ color: C.textPrimary }}>
+              <h2 className="text-[18px] font-medium" style={{ color: C.textPrimary }}>
                 Promote to {targetMeta.label}
               </h2>
             </div>
@@ -3257,7 +3240,7 @@ function PromoteBomModal({ targetBomId, onClose, onConfirm, scenarioStep }) {
             </div>
           ) : (
             <>
-              <div className="text-xs font-medium mb-2 uppercase tracking-wide"
+              <div className="text-xs font-medium mb-2 tracking-wide"
                 style={{ color: C.textSecondary }}>
                 Parts to Promote ({needsAction.length})
               </div>
@@ -3268,14 +3251,14 @@ function PromoteBomModal({ targetBomId, onClose, onConfirm, scenarioStep }) {
                     <Package className="w-4 h-4 shrink-0"
                       style={{ color: p.isHero ? C.warning : C.textSecondary }} />
                     <div className="flex-1 min-w-0">
-                      <div className="font-mono text-[11px]" style={{ color: C.textPrimary }}>
+                      <div className="tabular-nums text-[12px]" style={{ color: C.textPrimary }}>
                         {p.partId}
                       </div>
                       <div className="text-[10px] truncate" style={{ color: C.textSecondary }}>
                         {p.desc}
                       </div>
                     </div>
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0"
                       style={{
                         backgroundColor: p.syncStatus === "missing" ? C.errorLight : C.warningLight,
                         color: p.syncStatus === "missing" ? C.error : C.warning,
@@ -3328,6 +3311,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("priority"); // priority (composite) | phaseDays | readiness | name
   const [statusFilter, setStatusFilter] = useState("all"); // all | onTrack | atRisk | blocked
+  const [selectedRows, setSelectedRows] = useState([]); // selected project codes
   // Hover popover state — which project's collaborators popover is open
   const [hoveredCollabProject, setHoveredCollabProject] = useState(null);
   const hoverTimeoutRef = useRef(null);
@@ -3390,9 +3374,9 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
         breadcrumbs={[
           { label: "Home", onClick: () => setView("projects") },
           { label: "Design-to-Source" },
-          { label: "Design-to-Source Projects" },
+          { label: "Design to Source Project" },
         ]}
-        title="Design-to-Source Projects"
+        title="Design to Source Project"
         starable
         actions={[
           {
@@ -3406,137 +3390,143 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
       />
 
       <div className="px-8 pt-2 pb-6">
-      {/* Unified Content Card: Filter Box + Pill Filter + Table */}
-      <div className="rounded-xl border bg-white overflow-hidden" style={{ borderColor: C.border }}>
+      {/* Unified content box — radius 24 (rounded-3xl) */}
+      <div className="rounded-3xl border bg-white overflow-hidden" style={{ borderColor: C.border }}>
 
-        {/* (1) Filter Box: Search/Phase/Priority/Sort + Reset on the right */}
-        <div className="p-4 border-b" style={{ borderColor: C.border }}>
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex-1 min-w-[260px] relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textDisabled }} />
-              <input type="text" placeholder="Search by project name, code, or product..."
-                value={search} onChange={(e) => setSearch(e.target.value)}
-                className="w-full h-9 pl-9 pr-3 rounded-md text-sm outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                style={{ backgroundColor: C.surfaceTinted, color: C.textPrimary, border: "1px solid transparent" }}
-                onFocus={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.backgroundColor = "white"; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = "transparent"; e.currentTarget.style.backgroundColor = C.surfaceTinted; }} />
-            </div>
+      {/* (1) Filter bar section — 24px horizontal padding */}
+      <div className="px-6 py-3 flex items-center gap-x-5 gap-y-3 flex-wrap">
+        {/* Search (project) — dropdown-style field with trailing icon */}
+        <div className="flex items-center gap-2 flex-1 min-w-[260px]">
+          <div className="relative w-full">
+            <input type="text" placeholder="Search by project name, code, or product..."
+              value={search} onChange={(e) => setSearch(e.target.value)}
+              className="w-full h-9 pl-3 pr-9 rounded-md border text-[12px] outline-none focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }} />
+            <Search className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textDisabled }} />
+          </div>
+        </div>
+        {/* Phase */}
+        <div className="flex items-center gap-2">
+          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Phase</span>
+          <div className="relative" style={{ width: 160 }}>
             <select value={phaseFilter} onChange={(e) => setPhaseFilter(e.target.value)}
-              className="h-9 px-3 pr-8 rounded-md text-sm outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 cursor-pointer appearance-none bg-no-repeat"
-              style={{
-                backgroundColor: C.surfaceTinted, color: C.textPrimary, border: "1px solid transparent",
-                backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e")`,
-                backgroundPosition: "right 10px center",
-                backgroundSize: "12px 12px",
-              }}>
+              className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] appearance-none bg-white outline-none focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, color: C.textPrimary }}>
               <option value="all">All Phases</option>
               {PHASES.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
+            <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textSecondary }} />
+          </div>
+        </div>
+        {/* Priority */}
+        <div className="flex items-center gap-2">
+          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Priority</span>
+          <div className="relative" style={{ width: 140 }}>
             <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}
-              className="h-9 px-3 pr-8 rounded-md text-sm outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 cursor-pointer appearance-none bg-no-repeat"
-              style={{
-                backgroundColor: C.surfaceTinted, color: C.textPrimary, border: "1px solid transparent",
-                backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e")`,
-                backgroundPosition: "right 10px center",
-                backgroundSize: "12px 12px",
-              }}>
+              className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] appearance-none bg-white outline-none focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, color: C.textPrimary }}>
               <option value="all">All Priorities</option>
-              <option value="high">High Priority</option>
-              <option value="med">Medium Priority</option>
-              <option value="low">Low Priority</option>
+              <option value="high">High</option>
+              <option value="med">Medium</option>
+              <option value="low">Low</option>
             </select>
+            <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textSecondary }} />
+          </div>
+        </div>
+        {/* Right cluster: Sort + Search button + icons */}
+        <div className="ml-auto flex items-center gap-3">
+          <div className="relative" style={{ width: 170 }}>
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
-              className="h-9 px-3 pr-8 rounded-md text-sm outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 cursor-pointer appearance-none bg-no-repeat"
-              style={{
-                backgroundColor: C.surfaceTinted, color: C.textPrimary, border: "1px solid transparent",
-                backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e")`,
-                backgroundPosition: "right 10px center",
-                backgroundSize: "12px 12px",
-              }}>
+              className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] appearance-none bg-white outline-none focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, color: C.textPrimary }}>
               <option value="priority">Sort: Urgency</option>
               <option value="phaseDays">Sort: Phase D-day</option>
               <option value="readiness">Sort: Readiness</option>
               <option value="name">Sort: Name</option>
             </select>
+            <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textSecondary }} />
+          </div>
+          <button className="h-9 px-6 rounded-full text-[12px] font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ borderColor: C.primary, color: C.primary, backgroundColor: "white" }}>
+            Search
+          </button>
+        </div>
+      </div>
 
-            {/* Reset Button — beside the filter box */}
-            {(() => {
-              const isFiltered = statusFilter !== "all" || search !== "" || phaseFilter !== "all" || priorityFilter !== "all" || sortBy !== "priority";
-              const onResetAll = () => {
-                setStatusFilter("all");
-                setSearch("");
-                setPhaseFilter("all");
-                setPriorityFilter("all");
-                setSortBy("priority");
-              };
-              return (
-                <button onClick={onResetAll} disabled={!isFiltered}
-                  className="ml-auto w-9 h-9 rounded-md flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+      {/* (2) Status count chips section — chips wrapped in a pill container (radius 1000), 24px side margin */}
+      <div className="flex items-center px-6 py-3" style={{ borderColor: C.borderLight }}>
+        <div className="flex items-center gap-1 p-1" style={{ backgroundColor: C.surfaceTinted, borderRadius: 1000 }}>
+          {[
+            { id: "onTrack", label: "On Track", count: totals.onTrack },
+            { id: "atRisk", label: "At Risk", count: totals.atRisk },
+            { id: "blocked", label: "Blocked", count: totals.blocked },
+          ].map((chip, i, arr) => {
+            const isActive = statusFilter === chip.id;
+            return (
+              <React.Fragment key={chip.id}>
+                <button onClick={() => setStatusFilter(chip.id)}
+                  className="flex items-center gap-1.5 px-3.5 py-1 text-[12px] transition-colors focus:outline-none focus-visible:ring-2"
                   style={{
-                    color: isFiltered ? C.primary : C.textDisabled,
-                    cursor: isFiltered ? "pointer" : "not-allowed",
-                  }}
-                  onMouseEnter={(e) => { if (isFiltered) e.currentTarget.style.backgroundColor = C.primarySoft; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
-                  title={isFiltered ? "Reset all filters" : "No active filters"}>
-                  <RefreshCw className="w-4 h-4" />
+                    backgroundColor: isActive ? "white" : "transparent",
+                    color: isActive ? C.primary : C.textSecondary,
+                    boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+                    borderRadius: 1000,
+                  }}>
+                  <span>{chip.label}</span>
+                  <span className="font-medium" style={{ color: isActive ? C.primary : C.textPrimary }}>{chip.count}</span>
                 </button>
-              );
-            })()}
+                {i < arr.length - 1 && <div className="w-px h-3" style={{ backgroundColor: C.border }} />}
+              </React.Fragment>
+            );
+          })}
+        </div>
+        {(() => {
+          const isFiltered = statusFilter !== "all" || search !== "" || phaseFilter !== "all" || priorityFilter !== "all" || sortBy !== "priority";
+          const onResetAll = () => { setStatusFilter("all"); setSearch(""); setPhaseFilter("all"); setPriorityFilter("all"); setSortBy("priority"); };
+          return (
+            <button onClick={onResetAll} disabled={!isFiltered}
+              className="ml-3 w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ color: C.textSecondary }} title="Reset filters">
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          );
+        })()}
+      </div>
+
+        {/* (3) Total bar — Figma list pattern (count left, table actions right) */}
+        <div className="px-6 py-3 flex items-center justify-between"
+          style={{ color: C.textSecondary }}>
+          <div className="text-[14px] flex items-center gap-3" style={{ color: C.textPrimary }}>
+            {selectedRows.length > 0 ? (
+              <>
+                <span className="font-medium" style={{ color: C.primary }}>{selectedRows.length} selected</span>
+                <button onClick={() => setSelectedRows([])}
+                  className="text-[12px] hover:underline" style={{ color: C.textSecondary }}>
+                  Clear
+                </button>
+              </>
+            ) : (
+              <span>Total <span className="font-medium">{filtered.length}</span></span>
+            )}
           </div>
         </div>
-
-        {/* (2) Pill Filter Bar — semantic icons + colors */}
-        <div className="px-4 py-2.5 border-b" style={{ borderColor: C.border }}>
-          <div className="flex items-center rounded-full overflow-hidden w-fit p-0.5"
-            style={{ backgroundColor: C.surfaceTinted }}>
-            {[
-              { id: "all", label: "All", count: totals.total, icon: Layers, accent: C.textSecondary },
-              { id: "onTrack", label: "On Track", count: totals.onTrack, icon: CheckCircle, accent: C.success },
-              { id: "atRisk", label: "At Risk", count: totals.atRisk, icon: AlertTriangle, accent: C.warning },
-              { id: "blocked", label: "Blocked", count: totals.blocked, icon: XCircle, accent: C.error },
-            ].map((f) => {
-              const isActive = statusFilter === f.id;
-              const Icon = f.icon;
-              return (
-                <button key={f.id}
-                  onClick={() => setStatusFilter(f.id)}
-                  className="h-7 px-3.5 flex items-center gap-1.5 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                  style={{
-                    backgroundColor: isActive ? C.primary : "transparent",
-                    color: isActive ? "white" : C.textSecondary,
-                  }}
-                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.04)"; }}
-                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = "transparent"; }}>
-                  <Icon className="w-3 h-3 shrink-0"
-                    style={{ color: isActive ? "white" : f.accent, opacity: isActive ? 0.9 : 1 }} />
-                  <span className="text-xs font-medium whitespace-nowrap">{f.label}</span>
-                  <span className="text-xs font-semibold whitespace-nowrap"
-                    style={{ opacity: isActive ? 0.85 : 1 }}>
-                    {f.count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* (3) Project Table */}
-        <div className="px-4 py-2.5 border-b text-xs"
-          style={{ borderColor: C.border, color: C.textSecondary }}>
-          <span><span className="font-semibold" style={{ color: C.textPrimary }}>{filtered.length}</span> of {PROJECTS.length} projects</span>
-        </div>
-        <div className="overflow-auto">
+        <div className="overflow-auto px-6 pb-1">
           <table className="w-full text-xs">
-            <thead style={{ backgroundColor: C.surface2 }}>
-              <tr className="border-b" style={{ borderColor: C.border, color: C.textSecondary }}>
+            <thead style={{ backgroundColor: "#f2f4f7" }}>
+              <tr style={{ color: C.textSecondary }}>
+                <th className="text-center font-medium py-2.5 px-4 w-10 first:rounded-l-lg">
+                  <input type="checkbox" className="rounded" style={{ accentColor: C.primary }}
+                    checked={filtered.length > 0 && selectedRows.length === filtered.length}
+                    ref={(el) => { if (el) el.indeterminate = selectedRows.length > 0 && selectedRows.length < filtered.length; }}
+                    onChange={(e) => setSelectedRows(e.target.checked ? filtered.map((p) => p.code) : [])} />
+                </th>
                 <th className="text-left font-medium py-2.5 px-4">Project</th>
                 <th className="text-left font-medium py-2.5 px-2">Owner</th>
                 <th className="text-left font-medium py-2.5 px-2">Phase</th>
                 <th className="text-center font-medium py-2.5 px-2">D-day</th>
                 <th className="text-center font-medium py-2.5 px-2">Blocking</th>
                 <th className="text-left font-medium py-2.5 px-2 w-56">Gate Readiness</th>
-                <th className="text-right font-medium py-2.5 px-4">TMC Gap</th>
+                <th className="text-right font-medium py-2.5 px-4 last:rounded-r-lg">TMC Gap</th>
               </tr>
             </thead>
             <tbody>
@@ -3546,11 +3536,17 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                 return (
                   <tr key={p.code} onClick={() => onOpenProject(p.code)}
                     className="cursor-pointer border-b transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                    style={{ borderColor: C.borderLight, backgroundColor: "white" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = C.surfaceTinted; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "white"; }}
+                    style={{ borderColor: C.borderLight, backgroundColor: selectedRows.includes(p.code) ? C.primarySoft : "white" }}
+                    onMouseEnter={(e) => { if (!selectedRows.includes(p.code)) e.currentTarget.style.backgroundColor = C.surfaceTinted; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = selectedRows.includes(p.code) ? C.primarySoft : "white"; }}
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpenProject(p.code); } }}>
+                    {/* Checkbox */}
+                    <td className="py-3 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                      <input type="checkbox" className="rounded" style={{ accentColor: C.primary }}
+                        checked={selectedRows.includes(p.code)}
+                        onChange={(e) => setSelectedRows(e.target.checked ? [...selectedRows, p.code] : selectedRows.filter((c) => c !== p.code))} />
+                    </td>
                     {/* Project cell: Avatar + name + code/product (no PM here — moved to Owner column) */}
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2.5">
@@ -3562,7 +3558,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                           <div className="flex items-center gap-1.5">
                             <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</span>
                           </div>
-                          <div className="text-[10px] font-mono mt-0.5" style={{ color: C.textDisabled }}>
+                          <div className="text-[10px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>
                             {p.code} · {p.product}
                           </div>
                         </div>
@@ -3628,7 +3624,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                                 {/* Header */}
                                 <div className="px-3 py-2 border-b flex items-center justify-between"
                                   style={{ borderColor: C.borderLight }}>
-                                  <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: C.textSecondary }}>
+                                  <div className="text-[12px] font-medium tracking-wider" style={{ color: C.textSecondary }}>
                                     {totalCollaborators} {totalCollaborators === 1 ? "Collaborator" : "Collaborators"}
                                   </div>
                                   <button
@@ -3645,7 +3641,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
 
                                 {/* Internal section */}
                                 <div className="py-1.5">
-                                  <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider"
+                                  <div className="px-3 py-1 text-[10px] font-medium tracking-wider"
                                     style={{ color: C.textDisabled }}>
                                     Internal · {internalList.length}
                                   </div>
@@ -3661,7 +3657,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                                               {personaMeta.name || c.persona}
                                             </span>
                                             {c.owner && (
-                                              <span className="text-[8px] uppercase tracking-wide px-1 py-0.5 rounded font-bold"
+                                              <span className="text-[10px] tracking-wide px-1 py-0.5 rounded font-medium"
                                                 style={{ backgroundColor: C.primary, color: "white" }}>
                                                 Owner
                                               </span>
@@ -3686,16 +3682,16 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                                 {/* External section */}
                                 {externalList.length > 0 && (
                                   <div className="py-1.5 border-t" style={{ borderColor: C.borderLight }}>
-                                    <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider"
+                                    <div className="px-3 py-1 text-[10px] font-medium tracking-wider"
                                       style={{ color: C.textDisabled }}>
                                       External · {externalList.length}
                                     </div>
                                     {externalList.slice(0, 3).map((c) => (
                                       <div key={`ext-${c.id}`}
                                         className="px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-gray-50">
-                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0"
+                                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white shrink-0"
                                           style={{ backgroundColor: c.color }}>
-                                          {c.initial}
+                                          {c.initial?.charAt(0)}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                           <div className="text-xs font-medium truncate" style={{ color: C.textPrimary }}>
@@ -3727,13 +3723,16 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                         );
                       })()}
                     </td>
-                    {/* Phase — label only, no dots */}
+                    {/* Phase — primary color chip */}
                     <td className="py-3 px-2">
-                      <span className="text-xs font-medium" style={{ color: C.textPrimary }}>{p.phase}</span>
+                      <span className="inline-flex items-center text-[12px] font-medium px-2.5 py-0.5 rounded-full"
+                        style={{ backgroundColor: C.primaryLight, color: C.primary }}>
+                        {p.phase}
+                      </span>
                     </td>
                     {/* D-day */}
                     <td className="py-3 px-2 text-center">
-                      <span className="font-mono font-semibold text-xs"
+                      <span className="tabular-nums font-medium text-xs"
                         style={{ color: p.phaseDays < 30 ? C.error : p.phaseDays < 60 ? C.warning : C.textSecondary }}>
                         D-{p.phaseDays}
                       </span>
@@ -3743,7 +3742,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                       {p.blocking > 0 ? (
                         <>
                           <span
-                            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full cursor-default transition-colors"
+                            className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full cursor-default transition-colors"
                             style={{ backgroundColor: C.errorLight, color: C.error }}
                             onMouseEnter={(e) => {
                               e.stopPropagation();
@@ -3788,7 +3787,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                                   style={{ borderColor: C.borderLight, backgroundColor: C.errorLight }}>
                                   <div className="flex items-center gap-1.5">
                                     <XCircle className="w-3.5 h-3.5" style={{ color: C.error }} />
-                                    <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: C.error }}>
+                                    <div className="text-[12px] font-medium tracking-wider" style={{ color: C.error }}>
                                       {blockingList.length} Blocking Item{blockingList.length > 1 ? "s" : ""}
                                     </div>
                                   </div>
@@ -3827,17 +3826,17 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                                           <Package className="w-3.5 h-3.5" style={{ color: C.error }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                          <div className="text-xs font-semibold truncate" style={{ color: C.textPrimary }}>
+                                          <div className="text-xs font-medium truncate" style={{ color: C.textPrimary }}>
                                             {item.partName || item.partId}
                                           </div>
-                                          <div className="text-[10px] font-mono mt-0.5" style={{ color: C.textDisabled }}>
+                                          <div className="text-[10px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>
                                             {item.partId}
                                           </div>
                                           <div className="text-[10px] mt-0.5 leading-snug" style={{ color: C.textSecondary }}>
                                             {item.blockReason}
                                           </div>
                                         </div>
-                                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 mt-0.5"
+                                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 mt-0.5"
                                           style={{
                                             backgroundColor: "white",
                                             color: actionColor,
@@ -3871,7 +3870,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                                   backgroundColor: readinessColor,
                                 }} />
                             </div>
-                            <span className="text-xs font-bold w-9 text-right"
+                            <span className="text-xs font-medium w-9 text-right"
                               style={{ color: readinessColor }}>
                               {p.readiness}%
                             </span>
@@ -3881,7 +3880,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                     </td>
                     {/* TMC Gap */}
                     <td className="py-3 px-4 text-right">
-                      <span className="font-mono font-semibold text-xs"
+                      <span className="tabular-nums font-medium text-xs"
                         style={{ color: p.tmcGap === 0 ? C.textDisabled : p.tmcGap > 0 ? C.error : C.success }}>
                         {p.tmcGap === 0 ? "—" : p.tmcGap > 0 ? `+$${p.tmcGap}k` : `-$${Math.abs(p.tmcGap)}k`}
                       </span>
@@ -3905,7 +3904,7 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
                 setPriorityFilter("all");
                 setSortBy("priority");
               }}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center gap-1.5"
+              className="text-xs font-medium px-3 py-1.5 rounded-full border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center gap-1.5"
               style={{ borderColor: C.primary, color: C.primary }}>
               <RefreshCw className="w-3 h-3" />
               Clear all filters
@@ -4020,7 +4019,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
             <Sparkles className="w-5 h-5" style={{ color: "white" }} />
           </div>
           <div className="flex-1">
-            <div className="text-sm font-semibold mb-0.5" style={{ color: C.textPrimary }}>
+            <div className="text-sm font-medium mb-0.5" style={{ color: C.textPrimary }}>
               Welcome to your new project
             </div>
             <div className="text-xs" style={{ color: C.textSecondary }}>
@@ -4031,7 +4030,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
 
         {/* Onboarding checklist */}
         <div className="rounded-xl border bg-white p-5 mb-5" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-semibold uppercase tracking-wide mb-4" style={{ color: C.primary }}>
+          <div className="text-[10px] font-medium tracking-wide mb-4" style={{ color: C.primary }}>
             Get Started · 4 Steps
           </div>
           <div className="space-y-3">
@@ -4060,11 +4059,11 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
                   {step.done ? (
                     <CheckCircle className="w-4 h-4" style={{ color: "white" }} />
                   ) : (
-                    <span className="text-xs font-bold" style={{ color: C.textSecondary }}>{step.num}</span>
+                    <span className="text-xs font-medium" style={{ color: C.textSecondary }}>{step.num}</span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold mb-0.5"
+                  <div className="text-sm font-medium mb-0.5"
                     style={{ color: step.done ? C.success : C.textPrimary }}>
                     {step.title}
                   </div>
@@ -4074,7 +4073,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
                 </div>
                 {step.cta && (
                   <button onClick={step.action}
-                    className="px-3 py-1.5 rounded-md text-xs font-semibold inline-flex items-center gap-1.5 text-white shrink-0 hover:opacity-90"
+                    className="px-3 py-1.5 rounded-md text-xs font-medium inline-flex items-center gap-1.5 text-white shrink-0 hover:opacity-90"
                     style={{ backgroundColor: C.primary }}>
                     {step.icon && <step.icon className="w-3.5 h-3.5" />}
                     {step.cta}
@@ -4088,24 +4087,27 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
         {/* Project meta summary */}
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-lg border bg-white p-4" style={{ borderColor: C.border }}>
-            <div className="text-[10px] font-medium uppercase tracking-wide mb-1" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide mb-1.5" style={{ color: C.textSecondary }}>
               Phase
             </div>
-            <div className="text-base font-semibold" style={{ color: C.textPrimary }}>{project.phase}</div>
-            <div className="text-[10px] mt-1" style={{ color: C.textSecondary }}>D-{project.phaseDays} to next gate</div>
+            <span className="inline-flex items-center text-[14px] font-medium px-2.5 py-0.5 rounded-full"
+              style={{ backgroundColor: C.primaryLight, color: C.primary }}>
+              {project.phase}
+            </span>
+            <div className="text-[10px] mt-1.5" style={{ color: C.textSecondary }}>D-{project.phaseDays} to next gate</div>
           </div>
           <div className="rounded-lg border bg-white p-4" style={{ borderColor: C.border }}>
-            <div className="text-[10px] font-medium uppercase tracking-wide mb-1" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide mb-1" style={{ color: C.textSecondary }}>
               Project Type
             </div>
-            <div className="text-base font-semibold" style={{ color: C.textPrimary }}>{project.type}</div>
+            <div className="text-base font-medium" style={{ color: C.textPrimary }}>{project.type}</div>
             <div className="text-[10px] mt-1" style={{ color: C.textSecondary }}>{project.product}</div>
           </div>
           <div className="rounded-lg border bg-white p-4" style={{ borderColor: C.border }}>
-            <div className="text-[10px] font-medium uppercase tracking-wide mb-1" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide mb-1" style={{ color: C.textSecondary }}>
               Created
             </div>
-            <div className="text-base font-semibold" style={{ color: C.textPrimary }}>{project.lastUpdate}</div>
+            <div className="text-base font-medium" style={{ color: C.textPrimary }}>{project.lastUpdate}</div>
             <div className="text-[10px] mt-1" style={{ color: C.textSecondary }}>by {PERSONAS[project.pm]?.name}</div>
           </div>
         </div>
@@ -4124,7 +4126,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <div className="text-sm font-semibold mb-0.5"
+          <div className="text-sm font-medium mb-0.5"
             style={{ color: isResolved || blocking === 0 ? C.successDark : C.primaryDark }}>
             {isResolved
               ? `On Track for ${project.phase} Phase Gate`
@@ -4156,304 +4158,182 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
               setView && setView("bom");
             }
           }}
-          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          className="text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
           style={{ color: isResolved || blocking === 0 ? C.success : C.primary }}>
           {isResolved ? "Prepare gate review →" : blocking === 0 ? "View progress →" : "Review blockers →"}
         </button>
       </div>
 
-      {/* KPI Row — PM Cockpit (4 cards: Runway / Pending Decisions / Cost / Risk) */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        {/* Gate Runway — phase deadline */}
-        <KpiCard
-          icon={Clock}
-          iconColor={project.phaseDays <= 7 ? C.error : project.phaseDays <= 30 ? C.warning : C.textSecondary}
-          label="Gate Runway"
-          value={`${project.phaseDays} days`}
-          sub={`${project.phase} gate deadline`} />
-
-        {/* Pending Decisions — single source of truth for "PM action needed".
-            Same data as the Pending Decisions widget below (blocking items requiring PM resolution). */}
-        <KpiCard
-          icon={AlertTriangle}
-          iconColor={blocking > 0 ? C.error : C.success}
-          label="Pending Decisions"
-          value={blocking}
-          sub={blocking > 0
-            ? (isHeroProject ? "PM action needed" : "Action required")
-            : "All clear"} />
-
-        {/* Cost vs Target — TMC Gap */}
-        <KpiCard
-          icon={DollarSign}
-          iconColor={tmcGap > 0 ? C.error : tmcGap < 0 ? C.success : C.textSecondary}
-          label="Cost vs Target"
-          value={tmcGap === 0 ? "—" : tmcGap > 0 ? `+$${tmcGap}k` : `-$${Math.abs(tmcGap)}k`}
-          sub={tmcGap > 0 ? "Over target" : tmcGap < 0 ? "Under target" : "On target"} />
-
-        {/* Risk Items — High risk parts (Q-BOM) */}
-        <KpiCard
-          icon={ShieldCheck}
-          iconColor={isResolved ? C.success : (isHeroProject ? C.warning : C.textSecondary)}
-          label="Risk Items"
-          value={isResolved ? "0" : (isHeroProject ? "6" : "0")}
-          sub={isResolved ? "All cleared" : (isHeroProject ? "3 sole-source · 2 geo" : "—")} />
+      {/* KPI Row — Figma style: 48px tinted icon box + label/value, hairline gaps */}
+      <div className="grid grid-cols-4 mb-3 rounded-3xl overflow-hidden" style={{ gap: 2, backgroundColor: C.borderLight }}>
+        {[
+          { icon: Clock, tint: "#f9f5ff", iconColor: C.primary, label: "Gate Runway",
+            value: `${project.phaseDays} days` },
+          { icon: AlertTriangle, tint: "#ecfdff", iconColor: C.info, label: "Pending Decisions",
+            value: `${blocking}` },
+          { icon: DollarSign, tint: "#fff1f3", iconColor: C.error, label: "Cost vs Target",
+            value: tmcGap === 0 ? "—" : tmcGap > 0 ? `+$${tmcGap}k` : `-$${Math.abs(tmcGap)}k` },
+          { icon: ShieldCheck, tint: "#fefbe8", iconColor: C.warning, label: "Risk Items",
+            value: isResolved ? "0" : (isHeroProject ? "6" : "0") },
+        ].map((k) => {
+          const Icon = k.icon;
+          return (
+            <div key={k.label} className="bg-white flex items-start gap-4 p-6">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                style={{ backgroundColor: k.tint }}>
+                <Icon className="w-6 h-6" style={{ color: k.iconColor }} />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[12px] font-medium leading-4" style={{ color: C.textSecondary }}>{k.label}</span>
+                <span className="text-[24px] font-medium leading-8" style={{ color: C.textPrimary }}>{k.value}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Gate Readiness + Blocking Items */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
-        <div className="p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="text-sm font-semibold mb-4" style={{ color: C.textPrimary }}>
-            Gate Readiness — {project.phase}
+      {/* Row: Gate Readiness (donut + bars) + Pending Decisions list */}
+      <div className="grid grid-cols-5 gap-3 mb-3">
+        {/* Gate Readiness — phase */}
+        <div className="col-span-2 rounded-3xl bg-white p-8">
+          <div className="text-[20px] font-medium mb-2" style={{ color: C.textPrimary }}>
+            Gate Readiness - {project.phase}
           </div>
-          <div className="flex items-center justify-center mb-4">
-            <ReadinessRing value={readiness} />
+          <div className="flex items-center gap-4">
+            <div className="shrink-0"><ReadinessRing value={readiness} /></div>
+            <div className="flex-1 flex flex-col gap-4 min-w-0">
+              {subIndicators.map((g) => (
+                <div key={g.label} className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between text-[16px]" style={{ color: C.textSecondary }}>
+                    <span className="truncate">{g.label}</span>
+                    <span className="font-medium tabular-nums shrink-0" style={{ color: C.textPrimary }}>{g.value}%</span>
+                  </div>
+                  <div className="h-4 rounded-full overflow-hidden" style={{ backgroundColor: "#eaecf0" }}>
+                    <div className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${g.value}%`, backgroundColor: C.primary }} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="space-y-2.5">
-            {subIndicators.map((g) => (
-              <div key={g.label}>
-                <div className="flex justify-between text-xs mb-1">
-                  <span style={{ color: C.textSecondary }}>{g.label}</span>
-                  <span className="font-semibold" style={{ color: g.color }}>{g.value}%</span>
+        </div>
+
+        {/* Pending Decisions — card list with Review buttons */}
+        <div className="col-span-3 rounded-3xl bg-white p-8 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Pending Decisions</div>
+            <button
+              onClick={() => setView && setView("bom")}
+              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
+              style={{ color: C.primary }}>
+              View All
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {(blocking > 0 ? blockingItems : []).slice(0, 4).map((item) => (
+              <div key={item.id}
+                className="flex items-center gap-2 px-4 py-3 rounded-xl"
+                style={{ backgroundColor: C.surfaceTinted }}>
+                <div className="flex-1 min-w-0 flex flex-col gap-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[14px] font-medium" style={{ color: C.textPrimary }}>
+                      {item.partName || item.partId}
+                    </span>
+                    <span className="text-[14px] tabular-nums" style={{ color: C.textSecondary }}>{item.partId}</span>
+                  </div>
+                  <span className="text-[14px]" style={{ color: C.textSecondary }}>{item.blockReason}</span>
                 </div>
-                <div className="h-1.5 rounded-full" style={{ backgroundColor: C.borderLight }}>
-                  <div className="h-1.5 rounded-full transition-all duration-500"
-                    style={{ width: `${g.value}%`, backgroundColor: g.color }} />
+                {isHeroProject && (
+                  <button
+                    onClick={() => onOpenItem && onOpenItem(item.id)}
+                    className="h-6 px-2 rounded border text-[12px] font-medium shrink-0 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                    style={{ borderColor: C.primary, color: C.primary, backgroundColor: "white" }}>
+                    Review
+                  </button>
+                )}
+              </div>
+            ))}
+            {blocking === 0 && (
+              <div className="text-center py-10">
+                <CheckCircle className="w-12 h-12 mx-auto mb-3" style={{ color: C.success }} />
+                <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>No pending decisions</div>
+                <div className="text-xs" style={{ color: C.textSecondary }}>{project.phase} phase progressing normally</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Row: Risk Summary (narrow) + Recent Activity (wide) */}
+      <div className="grid grid-cols-5 gap-3">
+        {/* Risk Summary */}
+        <div className="col-span-2 rounded-3xl bg-white p-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Risk Summary</div>
+            <button
+              onClick={() => setView && setView("bom")}
+              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
+              style={{ color: C.primary }}>
+              View All
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex flex-col gap-4">
+            {[
+              { label: "Sole source", value: 18, target: "Target 10%", color: C.error },
+              { label: "Single source", value: 24, target: "Target 15%", color: C.warning },
+              { label: "Dual+", value: 58, target: "Target 75%", color: C.warning },
+            ].map((r) => (
+              <div key={r.label} className="flex flex-col gap-1">
+                <div className="flex items-center justify-between text-[16px]">
+                  <span style={{ color: C.textSecondary }}>{r.label}</span>
+                  <span className="font-medium tabular-nums" style={{ color: r.color }}>{r.value}%</span>
                 </div>
+                <div className="h-4 rounded-full overflow-hidden" style={{ backgroundColor: "#eaecf0" }}>
+                  <div className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${r.value}%`, backgroundColor: r.color }} />
+                </div>
+                <span className="text-[14px]" style={{ color: C.textDisabled }}>{r.target}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="col-span-2 p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="flex items-center justify-between mb-4 gap-3">
-            <div className="flex items-baseline gap-2 min-w-0">
-              <div className="text-sm font-semibold shrink-0" style={{ color: C.textPrimary }}>
-                {isResolved ? "Recently Resolved Items" : blocking > 0 ? "Pending Decisions" : "Recent Activity"}
-              </div>
-              {!isResolved && blocking > 0 && (
-                <span className="text-[11px]" style={{ color: C.textDisabled }}>
-                  · PM action needed
-                </span>
-              )}
-            </div>
-            <span className="text-[11px] shrink-0" style={{ color: C.textSecondary }}>
-              {isResolved
-                ? `${blockingItems.length} resolved in last 24h`
-                : blocking > 0
-                  ? `${blocking} item${blocking > 1 ? "s" : ""}`
-                  : "All caught up"}
-            </span>
+        {/* Recent Activity */}
+        <div className="col-span-3 rounded-3xl bg-white p-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Recent Activity</div>
+            <button
+              onClick={() => setView && setView("bom")}
+              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
+              style={{ color: C.primary }}>
+              View All
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
-          {isResolved ? (
-            <div className="text-center py-12">
-              <CheckCircle className="w-12 h-12 mx-auto mb-3" style={{ color: C.success }} />
-              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>All blocking items resolved</div>
-              <div className="text-xs" style={{ color: C.textSecondary }}>End-to-End collaboration cycle complete</div>
-            </div>
-          ) : blocking === 0 ? (
-            <div className="text-center py-12">
-              <CheckCircle className="w-12 h-12 mx-auto mb-3" style={{ color: C.success }} />
-              <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>No blocking items</div>
-              <div className="text-xs" style={{ color: C.textSecondary }}>{project.phase} phase progressing normally</div>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {blockingItems.map((item) => {
-                // Infer PM action type from blockReason/status:
-                // - "no supplier" / "not assigned" → Assign
-                // - "Risk Assessment pending" / spec review → Review
-                // - cost/price conflicts → Resolve
-                const reason = (item.blockReason || "").toLowerCase();
-                let actionLabel = "Resolve";
-                let actionColor = C.error;
-                if (reason.includes("not assigned") || reason.includes("no supplier") || reason.includes("rfq not")) {
-                  actionLabel = "Assign";
-                  actionColor = C.primary;
-                } else if (reason.includes("pending") || reason.includes("review") || reason.includes("spec")) {
-                  actionLabel = "Review";
-                  actionColor = C.warning;
-                }
-                return (
-                  <div key={item.id}
-                    className="w-full p-3 rounded-lg border transition-all hover:shadow-sm"
-                    style={{ borderColor: C.borderLight }}>
-                    <div className="flex items-start gap-3">
-                      <button
-                        onClick={() => isHeroProject && onOpenItem && onOpenItem(item.id)}
-                        disabled={!isHeroProject}
-                        className="flex-1 min-w-0 text-left flex items-start gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
-                        style={{ cursor: isHeroProject ? "pointer" : "default" }}>
-                        <div className="w-9 h-9 rounded flex items-center justify-center shrink-0"
-                          style={{ backgroundColor: C.errorLight }}>
-                          <Package className="w-4 h-4" style={{ color: C.error }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className="text-sm font-medium" style={{ color: C.textPrimary }}>
-                              {item.partName || item.partId}
-                            </span>
-                            <span className="text-xs font-mono" style={{ color: C.textSecondary }}>
-                              {item.partId}
-                            </span>
-                          </div>
-                          <div className="text-xs mb-2" style={{ color: C.textSecondary }}>
-                            {item.blockReason}
-                          </div>
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            {item.status && Object.entries(item.status).map(([k, v]) => (
-                              <StatusPill key={k} kind={v} label={`${k}: ${STATUS_MAP[v].label}`} />
-                            ))}
-                          </div>
-                        </div>
-                      </button>
-                      {isHeroProject && (
-                        <button
-                          onClick={() => onOpenItem && onOpenItem(item.id)}
-                          className="h-7 px-2.5 rounded-md text-[11px] font-semibold border transition-colors shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
-                          style={{ borderColor: actionColor, color: actionColor, backgroundColor: "white" }}>
-                          {actionLabel}
-                        </button>
-                      )}
-                    </div>
+          <div className="flex flex-col">
+            {[
+              { persona: "QM", name: "Quinn R.", role: "Quality Manager", time: "29 min ago",
+                msg: "D-23 to the Develop Phase Gate. The new AMOLED Panel addition is blocked on both Cost & PPAP. Please review." },
+              { persona: "SM", name: "Sam Lee", role: "Sourcing Manager", time: "28 min ago",
+                msg: "Display Module: Gorilla Glass Victus 2 confirmed. +20% strength gain. Spec docs updated." },
+              { persona: "CM", name: "Cory Chen", role: "Cost Manager", time: "29 min ago",
+                msg: "Drafting PFMEA for the Bonding process. We likely need to add a Critical entry for OCA lamination." },
+            ].map((a, i) => (
+              <div key={i} className="flex items-start gap-2 py-2">
+                <PersonaAvatar p={a.persona} size={32} />
+                <div className="flex-1 min-w-0 flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[14px] font-medium" style={{ color: C.textPrimary }}>{a.name}</span>
+                    <span className="text-[12px]" style={{ color: C.textSecondary }}>{a.time}</span>
                   </div>
-                );
-              })}
-              {!isHeroProject && (
-                <div className="mt-2 px-3 py-2 rounded-md text-xs flex items-center gap-2"
-                  style={{ backgroundColor: C.infoLight, color: C.info }}>
-                  <Info className="w-3.5 h-3.5" />
-                  Item-level collaboration happens in BOM Collaboration
+                  <span className="text-[10px] leading-[14px]" style={{ color: C.textSecondary }}>{a.role}</span>
+                  <p className="text-[14px] leading-5 mt-0.5" style={{ color: C.textPrimary }}>{a.msg}</p>
                 </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Activity Mini + Risk Summary (2-column) */}
-      <div className="grid grid-cols-3 gap-4">
-        {/* Activity Mini — 2/3 width */}
-        <div className="col-span-2 p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Recent Activity & Decisions</div>
-              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
-                Project mentions & decisions — synced with the Activity Stream in BOM Collaboration.
               </div>
-            </div>
-            <button onClick={() => setView("bom")}
-              className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
-              style={{ color: C.primary }}>
-              Full activity stream →
-            </button>
+            ))}
           </div>
-          {isHeroProject ? (
-            <div className="space-y-3">
-              {(() => {
-                // Activity feed mix:
-                // - Scenario messages (ids 1-8) progress with scenarioStep
-                // - History messages (ids 11+) are always-on context
-                // Always show 4 recent items: prefer latest scenario messages, fill with history
-                const scenarioMsgs = ACTIVITY_FEED.slice(0, Math.min(scenarioStep + 1, 8)); // up to 8 scenario items
-                const historyMsgs = ACTIVITY_FEED.filter(m => m.id >= 11);                  // history
-                // Latest scenario messages (descending by id) + history filler
-                const latestScenario = [...scenarioMsgs].reverse(); // most recent scenario message first
-                const mixed = [...latestScenario, ...historyMsgs].slice(0, 3);
-                return mixed.map((m) => (
-                  <div key={m.id} className="flex items-start gap-3 text-sm">
-                    <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={26} />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-medium" style={{ color: C.textPrimary }}>
-                          {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
-                        </span>
-                        <span className="text-xs" style={{ color: C.textDisabled }}>·</span>
-                        <span className="text-xs" style={{ color: C.textDisabled }}>{m.ts}</span>
-                        {m.decision && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
-                            style={{ backgroundColor: C.primaryLight, color: C.primary }}>DECISION</span>
-                        )}
-                      </div>
-                      <div className="text-xs leading-relaxed" style={{ color: C.textSecondary }}>{m.message}</div>
-                    </div>
-                  </div>
-                ));
-              })()}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <Activity className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
-              <div className="text-xs" style={{ color: C.textSecondary }}>
-                {project.name}'s activity log will appear here
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Risk Summary — 1/3 width (NEW) */}
-        <div className="p-5 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Risk Summary</div>
-              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>Supplier source distribution</div>
-            </div>
-            <button onClick={() => setView("bom")}
-              className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-              style={{ color: C.primary }}>
-              Full dashboard →
-            </button>
-          </div>
-          {(() => {
-            // Hero project: scenario-driven values; resolved state shows improved metrics
-            // Other projects: derived placeholders
-            const riskData = isHeroProject
-              ? (isResolved
-                  ? [
-                      { label: "Sole source", value: 8, target: 10, color: C.success, status: "good" },
-                      { label: "Single source", value: 12, target: 15, color: C.success, status: "good" },
-                      { label: "Dual+", value: 80, target: 75, color: C.success, status: "good" },
-                    ]
-                  : [
-                      { label: "Sole source", value: 18, target: 10, color: C.error, status: "over" },
-                      { label: "Single source", value: 24, target: 15, color: C.warning, status: "over" },
-                      { label: "Dual+", value: 58, target: 75, color: C.warning, status: "under" },
-                    ])
-              : [
-                  { label: "Sole source", value: 12, target: 10, color: C.warning, status: "over" },
-                  { label: "Single source", value: 18, target: 15, color: C.warning, status: "over" },
-                  { label: "Dual+", value: 70, target: 75, color: C.warning, status: "under" },
-                ];
-            return (
-              <div className="space-y-3.5">
-                {riskData.map((r) => (
-                  <div key={r.label}>
-                    <div className="flex items-center justify-between text-xs mb-1">
-                      <span style={{ color: C.textSecondary }}>{r.label}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold" style={{ color: r.color }}>{r.value}%</span>
-                        <span className="text-[10px]" style={{ color: C.textDisabled }}>Target {r.target}%</span>
-                      </div>
-                    </div>
-                    <div className="h-1.5 rounded-full overflow-hidden relative" style={{ backgroundColor: C.borderLight }}>
-                      <div className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.min(100, r.value)}%`,
-                          backgroundColor: r.color,
-                        }} />
-                      {/* Target marker */}
-                      <div className="absolute top-0 bottom-0 w-px"
-                        style={{
-                          left: `${Math.min(100, r.target)}%`,
-                          backgroundColor: C.textPrimary,
-                          opacity: 0.4,
-                        }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            );
-          })()}
         </div>
       </div>
     </div>
@@ -4556,7 +4436,7 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <div className="text-sm font-semibold mb-0.5"
+          <div className="text-sm font-medium mb-0.5"
             style={{ color: isResolved ? C.successDark : C.primaryDark }}>
             {isResolved
               ? `All design reviews cleared — ${project.phase} Phase Gate ready`
@@ -4570,14 +4450,14 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
         <button
           onClick={() => setView && setView("bom")}
-          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          className="text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
           style={{ color: isResolved ? C.success : C.primary }}>
           {isResolved ? "Open BOM →" : "Open BOM workspace →"}
         </button>
       </div>
 
-      {/* KPI Row — DE-specific (5 cards) */}
-      <div className="grid grid-cols-5 gap-4 mb-5">
+      {/* KPI Row — DE-specific (4 cards, standardized) */}
+      <div className="grid grid-cols-4 gap-4 mb-5">
         <KpiCard
           icon={AtSign}
           iconColor={pendingDecisions > 0 ? C.primary : C.success}
@@ -4605,23 +4485,28 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           label="New Parts (No Supplier)"
           value={newParts}
           sub={newParts > 0 ? "RFQ needed" : "All assigned"} />
-
-        <KpiCard
-          icon={ShieldCheck}
-          iconColor={ppapPending > 0 ? C.warning : C.success}
-          label="PPAP Items Pending"
-          value={ppapPending}
-          sub={ppapPending > 0 ? "QM review required" : "All cleared"} />
       </div>
 
-      {/* Row 1: BOM Review Queue (2/3) + Changes Submitted (1/3) */}
+      {/* Row 1: BOM Status chart (1/3) + BOM Review Queue (2/3) */}
       <div className="grid grid-cols-3 gap-4 mb-5">
+        {/* BOM Status distribution chart */}
+        <MiniProgressCard
+          title="BOM Status"
+          subtitle="E-BOM parts by review state"
+          headline={`${Math.round(((80 - pendingDecisions - conflicts) / 80) * 100)}%`}
+          headlineSub="cleared"
+          headlineColor={C.info}
+          segments={[
+            { label: "Approved", value: 80 - pendingDecisions - conflicts, color: C.success },
+            { label: "In Review", value: pendingDecisions, color: C.info },
+            { label: "Conflict", value: conflicts, color: C.error },
+          ]} />
         {/* My BOM Review Queue */}
         <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
             <div>
-              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>My BOM Review Queue</div>
-              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>My BOM Review Queue</div>
+              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
                 Accept or keep each change submitted by collaborators
               </div>
             </div>
@@ -4646,21 +4531,21 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                     <button
                       onClick={() => onOpenItem && onOpenItem(q.id)}
                       className="flex-1 min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded">
-                      <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{q.partName}</div>
-                      <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
-                        <span className="font-mono" style={{ color: C.textDisabled }}>{q.partId}</span>
+                      <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{q.partName}</div>
+                      <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
+                        <span className="tabular-nums" style={{ color: C.textDisabled }}>{q.partId}</span>
                         <span style={{ color: C.borderLight }}> · </span>
                         {q.meta}
                       </div>
                     </button>
-                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded shrink-0"
+                    <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shrink-0"
                       style={{ backgroundColor: meta.bg, color: meta.fg }}>
                       {meta.label}
                     </span>
                     {q.action && (
                       <button
                         onClick={() => onOpenItem && onOpenItem(q.id)}
-                        className="h-7 px-2.5 rounded-md text-[11px] font-semibold border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                        className="h-7 px-2.5 rounded-md text-[12px] font-medium border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                         style={{ borderColor: meta.actionBorder, color: meta.actionBorder, backgroundColor: "white" }}>
                         {q.action}
                       </button>
@@ -4671,12 +4556,15 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             </div>
           )}
         </div>
+      </div>
 
+      {/* Row 2: Changes I Submitted + DVT Validation + Process Sheet (3-up) */}
+      <div className="grid grid-cols-3 gap-4">
         {/* Changes I Submitted */}
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Changes I Submitted</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>Tracking your spec changes</div>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Changes I Submitted</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>Tracking your spec changes</div>
           </div>
           <div className="divide-y" style={{ borderColor: C.borderLight }}>
             {changesSubmitted.map((c) => {
@@ -4689,11 +4577,11 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               return (
                 <div key={c.id} className="px-5 py-3 flex items-start gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-semibold" style={{ color: C.textPrimary }}>{c.title}</div>
-                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{c.meta}</div>
+                    <div className="text-xs font-medium" style={{ color: C.textPrimary }}>{c.title}</div>
+                    <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{c.meta}</div>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                    <span className="text-[10px] font-medium tracking-wide px-1.5 py-0.5 rounded"
                       style={{ backgroundColor: stateMeta.bg, color: stateMeta.fg }}>
                       {stateMeta.label}
                     </span>
@@ -4710,15 +4598,11 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             })}
           </div>
         </div>
-      </div>
-
-      {/* Row 2: DVT Validation Required (1/2) + Process Sheet Completeness (1/2) */}
-      <div className="grid grid-cols-2 gap-4">
         {/* DVT Validation Required */}
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>DVT Validation Required</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>DVT Validation Required</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Design verification tests pending execution
             </div>
           </div>
@@ -4735,10 +4619,10 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                   <div className="w-2 h-2 rounded-full mt-1.5 shrink-0"
                     style={{ backgroundColor: d.urgent ? C.error : C.warning }} />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{d.title}</div>
-                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
+                    <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{d.title}</div>
+                    <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
                   </div>
-                  <span className="text-[11px] font-medium shrink-0"
+                  <span className="text-[12px] font-medium shrink-0"
                     style={{ color: d.due === "TBD" ? C.textDisabled : C.textSecondary }}>
                     {d.due}
                   </span>
@@ -4751,15 +4635,15 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         {/* Process Sheet Completeness */}
         <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
           <div className="mb-4">
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Process Sheet Completeness</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>Rev B by sub-system</div>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Process Sheet Completeness</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>Rev B by sub-system</div>
           </div>
           <div className="space-y-3.5">
             {processSheets.map((p) => (
               <div key={p.label}>
                 <div className="flex items-center justify-between text-xs mb-1">
                   <span style={{ color: C.textSecondary }}>{p.label}</span>
-                  <span className="font-semibold" style={{ color: p.color }}>{p.value}%</span>
+                  <span className="font-medium" style={{ color: p.color }}>{p.value}%</span>
                 </div>
                 <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: C.borderLight }}>
                   <div className="h-full rounded-full transition-all duration-500"
@@ -4866,7 +4750,7 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <div className="text-sm font-semibold mb-0.5"
+          <div className="text-sm font-medium mb-0.5"
             style={{ color: isResolved ? C.successDark : C.primaryDark }}>
             {isResolved
               ? `Cost reconcile complete — All items aligned for ${project.phase} Phase Gate`
@@ -4880,14 +4764,14 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
         <button
           onClick={() => setView && setView("bom")}
-          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          className="text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
           style={{ color: isResolved ? C.success : C.primary }}>
           {isResolved ? "View C-BOM →" : "Open cost reconcile →"}
         </button>
       </div>
 
-      {/* KPI Row — CM-specific (5 cards) */}
-      <div className="grid grid-cols-5 gap-4 mb-5">
+      {/* KPI Row — CM-specific (4 cards, standardized) */}
+      <div className="grid grid-cols-4 gap-4 mb-5">
         <KpiCard
           icon={DollarSign}
           iconColor={parseFloat(shouldVsQuotedGap) > 0 ? C.error : C.success}
@@ -4917,21 +4801,30 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           label="Cost Conflicts"
           value={costConflicts}
           sub={costConflicts > 0 ? "AMOLED + Touch IC" : "All clear"} />
-
-        <KpiCard
-          icon={Layers}
-          iconColor={parseFloat(totalGap) > 0 ? C.error : C.success}
-          label="Total Cost"
-          value={`$${totalCost.toFixed(2)}`}
-          sub={`${fmtGap(parseFloat(totalGap))} vs target`} />
       </div>
 
-      {/* Cost Reconcile Table — full width */}
-      <div className="rounded-xl border bg-white mb-5" style={{ borderColor: C.border }}>
-        <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-          <div>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Cost Reconcile — Rev B</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+      {/* Row: Cost breakdown chart (1/3) + Cost Reconcile table (2/3) */}
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        {/* Cost comparison chart — Target vs Quoted vs Should-cost */}
+        <MiniProgressCard
+          title="Cost Position"
+          subtitle="Total BOM, Rev B"
+          headline={`$${totalCost.toFixed(0)}`}
+          headlineSub={`${parseFloat(totalGap) >= 0 ? "+" : "−"}$${Math.abs(parseFloat(totalGap)).toFixed(0)} vs target`}
+          headlineColor={parseFloat(totalGap) > 0 ? C.error : C.success}
+          mode="compare"
+          unit="$"
+          segments={[
+            { label: "Target", value: Math.round(targetTotal), color: C.textSecondary },
+            { label: "Quoted", value: Math.round(totalCost), color: parseFloat(totalGap) > 0 ? C.error : C.success },
+            { label: "Should-cost", value: Math.round(targetTotal * 0.98), color: C.info },
+          ]} />
+        {/* Cost Reconcile Table */}
+        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+            <div>
+              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Cost Reconcile — Rev B</div>
+              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               FEPT Target · Quoted · Should-cost · Gap
             </div>
           </div>
@@ -4944,12 +4837,12 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         <table className="w-full">
           <thead>
             <tr style={{ color: C.textDisabled, borderBottom: `1px solid ${C.borderLight}` }}>
-              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5">Part</th>
-              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Target</th>
-              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Quoted</th>
-              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Should-cost</th>
-              <th className="text-right font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Gap (Q−T)</th>
-              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5 w-32">Status</th>
+              <th className="text-left font-medium text-[10px] tracking-wider py-2.5 px-5">Part</th>
+              <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Target</th>
+              <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Quoted</th>
+              <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Should-cost</th>
+              <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Gap (Q−T)</th>
+              <th className="text-left font-medium text-[10px] tracking-wider py-2.5 px-5 w-32">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -4968,20 +4861,20 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                     style={{ color: isConflict ? C.error : C.textPrimary }}>
                     {r.part}
                   </td>
-                  <td className="py-3 px-3 text-right text-sm font-mono" style={{ color: C.textPrimary }}>
+                  <td className="py-3 px-3 text-right text-sm tabular-nums" style={{ color: C.textPrimary }}>
                     {fmt(r.target)}
                   </td>
-                  <td className="py-3 px-3 text-right text-sm font-mono" style={{ color: r.quoted !== null ? C.textPrimary : C.textDisabled }}>
+                  <td className="py-3 px-3 text-right text-sm tabular-nums" style={{ color: r.quoted !== null ? C.textPrimary : C.textDisabled }}>
                     {fmt(r.quoted)}
                   </td>
-                  <td className="py-3 px-3 text-right text-sm font-mono" style={{ color: r.should !== null ? C.textPrimary : C.textDisabled }}>
+                  <td className="py-3 px-3 text-right text-sm tabular-nums" style={{ color: r.should !== null ? C.textPrimary : C.textDisabled }}>
                     {fmt(r.should)}
                   </td>
-                  <td className="py-3 px-3 text-right text-sm font-mono font-semibold" style={{ color: gapColor(r.gap) }}>
+                  <td className="py-3 px-3 text-right text-sm tabular-nums font-medium" style={{ color: gapColor(r.gap) }}>
                     {fmtGap(r.gap)}
                   </td>
                   <td className="py-3 px-5">
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded inline-block"
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded inline-block"
                       style={{ backgroundColor: meta.bg, color: meta.fg }}>
                       {meta.label}
                     </span>
@@ -4991,6 +4884,7 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Row: RFQ Status (1/2) + My Action Queue (1/2) */}
@@ -4998,8 +4892,8 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         {/* RFQ Status */}
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>RFQ Status</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>RFQ Status</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Supplier quote engagement progress
             </div>
           </div>
@@ -5016,10 +4910,10 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                   <div className="w-2 h-2 rounded-full mt-1.5 shrink-0"
                     style={{ backgroundColor: r.urgent ? C.error : C.warning }} />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{r.part}</div>
-                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{r.meta}</div>
+                    <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{r.part}</div>
+                    <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{r.meta}</div>
                   </div>
-                  <span className="text-[11px] font-medium shrink-0"
+                  <span className="text-[12px] font-medium shrink-0"
                     style={{ color: r.state === "open" ? C.error : C.warning }}>
                     {r.state === "open" ? "Open" : "In progress"}
                   </span>
@@ -5032,8 +4926,8 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         {/* My Action Queue */}
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>My Action Queue</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>My Action Queue</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               CM tasks requiring your input
             </div>
           </div>
@@ -5050,16 +4944,16 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                 return (
                   <div key={a.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{a.title}</div>
-                      <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
+                      <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{a.title}</div>
+                      <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
                     </div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded shrink-0"
+                    <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shrink-0"
                       style={{ backgroundColor: meta.bg, color: meta.fg }}>
                       {meta.label}
                     </span>
                     <button
                       onClick={() => setView && setView("bom")}
-                      className="h-7 px-2.5 rounded-md text-[11px] font-semibold border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      className="h-7 px-2.5 rounded-md text-[12px] font-medium border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                       style={{ borderColor: meta.border, color: meta.border, backgroundColor: "white" }}>
                       {a.action}
                     </button>
@@ -5153,7 +5047,7 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <div className="text-sm font-semibold mb-0.5"
+          <div className="text-sm font-medium mb-0.5"
             style={{ color: isResolved ? C.successDark : C.primaryDark }}>
             {isResolved
               ? `Sourcing strategy aligned — All risk targets within range`
@@ -5167,27 +5061,20 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
         <button
           onClick={() => setView && setView("bom")}
-          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          className="text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
           style={{ color: isResolved ? C.success : C.primary }}>
           {isResolved ? "View C-BOM →" : "Open sourcing view →"}
         </button>
       </div>
 
-      {/* KPI Row — SM-specific (5 cards) */}
-      <div className="grid grid-cols-5 gap-4 mb-5">
+      {/* KPI Row — SM-specific (4 cards, standardized) */}
+      <div className="grid grid-cols-4 gap-4 mb-5">
         <KpiCard
           icon={AtSign}
           iconColor={itemsNeedingInput > 0 ? C.error : C.success}
           label="Items Needing GCM Input"
           value={itemsNeedingInput}
           sub={itemsNeedingInput > 0 ? "Aligned cost not set" : "All set"} />
-
-        <KpiCard
-          icon={DollarSign}
-          iconColor={C.warning}
-          label="Commodity Exposure"
-          value={commodityExposure}
-          sub="CRM / volatile materials" />
 
         <KpiCard
           icon={AlertTriangle}
@@ -5211,15 +5098,29 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           sub={altSourcingActive > 0 ? "Evaluation in progress" : "None active"} />
       </div>
 
-      {/* Market Commodities — full width */}
-      <div className="rounded-xl border bg-white mb-5" style={{ borderColor: C.border }}>
-        <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-          <div>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
-              Market Commodities — Live Tracking
-            </div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
-              High-volatility items requiring GCM response
+      {/* Row: Sourcing mix chart (1/3) + Market Commodities (2/3) */}
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        {/* Sourcing mix — single vs dual vs multi source */}
+        <MiniProgressCard
+          title="Sourcing Mix"
+          subtitle="80 parts by supplier coverage"
+          headline={`${soleSourcePct}%`}
+          headlineSub="sole-source"
+          headlineColor={soleSourcePct > 10 ? C.error : C.success}
+          segments={[
+            { label: "Sole source", value: soleSourceCount, color: C.error },
+            { label: "Dual source", value: altSourcingActive + 12, color: C.warning },
+            { label: "Multi source", value: 80 - soleSourceCount - (altSourcingActive + 12), color: C.success },
+          ]} />
+        {/* Market Commodities */}
+        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+            <div>
+              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
+                Market Commodities — Live Tracking
+              </div>
+              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
+                High-volatility items requiring GCM response
             </div>
           </div>
           <button onClick={() => setView && setView("bom")}
@@ -5235,7 +5136,7 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               <div className="col-span-3 min-w-0">
                 <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
                   {c.name}
-                  <span className="ml-1.5 text-[10px] font-mono" style={{ color: C.textDisabled }}>
+                  <span className="ml-1.5 text-[10px] tabular-nums" style={{ color: C.textDisabled }}>
                     {c.source}
                   </span>
                 </div>
@@ -5253,13 +5154,13 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               </div>
               {/* Price */}
               <div className="col-span-2 text-right">
-                <span className="text-sm font-mono font-semibold" style={{ color: commodityBarColor(c.risk) }}>
+                <span className="text-sm tabular-nums font-medium" style={{ color: commodityBarColor(c.risk) }}>
                   {c.price}
                 </span>
               </div>
               {/* YTD */}
               <div className="col-span-1 text-right">
-                <span className="text-[11px] font-semibold inline-flex items-center gap-0.5 justify-end"
+                <span className="text-[12px] font-medium inline-flex items-center gap-0.5 justify-end"
                   style={{ color: ytdColor(c.trend) }}>
                   {c.trend === "up" ? <TrendingUp className="w-3 h-3" /> : c.trend === "down" ? <TrendingDown className="w-3 h-3" /> : null}
                   {c.ytd} YTD
@@ -5267,6 +5168,7 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               </div>
             </div>
           ))}
+        </div>
         </div>
       </div>
 
@@ -5276,8 +5178,8 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
             <div>
-              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>SSS Risk Dashboard</div>
-              <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>SSS Risk Dashboard</div>
+              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
                 Sole / Single / Dual+ source distribution
               </div>
             </div>
@@ -5293,7 +5195,7 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                 <div className="flex items-center justify-between text-xs mb-1.5">
                   <span style={{ color: C.textSecondary }}>{r.label}</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold" style={{ color: r.color }}>{r.value}%</span>
+                    <span className="font-medium" style={{ color: r.color }}>{r.value}%</span>
                     <span className="text-[10px]" style={{ color: C.textDisabled }}>Target {r.target}%</span>
                   </div>
                 </div>
@@ -5316,8 +5218,8 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         {/* My GCM Action Queue */}
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>My GCM Action Queue</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>My GCM Action Queue</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Sourcing decisions requiring your input
             </div>
           </div>
@@ -5334,16 +5236,16 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                 return (
                   <div key={a.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{a.title}</div>
-                      <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
+                      <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{a.title}</div>
+                      <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
                     </div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded shrink-0"
+                    <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shrink-0"
                       style={{ backgroundColor: meta.bg, color: meta.fg }}>
                       {meta.label}
                     </span>
                     <button
                       onClick={() => setView && setView("bom")}
-                      className="h-7 px-2.5 rounded-md text-[11px] font-semibold transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      className="h-7 px-2.5 rounded-md text-[12px] font-medium transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                       style={{
                         border: meta.filled ? "none" : `1px solid ${meta.border}`,
                         color: meta.filled ? "white" : meta.border,
@@ -5378,8 +5280,8 @@ function ApqpGanttChart() {
     <div className="rounded-xl border bg-white p-5 mb-5" style={{ borderColor: C.border }}>
       <div className="flex items-center justify-between mb-3">
         <div>
-          <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>APQP Program Timeline</div>
-          <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+          <div className="text-sm font-medium" style={{ color: C.textPrimary }}>APQP Program Timeline</div>
+          <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
             Advanced Product Quality Planning — 5-phase progress
           </div>
         </div>
@@ -5390,7 +5292,7 @@ function ApqpGanttChart() {
         </div>
       </div>
       <div className="relative">
-        <div className="flex justify-between text-[9px] font-mono mb-1 pl-44" style={{ color: C.textDisabled }}>
+        <div className="flex justify-between text-[10px] tabular-nums mb-1 pl-44" style={{ color: C.textDisabled }}>
           <span>03/16</span>
           <span>03/30</span>
           <span>04/13</span>
@@ -5413,7 +5315,7 @@ function ApqpGanttChart() {
                     backgroundColor: lightColor,
                     border: `1px solid ${color}`,
                   }}>
-                  <div className="text-[9px] font-bold" style={{ color: color }}>
+                  <div className="text-[10px] font-medium" style={{ color: color }}>
                     {ph.status === "complete" ? "✓" : ph.status === "active" ? "●" : "○"}
                   </div>
                 </div>
@@ -5429,9 +5331,9 @@ function ApqpGanttChart() {
             width: 0,
           }}>
           <div className="absolute h-full" style={{ width: 2, backgroundColor: C.primary, left: 0 }} />
-          <div className="absolute -top-3 -left-4 text-[9px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap"
+          <div className="absolute -top-3 -left-4 text-[10px] font-medium px-1.5 py-0.5 rounded whitespace-nowrap"
             style={{ backgroundColor: C.primary, color: "white" }}>
-            TODAY
+            Today
           </div>
         </div>
       </div>
@@ -5512,7 +5414,7 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       pending: { bg: C.bg,      text: C.textDisabled, opacity: 1 },
     }[state] || { bg: C.bg, text: C.textDisabled, opacity: 1 };
     return (
-      <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border"
+      <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium border"
         style={{ backgroundColor: meta.bg, color: meta.text, borderColor: state === "pending" ? C.border : "transparent" }}>
         {persona === "CM" ? "GC" : persona === "DE" ? "DE" : persona === "QM" ? "SQ" : persona}
       </div>
@@ -5552,7 +5454,7 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           <Sparkles className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <div className="text-sm font-semibold mb-0.5"
+          <div className="text-sm font-medium mb-0.5"
             style={{ color: isResolved ? C.successDark : C.primaryDark }}>
             {isResolved
               ? `Quality validation complete — All PPAP cleared for ${project.phase} Phase Gate`
@@ -5566,7 +5468,7 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
         <button
           onClick={() => setView && setView("bom")}
-          className="text-[11px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+          className="text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
           style={{ color: isResolved ? C.success : C.primary }}>
           {isResolved ? "View Q-BOM →" : "Open Q-BOM →"}
         </button>
@@ -5575,8 +5477,8 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       {/* APQP Program Timeline — top of QM Overview (replaces standalone APQP menu) */}
       <ApqpGanttChart />
 
-      {/* KPI Row — QM-specific (5 cards) */}
-      <div className="grid grid-cols-5 gap-4 mb-5">
+      {/* KPI Row — QM-specific (4 cards, standardized) */}
+      <div className="grid grid-cols-4 gap-4 mb-5">
         <KpiCard
           icon={ShieldCheck}
           iconColor={ppapItemsOpen > 0 ? C.error : C.success}
@@ -5599,13 +5501,6 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           sub={dvtIssuesOpen > 0 ? "Validation pending" : "All resolved"} />
 
         <KpiCard
-          icon={GitBranch}
-          iconColor={specChangesToReview > 0 ? C.info : C.success}
-          label="Spec Changes to Review"
-          value={specChangesToReview}
-          sub="Rev B vs Rev A" />
-
-        <KpiCard
           icon={Package}
           iconColor={newPartsNoPpap > 0 ? C.error : C.success}
           label="New Parts (No PPAP)"
@@ -5613,17 +5508,39 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           sub={newPartsNoPpap > 0 ? "Battery + Camera" : "All registered"} />
       </div>
 
-      {/* PCR Tracker — full width */}
-      <div className="rounded-xl border bg-white mb-5" style={{ borderColor: C.border }}>
-        <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-          <div>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
-              PCR Tracker — Cross-functional SSOT
+      {/* Row: PPAP progress chart (1/3) + PCR Tracker (2/3) */}
+      <div className="grid grid-cols-3 gap-4 mb-5">
+        {/* PPAP progress — complete vs in-progress vs not-started */}
+        {(() => {
+          const done = ppapStatus.filter(p => p.state === "complete").length;
+          const prog = ppapStatus.filter(p => p.state === "in-progress").length;
+          const not = ppapStatus.filter(p => p.state === "not-started").length;
+          const tot = done + prog + not || 1;
+          return (
+            <MiniProgressCard
+              title="PPAP Progress"
+              subtitle={`${ppapStatus.length} tracked parts`}
+              headline={`${Math.round((done / tot) * 100)}%`}
+              headlineSub="complete"
+              headlineColor={C.success}
+              segments={[
+                { label: "Complete", value: done, color: C.success },
+                { label: "In progress", value: prog, color: C.warning },
+                { label: "Not started", value: not, color: C.error },
+              ]} />
+          );
+        })()}
+        {/* PCR Tracker */}
+        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
+          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+            <div>
+              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
+                PCR Tracker — Cross-functional SSOT
+              </div>
+              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
+                Engineering · SQE · GCM — same real-time view
+              </div>
             </div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
-              Engineering · SQE · GCM — same real-time view
-            </div>
-          </div>
           <button onClick={() => setView && setView("bom")}
             className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
             style={{ color: C.primary }}>
@@ -5633,12 +5550,12 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         <table className="w-full">
           <thead>
             <tr style={{ color: C.textDisabled, borderBottom: `1px solid ${C.borderLight}` }}>
-              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5 w-40">Code</th>
-              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-3">Part & Change</th>
-              <th className="text-center font-semibold text-[10px] uppercase tracking-wider py-2.5 px-2 w-12">DE</th>
-              <th className="text-center font-semibold text-[10px] uppercase tracking-wider py-2.5 px-2 w-12">SQE</th>
-              <th className="text-center font-semibold text-[10px] uppercase tracking-wider py-2.5 px-2 w-12">GCM</th>
-              <th className="text-left font-semibold text-[10px] uppercase tracking-wider py-2.5 px-5 w-32">Status</th>
+              <th className="text-left font-medium text-[10px] tracking-wider py-2.5 px-5 w-40">Code</th>
+              <th className="text-left font-medium text-[10px] tracking-wider py-2.5 px-3">Part & Change</th>
+              <th className="text-center font-medium text-[10px] tracking-wider py-2.5 px-2 w-12">DE</th>
+              <th className="text-center font-medium text-[10px] tracking-wider py-2.5 px-2 w-12">SQE</th>
+              <th className="text-center font-medium text-[10px] tracking-wider py-2.5 px-2 w-12">GCM</th>
+              <th className="text-left font-medium text-[10px] tracking-wider py-2.5 px-5 w-32">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -5649,7 +5566,7 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                   onClick={() => onOpenItem && onOpenItem(r.id)}
                   className="cursor-pointer transition-colors hover:bg-gray-50"
                   style={{ borderBottom: `1px solid ${C.borderLight}` }}>
-                  <td className="py-3 px-5 text-xs font-mono" style={{ color: C.textDisabled }}>
+                  <td className="py-3 px-5 text-xs tabular-nums" style={{ color: C.textDisabled }}>
                     {r.code}
                   </td>
                   <td className="py-3 px-3 text-sm font-medium" style={{ color: C.textPrimary }}>
@@ -5665,7 +5582,7 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                     <div className="inline-flex justify-center">{roleStatusDot(r.cm, "CM")}</div>
                   </td>
                   <td className="py-3 px-5">
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded inline-block"
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded inline-block"
                       style={{ backgroundColor: meta.bg, color: meta.fg }}>
                       {meta.label}
                     </span>
@@ -5675,6 +5592,7 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Row: PPAP Status (1/2) + DVT Open Issues (1/2) */}
@@ -5682,8 +5600,8 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         {/* PPAP Status */}
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>PPAP Status</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>PPAP Status</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Per-part PPAP submission progress
             </div>
           </div>
@@ -5692,12 +5610,12 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               <div key={p.id} className="px-5 py-3 transition-colors hover:bg-gray-50">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{p.part}</div>
-                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+                    <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.part}</div>
+                    <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
                       PPAP Level {p.ppapLevel} · {ppapStateLabel(p.state)}
                     </div>
                   </div>
-                  <span className="text-[11px] font-medium ml-2 shrink-0"
+                  <span className="text-[12px] font-medium ml-2 shrink-0"
                     style={{ color: p.state === "complete" ? C.success : p.state === "in-progress" ? C.warning : C.textDisabled }}>
                     {ppapStateLabel(p.state)}
                   </span>
@@ -5714,8 +5632,8 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         {/* DVT Open Issues */}
         <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
           <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>DVT Open Issues</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>DVT Open Issues</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Design verification test results pending
             </div>
           </div>
@@ -5732,10 +5650,10 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
                   <div className="w-2 h-2 rounded-full mt-1.5 shrink-0"
                     style={{ backgroundColor: d.urgent ? C.error : C.warning }} />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{d.title}</div>
-                    <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
+                    <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{d.title}</div>
+                    <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
                   </div>
-                  <span className="text-[11px] font-medium shrink-0"
+                  <span className="text-[12px] font-medium shrink-0"
                     style={{ color: d.due === "TBD" ? C.textDisabled : C.textSecondary }}>
                     {d.due}
                   </span>
@@ -5782,8 +5700,8 @@ function KpiCard({ icon: Icon, iconColor, label, value, sub }) {
         </div>
         <span className="text-xs font-medium" style={{ color: C.textSecondary }}>{label}</span>
       </div>
-      <div className="text-2xl font-bold tracking-tight" style={{ color: C.textPrimary }}>{value}</div>
-      <div className="text-[11px] mt-0.5" style={{ color: C.textDisabled }}>{sub}</div>
+      <div className="text-2xl font-medium tracking-tight" style={{ color: C.textPrimary }}>{value}</div>
+      <div className="text-[12px] mt-0.5" style={{ color: C.textDisabled }}>{sub}</div>
     </div>
   );
 }
@@ -5802,12 +5720,78 @@ function ReadinessRing({ value }) {
           style={{ transition: "stroke-dashoffset 0.6s ease" }} />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center flex-col">
-        <span className="text-3xl font-bold" style={{ color }}>{value}%</span>
+        <span className="text-[32px] font-medium" style={{ color }}>{value}%</span>
         <span className="text-[10px]" style={{ color: C.textSecondary }}>Ready</span>
       </div>
     </div>
   );
 }
+
+// === MiniProgressCard — shared role-specific progress chart for Overview (KPI lower-left) ===
+// title: card title; subtitle: small caption; headline/headlineSub: big metric on top;
+// segments: [{ label, value, color }] rendered as a horizontal stacked bar + legend.
+// If `mode` === "compare", segments are drawn as separate full-width bars (for value comparison).
+function MiniProgressCard({ title, subtitle, headline, headlineSub, headlineColor, segments, mode = "stack", unit = "" }) {
+  const total = segments.reduce((s, x) => s + (x.value || 0), 0) || 1;
+  const maxVal = Math.max(...segments.map((s) => s.value || 0), 1);
+  return (
+    <div className="p-5 rounded-xl border bg-white flex flex-col" style={{ borderColor: C.border }}>
+      <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{title}</div>
+      {subtitle && <div className="text-[12px] mt-0.5 mb-3" style={{ color: C.textSecondary }}>{subtitle}</div>}
+
+      {headline !== undefined && (
+        <div className="flex items-baseline gap-1.5 mt-1 mb-3">
+          <span className="text-[32px] font-medium leading-none tabular-nums" style={{ color: headlineColor || C.textPrimary }}>{headline}</span>
+          {headlineSub && <span className="text-[12px]" style={{ color: C.textSecondary }}>{headlineSub}</span>}
+        </div>
+      )}
+
+      {mode === "stack" ? (
+        <>
+          {/* Horizontal stacked bar */}
+          <div className="h-3 rounded-full overflow-hidden flex" style={{ backgroundColor: C.borderLight }}>
+            {segments.map((s, i) => (
+              <div key={i} className="h-full transition-all duration-500"
+                style={{ width: `${((s.value || 0) / total) * 100}%`, backgroundColor: s.color }}
+                title={`${s.label}: ${s.value}`} />
+            ))}
+          </div>
+          {/* Legend */}
+          <div className="mt-3 space-y-1.5">
+            {segments.map((s, i) => (
+              <div key={i} className="flex items-center justify-between text-[12px]">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                  <span className="truncate" style={{ color: C.textSecondary }}>{s.label}</span>
+                </div>
+                <span className="tabular-nums font-medium shrink-0" style={{ color: C.textPrimary }}>
+                  {s.value}{unit}
+                </span>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        /* Compare mode — each segment is its own labeled bar */
+        <div className="space-y-2.5 mt-1">
+          {segments.map((s, i) => (
+            <div key={i}>
+              <div className="flex justify-between text-[12px] mb-1">
+                <span style={{ color: C.textSecondary }}>{s.label}</span>
+                <span className="tabular-nums font-medium" style={{ color: s.color }}>{unit}{s.value}</span>
+              </div>
+              <div className="h-1.5 rounded-full" style={{ backgroundColor: C.borderLight }}>
+                <div className="h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: `${((s.value || 0) / maxVal) * 100}%`, backgroundColor: s.color }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 // === SCREEN: GENERAL INFO (Project meta + Shared Files + Collaborators) ===
 function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
@@ -5843,12 +5827,9 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
       <div className="space-y-4">
 
         {/* === General Info === */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Phase Milestones — moved to top for at-a-glance progress overview */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
-            <div className="text-[10px] font-semibold uppercase tracking-wide mb-3" style={{ color: C.primary }}>
-              Key Milestones
-            </div>
+          <div>
             <div className="flex items-center gap-2">
               {meta.keyMilestones.map((ms, i) => {
                 const isCompleted = ms.status === "completed";
@@ -5866,10 +5847,10 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
                           : isActive ? <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
                           : <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color, opacity: 0.5 }} />}
                       </div>
-                      <div className="text-[11px] font-medium" style={{ color: isActive ? C.primary : C.textPrimary }}>
+                      <div className="text-[12px] font-medium" style={{ color: isActive ? C.primary : C.textPrimary }}>
                         {ms.phase}
                       </div>
-                      <div className="text-[9px]" style={{ color: C.textSecondary }}>{ms.date}</div>
+                      <div className="text-[10px]" style={{ color: C.textSecondary }}>{ms.date}</div>
                     </div>
                     {i < meta.keyMilestones.length - 1 && (
                       <div className="h-px flex-1 mb-6"
@@ -5882,33 +5863,10 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
           </div>
 
           {/* Project Meta Card */}
-          <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <div className="text-[10px] font-semibold uppercase tracking-wide mb-1" style={{ color: C.primary }}>
-                  Project Information
-                </div>
-                <div className="text-lg font-semibold" style={{ color: C.textPrimary }}>{meta.fullName}</div>
-                <div className="text-xs font-mono mt-0.5" style={{ color: C.textSecondary }}>{project.code}</div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] px-2 py-1 rounded font-medium"
-                  style={{
-                    backgroundColor: project.priority === "high" ? C.errorLight : project.priority === "med" ? C.warningLight : C.successLight,
-                    color: project.priority === "high" ? C.error : project.priority === "med" ? C.warning : C.success,
-                  }}>
-                  {project.priority.toUpperCase()} PRIORITY
-                </span>
-                <span className="text-[10px] px-2 py-1 rounded font-medium"
-                  style={{ backgroundColor: C.primaryLight, color: C.primary }}>
-                  {project.phase}
-                </span>
-              </div>
-            </div>
-
+          <div>
             {/* Core Objective */}
             <div className="mb-4 p-3 rounded-md" style={{ backgroundColor: C.bg }}>
-              <div className="text-[10px] font-semibold uppercase tracking-wide mb-1" style={{ color: C.textSecondary }}>
+              <div className="text-[10px] font-medium tracking-wide mb-1" style={{ color: C.textSecondary }}>
                 Core Objective
               </div>
               <div className="text-sm" style={{ color: C.textPrimary }}>{meta.coreObjective}</div>
@@ -5927,11 +5885,11 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
                 { label: "ERP Project ID", value: meta.erpProjectId, mono: true },
               ].map((row) => (
                 <div key={row.label}>
-                  <div className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
+                  <div className="text-[10px] font-medium tracking-wide mb-0.5"
                     style={{ color: C.textSecondary }}>
                     {row.label}
                   </div>
-                  <div className={row.mono ? "font-mono" : ""}
+                  <div className={row.mono ? "tabular-nums" : ""}
                     style={{ color: C.textPrimary }}>
                     {row.value}
                   </div>
@@ -5941,10 +5899,10 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
           </div>
 
           {/* Shared Files */}
-          <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-            <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+          <div>
+            <div className="py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.primary }}>
+                <div className="text-[16px] font-medium" style={{ color: C.textPrimary }}>
                   Shared Files
                 </div>
                 <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: C.bg, color: C.textSecondary }}>
@@ -5958,11 +5916,10 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
               </button>
             </div>
             {/* Filter pills */}
-            <div className="px-5 py-2 border-b flex items-center gap-1 flex-wrap"
-              style={{ borderColor: C.border, backgroundColor: C.bg }}>
+            <div className="py-2 flex items-center gap-1 flex-wrap">
               {fileFilters.map((f) => (
                 <button key={f.id} onClick={() => setFileFilter(f.id)}
-                  className="px-2.5 py-1 rounded text-[11px] font-medium transition-colors hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                  className="px-2.5 py-1 rounded text-[12px] font-medium transition-colors hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                   style={{
                     backgroundColor: fileFilter === f.id ? C.primary : "white",
                     color: fileFilter === f.id ? "white" : C.textSecondary,
@@ -5975,7 +5932,7 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
             {/* File list */}
             <div className="divide-y" style={{ borderColor: C.borderLight }}>
               {filteredFiles.map((f) => (
-                <div key={f.id} className="px-5 py-3 hover:bg-gray-50 flex items-center gap-3 cursor-pointer">
+                <div key={f.id} className="px-3 py-3 rounded-md hover:bg-gray-50 flex items-center gap-3 cursor-pointer">
                   <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
                     style={{ backgroundColor: C.bg }}>
                     <FileText className="w-5 h-5" style={{ color: fileIconColor(f.type) }} />
@@ -5987,7 +5944,7 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
                     <div className="text-[10px] mt-0.5 flex items-center gap-2" style={{ color: C.textSecondary }}>
                       <span>{f.size}</span>
                       <span>·</span>
-                      <span className="font-mono">{f.version}</span>
+                      <span className="tabular-nums">{f.version}</span>
                       <span>·</span>
                       <span className="px-1.5 py-0.5 rounded"
                         style={{ backgroundColor: C.primaryLight, color: C.primary }}>
@@ -6040,11 +5997,11 @@ function SupplierProfilePopover({ supplier, onClose }) {
 
   // Use first supplier item to derive a brand color for the avatar
   const brandColor = ({
-    "BOE Technology": "#1565E0",
-    "Samsung Display": "#532DF6",
-    "LG Display": "#009955",
-    "Nitto Denko": "#E06900",
-    "3M Korea": "#1565E0",
+    "BOE Technology": "#1570ef",
+    "Samsung Display": "#532df6",
+    "LG Display": "#039855",
+    "Nitto Denko": "#dc6803",
+    "3M Korea": "#1570ef",
   })[supplier.name] || C.primary;
 
   const maxPo = Math.max(...supplier.purchaseHistory.map(h => h.po));
@@ -6066,7 +6023,7 @@ function SupplierProfilePopover({ supplier, onClose }) {
         {/* Header */}
         <div className="px-6 pt-5 pb-4 border-b" style={{ borderColor: C.borderLight }}>
           <div className="flex items-start justify-between mb-3">
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Supplier Details</div>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Supplier Details</div>
             <button onClick={onClose} className="w-6 h-6 rounded hover:bg-gray-100 flex items-center justify-center"
               style={{ color: C.textSecondary }}>
               <X className="w-4 h-4" />
@@ -6079,14 +6036,14 @@ function SupplierProfilePopover({ supplier, onClose }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <div className="text-lg font-semibold" style={{ color: C.textPrimary }}>{supplier.name}</div>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1"
+                <div className="text-lg font-medium" style={{ color: C.textPrimary }}>{supplier.name}</div>
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1"
                   style={{ backgroundColor: C.primaryLight, color: C.primary }}>
                   <ShieldCheck className="w-3 h-3" />
                   {supplier.badge}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] mt-1 flex-wrap" style={{ color: C.textSecondary }}>
+              <div className="flex items-center gap-1.5 text-[12px] mt-1 flex-wrap" style={{ color: C.textSecondary }}>
                 <MapPin className="w-3 h-3" />
                 <span>{supplier.location}</span>
                 <span className="mx-1" style={{ color: C.textDisabled }}>·</span>
@@ -6114,14 +6071,14 @@ function SupplierProfilePopover({ supplier, onClose }) {
           <div className="mt-3 px-3 py-2 rounded-md flex items-start gap-2"
             style={{ backgroundColor: C.primarySoft }}>
             <Sparkles className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: C.primary }} />
-            <div className="text-[11px] leading-relaxed" style={{ color: C.primary }}>{supplier.summary}</div>
+            <div className="text-[12px] leading-relaxed" style={{ color: C.primary }}>{supplier.summary}</div>
           </div>
         </div>
 
         {/* Purchase History — combo chart (bar + line) */}
         <div className="px-6 pt-4 pb-3">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Purchase History</div>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Purchase History</div>
             <div className="flex items-center gap-3 text-[10px]" style={{ color: C.textSecondary }}>
               <span className="flex items-center gap-1">
                 <span className="w-3 h-2 rounded-sm" style={{ backgroundColor: C.primaryLight }} />
@@ -6184,7 +6141,7 @@ function SupplierProfilePopover({ supplier, onClose }) {
 
         {/* Items breakdown */}
         <div className="px-6 pb-4">
-          <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.textSecondary }}>
+          <div className="text-[10px] font-medium tracking-wider mb-2" style={{ color: C.textSecondary }}>
             Top Items
           </div>
           <div className="rounded-lg border overflow-hidden" style={{ borderColor: C.border }}>
@@ -6201,21 +6158,21 @@ function SupplierProfilePopover({ supplier, onClose }) {
                 {supplier.items.map((item) => (
                   <React.Fragment key={item.category}>
                     <tr style={{ borderTop: `1px solid ${C.borderLight}`, backgroundColor: C.surfaceTinted }}>
-                      <td className="py-1.5 px-3 text-[11px] font-semibold" style={{ color: C.textPrimary }}>{item.category}</td>
+                      <td className="py-1.5 px-3 text-[12px] font-medium" style={{ color: C.textPrimary }}>{item.category}</td>
                       <td className="py-1.5 px-3"></td>
-                      <td className="py-1.5 px-3 text-[11px] text-right font-semibold tabular-nums" style={{ color: C.textPrimary }}>
+                      <td className="py-1.5 px-3 text-[12px] text-right font-medium tabular-nums" style={{ color: C.textPrimary }}>
                         {item.amount.toLocaleString()}
                       </td>
-                      <td className="py-1.5 px-3 text-[11px] text-right font-semibold tabular-nums"
+                      <td className="py-1.5 px-3 text-[12px] text-right font-medium tabular-nums"
                         style={{ color: item.rate >= 0 ? C.success : C.error }}>
                         {item.rate >= 0 ? "+" : ""}{item.rate.toFixed(1)}%
                       </td>
                     </tr>
                     {item.parts.map((p) => (
                       <tr key={p.name} style={{ borderTop: `1px solid ${C.borderLight}` }}>
-                        <td className="py-1.5 px-3 text-[11px] pl-6" style={{ color: C.textPrimary }}>{p.name}</td>
-                        <td className="py-1.5 px-3 text-[11px]" style={{ color: C.textSecondary }}>{p.spec}</td>
-                        <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textSecondary }}>
+                        <td className="py-1.5 px-3 text-[12px] pl-6" style={{ color: C.textPrimary }}>{p.name}</td>
+                        <td className="py-1.5 px-3 text-[12px]" style={{ color: C.textSecondary }}>{p.spec}</td>
+                        <td className="py-1.5 px-3 text-[12px] text-right tabular-nums" style={{ color: C.textSecondary }}>
                           {p.amount.toLocaleString()}
                         </td>
                         <td></td>
@@ -6230,7 +6187,7 @@ function SupplierProfilePopover({ supplier, onClose }) {
 
         {/* RFx History */}
         <div className="px-6 pb-6">
-          <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.textSecondary }}>
+          <div className="text-[10px] font-medium tracking-wider mb-2" style={{ color: C.textSecondary }}>
             RFx History
           </div>
           <div className="rounded-lg border overflow-hidden" style={{ borderColor: C.border }}>
@@ -6249,13 +6206,13 @@ function SupplierProfilePopover({ supplier, onClose }) {
               <tbody>
                 {supplier.rfx.map((row, i) => (
                   <tr key={i} style={{ borderTop: `1px solid ${C.borderLight}` }}>
-                    <td className="py-1.5 px-3 text-[11px]" style={{ color: C.textPrimary }}>{row.year}</td>
-                    <td className="py-1.5 px-3 text-[11px]" style={{ color: C.textPrimary }}>{row.org}</td>
-                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textSecondary }}>{row.requests}</td>
-                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textSecondary }}>{row.bids}</td>
-                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textPrimary }}>{row.bidRate}%</td>
-                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums" style={{ color: C.textPrimary }}>{row.awards}</td>
-                    <td className="py-1.5 px-3 text-[11px] text-right tabular-nums font-semibold"
+                    <td className="py-1.5 px-3 text-[12px]" style={{ color: C.textPrimary }}>{row.year}</td>
+                    <td className="py-1.5 px-3 text-[12px]" style={{ color: C.textPrimary }}>{row.org}</td>
+                    <td className="py-1.5 px-3 text-[12px] text-right tabular-nums" style={{ color: C.textSecondary }}>{row.requests}</td>
+                    <td className="py-1.5 px-3 text-[12px] text-right tabular-nums" style={{ color: C.textSecondary }}>{row.bids}</td>
+                    <td className="py-1.5 px-3 text-[12px] text-right tabular-nums" style={{ color: C.textPrimary }}>{row.bidRate}%</td>
+                    <td className="py-1.5 px-3 text-[12px] text-right tabular-nums" style={{ color: C.textPrimary }}>{row.awards}</td>
+                    <td className="py-1.5 px-3 text-[12px] text-right tabular-nums font-medium"
                       style={{ color: row.awardRate >= 50 ? C.success : C.textPrimary }}>
                       {row.awardRate}%
                     </td>
@@ -6391,7 +6348,7 @@ function CollaboratorsScreen({ activeProjectCode }) {
       {/* === Header / toolbar (shared above both tables) === */}
       <div className="rounded-xl border bg-white px-5 py-3 flex items-center justify-between flex-wrap gap-3" style={{ borderColor: C.border }}>
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
+          <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
             Collaborators
             <span className="text-xs font-normal ml-2" style={{ color: C.textSecondary }}>
               Internal {filteredInternal.length} · External {filteredExternal.length}
@@ -6435,7 +6392,7 @@ function CollaboratorsScreen({ activeProjectCode }) {
       {/* === INTERNAL TABLE === */}
       <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
         <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-          <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.textSecondary }}>
+          <div className="text-[12px] font-medium tracking-wider" style={{ color: C.textSecondary }}>
             Internal · {filteredInternal.length}
           </div>
         </div>
@@ -6451,11 +6408,10 @@ function CollaboratorsScreen({ activeProjectCode }) {
                       toggleGroup(ids, !e.target.checked);
                     }} />
                 </th>
-                <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
                 <th className="text-left font-medium py-2 px-3 w-32">Name</th>
                 <th className="text-left font-medium py-2 px-3 w-28">Role</th>
+                <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
                 <th className="text-left font-medium py-2 px-3 w-40">Access</th>
-                <th className="text-left font-medium py-2 px-3">Associated BOMs</th>
                 <th className="text-left font-medium py-2 px-3 w-48">Email</th>
                 <th className="text-left font-medium py-2 px-3 w-24">Contact</th>
               </tr>
@@ -6466,11 +6422,13 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 const isSelected = selectedIds.has(memberId);
                 const meta = PERSONAS[c.persona] || {};
                 const perms = permissions[memberId] || {};
-                const accessAreas = ACCESS_AREAS.filter(a =>
+                // Access areas grouped by permission level (edit vs view-only)
+                // 'files'/'decisions' are universally granted, so exclude from the access display (always true is noise)
+                const accessEditAreas = ACCESS_AREAS.filter(a =>
                   perms[a.id] === "edit" && !["files", "decisions"].includes(a.id)
                 ).map(a => a.label);
-                const associatedBoms = ACCESS_AREAS.filter(a =>
-                  (perms[a.id] === "edit" || perms[a.id] === "view") && ["ebom", "cbom", "qbom"].includes(a.id)
+                const accessViewAreas = ACCESS_AREAS.filter(a =>
+                  perms[a.id] === "view" && !["files", "decisions"].includes(a.id)
                 ).map(a => a.label);
                 const orgLabel = ({
                   PM: "[PMO] Project Office",
@@ -6489,25 +6447,44 @@ function CollaboratorsScreen({ activeProjectCode }) {
                     <td className="py-2 px-3 text-center">
                       <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" />
                     </td>
-                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>{orgLabel}</td>
                     <td className="py-2 px-3">
                       <div className="flex items-center gap-1.5">
                         <PersonaAvatar p={c.persona} size={18} />
-                        <span className="text-[11px] font-medium" style={{ color: C.textPrimary }}>{meta.name}</span>
+                        <span className="text-[12px] font-medium" style={{ color: C.textPrimary }}>{meta.name}</span>
                         {c.owner && (
-                          <span className="text-[8px] uppercase font-bold px-1 py-0.5 rounded"
+                          <span className="text-[10px] font-medium px-1 py-0.5 rounded"
                             style={{ backgroundColor: C.primary, color: "white" }}>Owner</span>
                         )}
                       </div>
                     </td>
-                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>{c.role}</td>
-                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>
-                      {accessAreas.length > 0 ? accessAreas.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
+                    <td className="py-2 px-3 text-[12px]" style={{ color: C.textPrimary }}>{c.role}</td>
+                    <td className="py-2 px-3 text-[12px]" style={{ color: C.textPrimary }}>{orgLabel}</td>
+                    <td className="py-2 px-3">
+                      {accessEditAreas.length === 0 && accessViewAreas.length === 0 ? (
+                        <span className="text-[12px]" style={{ color: C.textDisabled }}>—</span>
+                      ) : (
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {accessEditAreas.map(label => (
+                            <span key={`e-${label}`}
+                              title={`Edit access to ${label}`}
+                              className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center"
+                              style={{ backgroundColor: C.primaryLight, color: C.primary }}>
+                              {label}
+                            </span>
+                          ))}
+                          {accessViewAreas.map(label => (
+                            <span key={`v-${label}`}
+                              title={`View-only access to ${label}`}
+                              className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 border"
+                              style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
+                              {label}
+                              <span className="text-[10px] font-medium opacity-70 ml-0.5">view</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </td>
-                    <td className="py-2 px-3 text-[11px]" style={{ color: C.textSecondary }}>
-                      {associatedBoms.length > 0 ? associatedBoms.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
-                    </td>
-                    <td className="py-2 px-3 text-[11px] font-mono" style={{ color: C.textSecondary }}>
+                    <td className="py-2 px-3 text-[12px] tabular-nums" style={{ color: C.textSecondary }}>
                       {meta.email || `${meta.name?.toLowerCase().replace(/[ .]/g, '.')}@samsung.com`}
                     </td>
                     <td className="py-2 px-3">
@@ -6526,7 +6503,7 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 );
               })}
               {filteredInternal.length === 0 && (
-                <tr><td colSpan={8} className="py-8 text-center text-[11px]" style={{ color: C.textDisabled }}>No internal members.</td></tr>
+                <tr><td colSpan={7} className="py-8 text-center text-[12px]" style={{ color: C.textDisabled }}>No internal members.</td></tr>
               )}
             </tbody>
           </table>
@@ -6536,7 +6513,7 @@ function CollaboratorsScreen({ activeProjectCode }) {
       {/* === EXTERNAL TABLE === */}
       <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
         <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-          <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.textSecondary }}>
+          <div className="text-[12px] font-medium tracking-wider" style={{ color: C.textSecondary }}>
             External · {filteredExternal.length}
           </div>
         </div>
@@ -6552,11 +6529,10 @@ function CollaboratorsScreen({ activeProjectCode }) {
                       toggleGroup(ids, !e.target.checked);
                     }} />
                 </th>
-                <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
                 <th className="text-left font-medium py-2 px-3 w-32">Name</th>
                 <th className="text-left font-medium py-2 px-3 w-28">Role</th>
+                <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
                 <th className="text-left font-medium py-2 px-3 w-40">Access</th>
-                <th className="text-left font-medium py-2 px-3">Associated BOMs</th>
                 <th className="text-left font-medium py-2 px-3 w-48">Email</th>
                 <th className="text-left font-medium py-2 px-3 w-24">Contact</th>
               </tr>
@@ -6572,13 +6548,13 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 const supplierGroups = Object.entries(bySupplier).sort(([a], [b]) => a.localeCompare(b));
                 return supplierGroups.map(([company, members]) => (
                   <React.Fragment key={`sup-${company}`}>
-                    <tr style={{ borderBottom: `1px solid ${C.borderLight}`, backgroundColor: "#FAFBFC" }}>
-                      <td colSpan={8} className="py-1.5 px-3">
+                    <tr style={{ borderBottom: `1px solid ${C.borderLight}`, backgroundColor: "#fcfcfd" }}>
+                      <td colSpan={7} className="py-1.5 px-3">
                         <div className="flex items-center gap-2 pl-3">
                           <div className="w-1 h-3 rounded-sm" style={{ backgroundColor: members[0]?.color || C.textDisabled }} />
                           <button
                             onClick={() => SUPPLIER_DETAILS[company] && setSupplierProfileOpen(company)}
-                            className="text-[10px] font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded inline-flex items-center gap-1"
+                            className="text-[10px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded inline-flex items-center gap-1"
                             style={{ color: C.textPrimary, cursor: SUPPLIER_DETAILS[company] ? "pointer" : "default" }}
                             title={SUPPLIER_DETAILS[company] ? "View supplier details" : undefined}>
                             {company}
@@ -6594,11 +6570,12 @@ function CollaboratorsScreen({ activeProjectCode }) {
                       const memberId = `ext-${c.id}`;
                       const isSelected = selectedIds.has(memberId);
                       const perms = permissions[memberId] || {};
-                      const accessAreas = ACCESS_AREAS.filter(a =>
+                      // Same edit/view split as Internal
+                      const accessEditAreas = ACCESS_AREAS.filter(a =>
                         perms[a.id] === "edit" && !["files", "decisions"].includes(a.id)
                       ).map(a => a.label);
-                      const associatedBoms = ACCESS_AREAS.filter(a =>
-                        (perms[a.id] === "edit" || perms[a.id] === "view") && ["ebom", "cbom", "qbom"].includes(a.id)
+                      const accessViewAreas = ACCESS_AREAS.filter(a =>
+                        perms[a.id] === "view" && !["files", "decisions"].includes(a.id)
                       ).map(a => a.label);
                       return (
                         <tr key={memberId}
@@ -6610,7 +6587,17 @@ function CollaboratorsScreen({ activeProjectCode }) {
                           <td className="py-2 px-3 text-center">
                             <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" />
                           </td>
-                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>
+                          <td className="py-2 px-3">
+                            <div className="flex items-center gap-1.5">
+                              <div className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-medium text-white shrink-0"
+                                style={{ backgroundColor: c.color }}>
+                                {c.initial?.charAt(0)}
+                              </div>
+                              <span className="text-[12px] font-medium" style={{ color: C.textPrimary }}>{c.name}</span>
+                            </div>
+                          </td>
+                          <td className="py-2 px-3 text-[12px]" style={{ color: C.textPrimary }}>{c.role}</td>
+                          <td className="py-2 px-3 text-[12px]" style={{ color: C.textPrimary }}>
                             {SUPPLIER_DETAILS[c.company] ? (
                               <button
                                 onClick={(e) => { e.stopPropagation(); setSupplierProfileOpen(c.company); }}
@@ -6621,22 +6608,31 @@ function CollaboratorsScreen({ activeProjectCode }) {
                             ) : c.company}
                           </td>
                           <td className="py-2 px-3">
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold text-white shrink-0"
-                                style={{ backgroundColor: c.color }}>
-                                {c.initial}
+                            {accessEditAreas.length === 0 && accessViewAreas.length === 0 ? (
+                              <span className="text-[12px]" style={{ color: C.textDisabled }}>—</span>
+                            ) : (
+                              <div className="flex items-center gap-1 flex-wrap">
+                                {accessEditAreas.map(label => (
+                                  <span key={`e-${label}`}
+                                    title={`Edit access to ${label}`}
+                                    className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center"
+                                    style={{ backgroundColor: C.primaryLight, color: C.primary }}>
+                                    {label}
+                                  </span>
+                                ))}
+                                {accessViewAreas.map(label => (
+                                  <span key={`v-${label}`}
+                                    title={`View-only access to ${label}`}
+                                    className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 border"
+                                    style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
+                                    {label}
+                                    <span className="text-[10px] font-medium opacity-70 ml-0.5">view</span>
+                                  </span>
+                                ))}
                               </div>
-                              <span className="text-[11px] font-medium" style={{ color: C.textPrimary }}>{c.name}</span>
-                            </div>
+                            )}
                           </td>
-                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>{c.role}</td>
-                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textPrimary }}>
-                            {accessAreas.length > 0 ? accessAreas.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
-                          </td>
-                          <td className="py-2 px-3 text-[11px]" style={{ color: C.textSecondary }}>
-                            {associatedBoms.length > 0 ? associatedBoms.join(", ") : <span style={{ color: C.textDisabled }}>—</span>}
-                          </td>
-                          <td className="py-2 px-3 text-[11px] font-mono" style={{ color: C.textSecondary }}>{c.email}</td>
+                          <td className="py-2 px-3 text-[12px] tabular-nums" style={{ color: C.textSecondary }}>{c.email}</td>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-1">
                               <button className="w-6 h-6 rounded flex items-center justify-center hover:bg-white border focus:outline-none focus-visible:ring-2"
@@ -6656,7 +6652,7 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 ));
               })()}
               {filteredExternal.length === 0 && (
-                <tr><td colSpan={8} className="py-8 text-center text-[11px]" style={{ color: C.textDisabled }}>No external partners.</td></tr>
+                <tr><td colSpan={7} className="py-8 text-center text-[12px]" style={{ color: C.textDisabled }}>No external partners.</td></tr>
               )}
             </tbody>
           </table>
@@ -6731,7 +6727,7 @@ function BulkActionModal({ action, selectedCount, onClose }) {
             <Icon className="w-5 h-5" style={{ color: C.primary }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>{cfg.title}</div>
+            <div className="text-[18px] font-medium leading-6" style={{ color: C.textPrimary }}>{cfg.title}</div>
             <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>
               {action === "access"
                 ? <>Edit access for <strong style={{ color: C.textPrimary }}>{selectedCount}</strong> selected collaborator{selectedCount !== 1 ? "s" : ""}</>
@@ -6752,8 +6748,8 @@ function BulkActionModal({ action, selectedCount, onClose }) {
               <div key={area.id} className="rounded-lg border p-3"
                 style={{ borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
                 <div className="mb-2">
-                  <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>{area.label}</div>
-                  <div className="text-[11px]" style={{ color: C.textSecondary }}>{area.desc}</div>
+                  <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{area.label}</div>
+                  <div className="text-[12px]" style={{ color: C.textSecondary }}>{area.desc}</div>
                 </div>
                 <div className="flex gap-2">
                   {accessOptions.map((opt) => {
@@ -6776,7 +6772,7 @@ function BulkActionModal({ action, selectedCount, onClose }) {
                             style={{ accentColor: C.primary }}
                           />
                           <div className="flex-1 min-w-0">
-                            <div className="text-xs font-semibold" style={{ color: isSelected ? C.primary : C.textPrimary }}>
+                            <div className="text-xs font-medium" style={{ color: isSelected ? C.primary : C.textPrimary }}>
                               {opt.label}
                             </div>
                             <div className="text-[10px]" style={{ color: C.textDisabled }}>
@@ -6790,7 +6786,7 @@ function BulkActionModal({ action, selectedCount, onClose }) {
                 </div>
               </div>
             ))}
-            <div className="flex items-center gap-2 px-2 text-[11px]" style={{ color: C.textSecondary }}>
+            <div className="flex items-center gap-2 px-2 text-[12px]" style={{ color: C.textSecondary }}>
               <Info className="w-3 h-3 shrink-0" style={{ color: C.textDisabled }} />
               Owner permissions are locked and won't change. Existing settings for other selected users will be overwritten.
             </div>
@@ -6799,14 +6795,14 @@ function BulkActionModal({ action, selectedCount, onClose }) {
           <div className="px-6 py-4 space-y-3">
             {action === "update" && (
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Subject</label>
+                <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Subject</label>
                 <input className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
                   style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}
                   placeholder="e.g. AMOLED Panel spec update" />
               </div>
             )}
             <div>
-              <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Message</label>
+              <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Message</label>
               <textarea rows={4} placeholder={cfg.placeholder}
                 className="px-3 py-2 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 resize-none"
                 style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
@@ -6871,7 +6867,7 @@ function AddCollaboratorModal({ mode, onClose }) {
             <Icon className="w-5 h-5" style={{ color: cfg.iconFg }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>{cfg.title}</div>
+            <div className="text-[18px] font-medium leading-6" style={{ color: C.textPrimary }}>{cfg.title}</div>
             <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>{cfg.subtitle}</div>
           </div>
           <button onClick={onClose}
@@ -6885,14 +6881,14 @@ function AddCollaboratorModal({ mode, onClose }) {
           {isInternal ? (
             <>
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Email</label>
+                <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Email</label>
                 <input type="email"
                   placeholder="member@samsung.com"
                   className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
                   style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
               </div>
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Role</label>
+                <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Role</label>
                 <select
                   className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 bg-white"
                   style={{ borderColor: C.border }}>
@@ -6905,7 +6901,7 @@ function AddCollaboratorModal({ mode, onClose }) {
                 </select>
               </div>
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Department <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
+                <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Department <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
                 <input type="text"
                   placeholder="e.g. Mobile R&D, Cost Engineering"
                   className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
@@ -6915,14 +6911,14 @@ function AddCollaboratorModal({ mode, onClose }) {
           ) : (
             <>
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Contact Name</label>
+                <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Contact Name</label>
                 <input type="text"
                   placeholder="e.g. Chen Wei"
                   className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
                   style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
               </div>
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Company</label>
+                <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Company</label>
                 <input type="text"
                   placeholder="e.g. BOE Technology"
                   className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
@@ -6930,14 +6926,14 @@ function AddCollaboratorModal({ mode, onClose }) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Email</label>
+                  <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Email</label>
                   <input type="email"
                     placeholder="contact@company.com"
                     className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
                     style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }} />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Phone <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
+                  <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Phone <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
                   <input type="tel"
                     placeholder="+1 ..."
                     className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2"
@@ -6945,7 +6941,7 @@ function AddCollaboratorModal({ mode, onClose }) {
                 </div>
               </div>
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>BOM Scope</label>
+                <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>BOM Scope</label>
                 <select
                   className="h-9 px-3 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 bg-white"
                   style={{ borderColor: C.border }}>
@@ -6958,7 +6954,7 @@ function AddCollaboratorModal({ mode, onClose }) {
           )}
 
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wide block mb-1" style={{ color: C.textSecondary }}>Personal Message <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
+            <label className="text-[12px] font-medium tracking-wide block mb-1" style={{ color: C.textSecondary }}>Personal Message <span className="font-normal normal-case" style={{ color: C.textDisabled }}>(optional)</span></label>
             <textarea rows={3}
               placeholder="Add a note to the invitation..."
               className="px-3 py-2 rounded-md border text-sm w-full outline-none focus:outline-none focus-visible:ring-2 resize-none"
@@ -6990,6 +6986,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
 
   // View mode: "kanban" (default) | "table"
   const [viewMode, setViewMode] = useState("kanban");
+  const [selectedBomRows, setSelectedBomRows] = useState([]); // selected BOM row ids
 
   // Compare BOMs modal (new — compare any two BOM versions across types)
   const [compareModalOpen, setCompareModalOpen] = useState(false);
@@ -7012,7 +7009,6 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
 
   // Empty state: no BOMs exist at all (all not_created)
   const allEmpty = bomsForProject.every(b => b.status === "not_created");
-  const activeCount = bomsForProject.filter(b => b.status === "active").length;
 
   const onBomClick = (bom) => {
     if (bom.status !== "active") return; // Only active BOMs are clickable
@@ -7029,25 +7025,25 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
             style={{ backgroundColor: C.primarySoft }}>
             <Network className="w-8 h-8" style={{ color: C.primary }} />
           </div>
-          <div className="text-base font-semibold mb-2" style={{ color: C.textPrimary }}>
+          <div className="text-base font-medium mb-2" style={{ color: C.textPrimary }}>
             No BOMs Yet
           </div>
           <div className="text-sm max-w-md mx-auto mb-6" style={{ color: C.textSecondary }}>
             Start by adding the E-BOM (Engineering). Once spec is defined, C-BOM and Q-BOM can be added in parallel as each domain begins collaborating.
           </div>
           <div className="inline-flex items-center gap-2">
-            <button className="px-4 py-2 rounded-md text-sm font-semibold text-white inline-flex items-center gap-2 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            <button className="px-4 py-2 rounded-md text-sm font-medium text-white inline-flex items-center gap-2 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               style={{ backgroundColor: C.primary }}>
               <Upload className="w-4 h-4" />
               Upload E-BOM
             </button>
-            <button className="px-4 py-2 rounded-md text-sm font-semibold border inline-flex items-center gap-2 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            <button className="px-4 py-2 rounded-md text-sm font-medium border inline-flex items-center gap-2 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
               <Link2 className="w-4 h-4" />
               Link Existing BOM
             </button>
           </div>
-          <div className="mt-6 text-[11px]" style={{ color: C.textDisabled }}>
+          <div className="mt-6 text-[12px]" style={{ color: C.textDisabled }}>
             Supported: CAD exports, PLM systems, Excel/CSV, or BOMs from other projects
           </div>
         </div>
@@ -7074,16 +7070,141 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
       collabType: "internal",
     })) : [];
     const tableRows = [...bomsForProject, ...archivedRows];
+    // Lifecycle counts for the status chip row (Figma pattern: Draft N · In Review N · Approved N ...)
+    const lcCount = (lc) => tableRows.filter(b => b.lifecycle === lc).length;
+    const statusChips = [
+      { id: "draft",    label: "Draft",     count: lcCount("draft") },
+      { id: "review",   label: "In Review", count: lcCount("review") },
+      { id: "approved", label: "Approved",  count: lcCount("approved") },
+      { id: "archived", label: "Archived",  count: lcCount("archived") },
+    ];
     return (
-    <div className="rounded-xl border bg-white overflow-hidden" style={{ borderColor: C.border }}>
-      <table className="w-full text-xs">
-        <thead className="border-b" style={{ borderColor: C.border, backgroundColor: C.bg }}>
+    <div>
+      {/* Unified content box — radius 24 (rounded-3xl) */}
+      <div className="rounded-3xl border bg-white overflow-hidden" style={{ borderColor: C.border }}>
+      {/* (1) Filter bar section — 24px horizontal padding */}
+      <div className="px-6 py-3 flex items-center gap-x-5 gap-y-3 flex-wrap">
+        {/* Operation Org */}
+        <div className="flex items-center gap-2">
+          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Operation Org.</span>
+          <div className="relative" style={{ width: 180 }}>
+            <select className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] appearance-none bg-white outline-none focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, color: C.textPrimary }}>
+              <option>All Operations</option>
+              <option>Mobile R&D</option>
+              <option>Cost Engineering</option>
+              <option>Quality Assurance</option>
+            </select>
+            <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textSecondary }} />
+          </div>
+        </div>
+        {/* Updated Date (range) */}
+        <div className="flex items-center gap-2">
+          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Updated Date</span>
+          <div className="relative" style={{ width: 200 }}>
+            <input placeholder="MM/DD/YYYY - MM/DD/YYYY"
+              className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] outline-none focus:outline-none focus-visible:ring-2 placeholder:text-[11px]"
+              style={{ borderColor: C.border, color: C.textPrimary }} />
+            <Calendar className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textSecondary }} />
+          </div>
+        </div>
+        {/* Owner search */}
+        <div className="flex items-center gap-2">
+          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Owner</span>
+          <div className="relative" style={{ width: 180 }}>
+            <input placeholder="Search"
+              className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] outline-none focus:outline-none focus-visible:ring-2"
+              style={{ borderColor: C.border, color: C.textPrimary }} />
+            <Search className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2" style={{ color: C.textDisabled }} />
+          </div>
+        </div>
+        {/* Right cluster: More Filters + Search + icons */}
+        <div className="ml-auto flex items-center gap-3">
+          <button className="flex items-center gap-1 text-[12px] font-medium hover:opacity-80 focus:outline-none focus-visible:ring-2 rounded"
+            style={{ color: C.textPrimary }}>
+            More Filters
+            <ChevronDown className="w-3.5 h-3.5" />
+          </button>
+          <button className="h-9 px-6 rounded-full text-[12px] font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+            style={{ borderColor: C.primary, color: C.primary, backgroundColor: "white" }}>
+            Search
+          </button>
+          <div className="flex items-center gap-1">
+            <button className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+              style={{ color: C.textSecondary }} title="Save filter">
+              <Bookmark className="w-4 h-4" />
+            </button>
+            <button className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+              style={{ color: C.textSecondary }} title="Settings">
+              <Settings className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* (2) Status count chips section — chips wrapped in a pill container (radius 1000), 24px side margin */}
+      <div className="flex items-center px-6 py-3" style={{ borderColor: C.borderLight }}>
+        <div className="flex items-center gap-1 p-1" style={{ backgroundColor: C.surfaceTinted, borderRadius: 1000 }}>
+          {statusChips.map((chip, i) => (
+            <React.Fragment key={chip.id}>
+              <button className="flex items-center gap-1.5 px-3.5 py-1 text-[12px] transition-colors hover:bg-white focus:outline-none focus-visible:ring-2"
+                style={{ color: C.textSecondary, borderRadius: 1000 }}>
+                <span>{chip.label}</span>
+                <span className="font-medium" style={{ color: C.textPrimary }}>{chip.count}</span>
+              </button>
+              {i < statusChips.length - 1 && <div className="w-px h-3" style={{ backgroundColor: C.border }} />}
+            </React.Fragment>
+          ))}
+        </div>
+        <button className="ml-3 w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+          style={{ color: C.textSecondary }} title="Reset filters">
+          <RotateCcw className="w-3.5 h-3.5" />
+        </button>
+      </div>
+      {/* Inset divider (between status chips and table area) */}
+      <div className="mx-6 my-3 h-px" style={{ backgroundColor: C.borderLight }} />
+
+      {/* (3) Total count bar section */}
+      <div className="flex items-center justify-between px-6 py-3">
+        <div className="text-[14px] flex items-center gap-3" style={{ color: C.textPrimary }}>
+          {selectedBomRows.length > 0 ? (
+            <>
+              <span className="font-medium" style={{ color: C.primary }}>{selectedBomRows.length} selected</span>
+              <button onClick={() => setSelectedBomRows([])}
+                className="text-[12px] hover:underline" style={{ color: C.textSecondary }}>
+                Clear
+              </button>
+            </>
+          ) : (
+            <span>Total <span className="font-medium">{tableRows.length}</span></span>
+          )}
+        </div>
+        <div className="flex items-center gap-1">
+          <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+            style={{ color: C.textSecondary }} title="Download">
+            <Download className="w-4 h-4" />
+          </button>
+          <button className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+            style={{ color: C.textSecondary }} title="Table settings">
+            <Settings className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+      <div className="overflow-x-auto px-6 pb-1">
+      <table className="w-full text-[12px]">
+        <thead style={{ backgroundColor: "#f2f4f7" }}>
           <tr style={{ color: C.textSecondary }}>
-            <th className="text-left font-medium py-2.5 px-4">BOM</th>
-            <th className="text-center font-medium py-2.5 px-4">Version</th>
-            <th className="text-right font-medium py-2.5 px-4">Parts</th>
-            <th className="text-left font-medium py-2.5 px-4">Last Activity</th>
-            <th className="text-right font-medium py-2.5 px-4 w-44">Status</th>
+            <th className="text-center font-medium py-3 px-4 w-10 first:rounded-l-lg">
+              <input type="checkbox" className="rounded" style={{ accentColor: C.primary }}
+                checked={tableRows.length > 0 && selectedBomRows.length === tableRows.length}
+                ref={(el) => { if (el) el.indeterminate = selectedBomRows.length > 0 && selectedBomRows.length < tableRows.length; }}
+                onChange={(e) => setSelectedBomRows(e.target.checked ? tableRows.map((b, idx) => b.id ?? idx) : [])} />
+            </th>
+            <th className="text-left font-medium py-3 px-4">BOM</th>
+            <th className="text-center font-medium py-3 px-4">Version</th>
+            <th className="text-right font-medium py-3 px-4">Parts</th>
+            <th className="text-left font-medium py-3 px-4">Last Activity</th>
+            <th className="text-left font-medium py-3 px-4 w-44 last:rounded-r-lg">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -7092,7 +7213,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
             const isInactive = b.status !== "active";
             const isArchived = b.status === "archived";
             // Use subtle background instead of opacity for accessibility
-            const rowBg = isArchived ? "#F5F5F5" : isInactive ? "#FAFAFA" : "white";
+            const rowBg = selectedBomRows.includes(b.id) ? C.primarySoft : isArchived ? "#f2f4f7" : isInactive ? "#fcfcfd" : "white";
 
             return (
               <tr key={b.id}
@@ -7102,6 +7223,12 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                   borderColor: C.borderLight,
                   backgroundColor: rowBg,
                 }}>
+                {/* Checkbox */}
+                <td className="py-3 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" className="rounded" style={{ accentColor: C.primary }}
+                    checked={selectedBomRows.includes(b.id)}
+                    onChange={(e) => setSelectedBomRows(e.target.checked ? [...selectedBomRows, b.id] : selectedBomRows.filter((id) => id !== b.id))} />
+                </td>
                 {/* BOM cell: Avatar + label + name + owner avatar inline */}
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2.5">
@@ -7114,7 +7241,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                         style={{ color: isInactive ? C.textDisabled : C.textSecondary }} />
                     </div>
                     <div className="min-w-0">
-                      <div className="font-semibold" style={{ color: isInactive ? C.textSecondary : C.textPrimary }}>
+                      <div className="font-medium" style={{ color: isInactive ? C.textSecondary : C.textPrimary }}>
                         {b.label}
                       </div>
                       <div className="text-[10px] mt-0.5 flex items-center gap-1.5" style={{ color: C.textDisabled }}>
@@ -7130,7 +7257,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                 </td>
 
                 {/* Version */}
-                <td className="py-3 px-4 text-center font-mono"
+                <td className="py-3 px-4 text-center tabular-nums"
                   style={{ color: isInactive ? C.textDisabled : C.textPrimary }}>
                   {b.version}
                 </td>
@@ -7139,17 +7266,17 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                 <td className="py-3 px-4 text-right">
                   {b.parts ? (
                     <div className="flex items-center justify-end gap-1.5">
-                      <span className="font-mono" style={{ color: isInactive ? C.textDisabled : C.textPrimary }}>
+                      <span className="tabular-nums" style={{ color: isInactive ? C.textDisabled : C.textPrimary }}>
                         {b.parts}
                       </span>
                       {b.missing > 0 && (
-                        <span className="text-[10px] font-mono font-semibold" style={{ color: C.warning }}>
+                        <span className="text-[10px] tabular-nums font-medium" style={{ color: C.warning }}>
                           ({b.missing} missing)
                         </span>
                       )}
                     </div>
                   ) : (
-                    <span className="font-mono" style={{ color: C.textDisabled }}>—</span>
+                    <span className="tabular-nums" style={{ color: C.textDisabled }}>—</span>
                   )}
                 </td>
 
@@ -7165,58 +7292,55 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                       </span>
                     </div>
                   ) : (
-                    <span className="text-[11px] italic" style={{ color: C.textDisabled }}>
+                    <span className="text-[12px] italic" style={{ color: C.textDisabled }}>
                       No activity yet
                     </span>
                   )}
                 </td>
 
-                {/* Status — lifecycle-aligned with Kanban (Draft / In Review / Approved / Archived).
-                    Special cases (not_created → Create from M, not_started → Start) preserved as actionable buttons.
-                    Sync issues shown as a small warning dot next to the status pill. */}
+                {/* Status — Figma list pattern: solid-fill pill (color bg + white text), no icon.
+                    Draft=neutral dark, In Review=primary, Approved=success, Archived=disabled.
+                    Sync issues shown as a small warning dot before the pill. */}
                 <td className="py-3 px-4 text-right">
                   {b.status === "not_created" ? (
                     <button
                       onClick={(e) => { e.stopPropagation(); /* TODO: create flow */ }}
-                      className="px-2.5 py-1 rounded-full text-[10px] font-semibold inline-flex items-center gap-1 hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                      style={{ backgroundColor: C.primarySoft, color: C.primary, border: `1px solid ${C.primaryLight}` }}>
+                      className="px-3 py-1 rounded-full text-[12px] font-medium inline-flex items-center gap-1 text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      style={{ backgroundColor: C.primary }}>
                       <Plus className="w-3 h-3" />
                       Create from M
                     </button>
                   ) : b.status === "not_started" ? (
                     <button
                       onClick={(e) => { e.stopPropagation(); /* TODO: start flow */ }}
-                      className="px-2.5 py-1 rounded-full text-[10px] font-semibold inline-flex items-center gap-1 hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                      style={{ backgroundColor: C.warning, color: "white" }}
+                      className="px-3 py-1 rounded-full text-[12px] font-medium inline-flex items-center gap-1 text-white hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      style={{ backgroundColor: C.warning }}
                       title={`${PERSONAS[b.owner]?.role} hasn't started yet`}>
                       <Play className="w-3 h-3" />
                       Start
                     </button>
                   ) : b.status === "archived" ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                      style={{ backgroundColor: C.bg, color: C.textDisabled, border: `1px solid ${C.borderLight}` }}>
-                      <Archive className="w-3 h-3" />
+                    <span className="inline-flex items-center text-[12px] font-medium px-3 py-1 rounded-full text-white"
+                      style={{ backgroundColor: C.textDisabled }}>
                       Archived
                     </span>
                   ) : (() => {
-                    // Active BOM: map lifecycle → label/color (mirrors Kanban columns)
+                    // Active BOM lifecycle → solid-fill pill color (Figma reference)
                     const lifecycleMeta = {
-                      draft:    { label: "Draft",     color: C.textSecondary, bg: C.bg,           icon: Edit3 },
-                      review:   { label: "In Review", color: C.info,          bg: "rgba(21,101,224,0.08)", icon: Eye },
-                      approved: { label: "Approved",  color: C.success,       bg: C.successLight, icon: CheckCircle },
-                    }[b.lifecycle] || { label: "Active", color: C.textSecondary, bg: C.bg, icon: Circle };
-                    const StatusIcon = lifecycleMeta.icon;
+                      draft:    { label: "Draft",     bg: "#475467" },  // neutral dark (text.secondary)
+                      review:   { label: "In Review", bg: C.primary },  // primary
+                      approved: { label: "Approved",  bg: C.success },  // success
+                    }[b.lifecycle] || { label: "Active", bg: "#475467" };
                     return (
                       <div className="inline-flex items-center gap-1.5">
-                        {/* Sync warning dot — small visual flag if sync issue exists, without overtaking the lifecycle status */}
+                        {/* Sync warning dot — small flag without overtaking the lifecycle status */}
                         {hasIssue && (
                           <span title={b.syncNote || `${b.missing} parts need sync`}>
                             <AlertTriangle className="w-3 h-3" style={{ color: C.warning }} />
                           </span>
                         )}
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                          style={{ backgroundColor: lifecycleMeta.bg, color: lifecycleMeta.color, border: `1px solid ${lifecycleMeta.color}` }}>
-                          <StatusIcon className="w-3 h-3" />
+                        <span className="inline-flex items-center text-[12px] font-medium px-3 py-1 rounded-full text-white"
+                          style={{ backgroundColor: lifecycleMeta.bg }}>
                           {lifecycleMeta.label}
                         </span>
                       </div>
@@ -7228,6 +7352,8 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
           })}
         </tbody>
       </table>
+      </div>
+      </div>
     </div>
     );
   };
@@ -7255,14 +7381,13 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
         {/* === DRAFT Column (work in progress, not yet ready for review) === */}
         <KanbanColumn
           label="Draft"
-          subtitle="Work in progress"
           dotColor={C.textSecondary}
           count={draftColumn.length}>
           {draftColumn.map((b) => (
             <KanbanCard key={b.id} bom={b} variant="draft" onClick={() => onBomClick(b)} />
           ))}
           {draftColumn.length === 0 && (
-            <div className="text-center py-8 text-[11px]" style={{ color: C.textDisabled }}>
+            <div className="text-center py-8 text-[12px]" style={{ color: C.textDisabled }}>
               No drafts
             </div>
           )}
@@ -7271,14 +7396,13 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
         {/* === IN REVIEW Column (under cross-functional review) === */}
         <KanbanColumn
           label="In Review"
-          subtitle="Cross-functional review"
           dotColor={C.info}
           count={reviewColumn.length}>
           {reviewColumn.map((b) => (
             <KanbanCard key={b.id} bom={b} variant="review" onClick={() => onBomClick(b)} />
           ))}
           {reviewColumn.length === 0 && (
-            <div className="text-center py-8 text-[11px]" style={{ color: C.textDisabled }}>
+            <div className="text-center py-8 text-[12px]" style={{ color: C.textDisabled }}>
               No BOMs in review
             </div>
           )}
@@ -7287,14 +7411,13 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
         {/* === APPROVED Column (signed off, driving downstream work) === */}
         <KanbanColumn
           label="Approved"
-          subtitle="Signed off"
           dotColor={C.success}
           count={approvedColumn.length}>
           {approvedColumn.map((b) => (
             <KanbanCard key={b.id} bom={b} variant="approved" onClick={() => onBomClick(b)} />
           ))}
           {approvedColumn.length === 0 && (
-            <div className="text-center py-8 text-[11px]" style={{ color: C.textDisabled }}>
+            <div className="text-center py-8 text-[12px]" style={{ color: C.textDisabled }}>
               No approved BOMs
             </div>
           )}
@@ -7304,7 +7427,6 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
         {showArchived && (
           <KanbanColumn
             label="Archived"
-            subtitle="Superseded"
             dotColor={C.textDisabled}
             count={archivedColumn.length}>
             {archivedColumn.map((b) => (
@@ -7318,113 +7440,105 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
 
   return (
     <div className="p-6" style={{ minHeight: "100%" }}>
-      <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-        {/* Toolbar: View toggle + Filters */}
-        <div className="px-5 py-3 border-b flex items-center justify-between flex-wrap gap-3" style={{ borderColor: C.border }}>
-          <div className="flex items-center gap-4 flex-wrap">
-            {/* View Toggle (Kanban / Table) */}
-            <div className="flex items-center p-0.5 rounded-full" style={{ backgroundColor: C.bg }}>
-              {[
-                { id: "kanban", label: "Kanban", icon: Columns3 },
-                { id: "table", label: "Table", icon: AlignLeft },
-              ].map((mode) => (
-                <button key={mode.id} onClick={() => setViewMode(mode.id)}
-                  className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                  style={{
-                    backgroundColor: viewMode === mode.id ? "white" : "transparent",
-                    color: viewMode === mode.id ? C.textPrimary : C.textSecondary,
-                    boxShadow: viewMode === mode.id ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
-                    border: viewMode === mode.id ? `1px solid ${C.border}` : "1px solid transparent",
-                  }}
-                  onMouseEnter={(e) => { if (viewMode !== mode.id) e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.03)"; }}
-                  onMouseLeave={(e) => { if (viewMode !== mode.id) e.currentTarget.style.backgroundColor = "transparent"; }}>
-                  <mode.icon className="w-3.5 h-3.5" />
-                  {mode.label}
-                </button>
-              ))}
-            </div>
+      {/* Title row — "BOM List" + Compare BOMs (title-level, like BOM Collaboration) */}
+      <div className="flex items-center gap-3 mb-4">
+        <h1 className="text-[20px] font-medium" style={{ color: C.textPrimary }}>BOM List</h1>
+        <div className="ml-auto flex items-center gap-1.5">
+          <button
+            onClick={() => { if (!project.isNew) setCompareModalOpen(true); }}
+            disabled={project.isNew}
+            className="h-8 px-3 rounded-md text-[12px] font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+            style={{
+              color: project.isNew ? C.textDisabled : C.textSecondary,
+              backgroundColor: "transparent",
+              opacity: project.isNew ? 0.5 : 1,
+            }}
+            onMouseEnter={(e) => { if (!project.isNew) e.currentTarget.style.backgroundColor = C.bg; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+            title={project.isNew ? "No previous versions to compare" : "Compare two BOM versions"}>
+            <GitCompareArrows className="w-3.5 h-3.5" />
+            Compare BOMs
+          </button>
+        </div>
+      </div>
 
-            {/* Filter chips (Kanban only) */}
-            {viewMode === "kanban" && (
-              <>
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-medium" style={{ color: C.textSecondary }}>Party</span>
-                  <div className="flex items-center gap-1">
-                    {[
-                      { id: "internal", label: "Internal" },
-                      { id: "external", label: "External" },
-                    ].map((p) => (
-                      <button key={p.id}
-                        onClick={() => setPartyFilters({ ...partyFilters, [p.id]: !partyFilters[p.id] })}
-                        className="text-[11px] font-semibold px-2 py-0.5 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
-                        style={{
-                          backgroundColor: partyFilters[p.id] ? "rgba(83,45,246,0.08)" : "transparent",
-                          color: partyFilters[p.id] ? C.primary : C.textSecondary,
-                          border: `1px solid ${partyFilters[p.id] ? C.primary : C.border}`,
-                        }}>
-                        {p.label}
-                      </button>
-                    ))}
-                  </div>
+      {/* Toolbar row — filters (left) + view toggle (right). No outer box; content box is below. */}
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+        <div className="flex items-center gap-4 flex-wrap">
+          {/* Filter chips (Kanban only) */}
+          {viewMode === "kanban" && (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] font-medium" style={{ color: C.textSecondary }}>Party</span>
+                <div className="flex items-center gap-1">
+                  {[
+                    { id: "internal", label: "Internal" },
+                    { id: "external", label: "External" },
+                  ].map((p) => (
+                    <button key={p.id}
+                      onClick={() => setPartyFilters({ ...partyFilters, [p.id]: !partyFilters[p.id] })}
+                      className="text-[12px] font-medium px-2 py-0.5 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
+                      style={{
+                        backgroundColor: partyFilters[p.id] ? "rgba(83,45,246,0.08)" : "transparent",
+                        color: partyFilters[p.id] ? C.primary : C.textSecondary,
+                        border: `1px solid ${partyFilters[p.id] ? C.primary : C.border}`,
+                      }}>
+                      {p.label}
+                    </button>
+                  ))}
                 </div>
-                <div className="w-px h-4" style={{ backgroundColor: C.border }} />
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-medium" style={{ color: C.textSecondary }}>Collab Type</span>
-                  <div className="flex items-center gap-1">
-                    {[
-                      { id: "design", label: "Design" },
-                      { id: "cost", label: "Cost" },
-                      { id: "quality", label: "Quality" },
-                    ].map((c) => (
-                      <button key={c.id}
-                        onClick={() => setCollabFilters({ ...collabFilters, [c.id]: !collabFilters[c.id] })}
-                        className="text-[11px] font-semibold px-2 py-0.5 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
-                        style={{
-                          backgroundColor: collabFilters[c.id] ? "rgba(83,45,246,0.08)" : "transparent",
-                          color: collabFilters[c.id] ? C.primary : C.textSecondary,
-                          border: `1px solid ${collabFilters[c.id] ? C.primary : C.border}`,
-                        }}>
-                        {c.label}
-                      </button>
-                    ))}
-                  </div>
+              </div>
+              <div className="w-px h-4" style={{ backgroundColor: C.border }} />
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] font-medium" style={{ color: C.textSecondary }}>Collab Type</span>
+                <div className="flex items-center gap-1">
+                  {[
+                    { id: "design", label: "Design" },
+                    { id: "cost", label: "Cost" },
+                    { id: "quality", label: "Quality" },
+                  ].map((c) => (
+                    <button key={c.id}
+                      onClick={() => setCollabFilters({ ...collabFilters, [c.id]: !collabFilters[c.id] })}
+                      className="text-[12px] font-medium px-2 py-0.5 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
+                      style={{
+                        backgroundColor: collabFilters[c.id] ? "rgba(83,45,246,0.08)" : "transparent",
+                        color: collabFilters[c.id] ? C.primary : C.textSecondary,
+                        border: `1px solid ${collabFilters[c.id] ? C.primary : C.border}`,
+                      }}>
+                      {c.label}
+                    </button>
+                  ))}
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
+        </div>
 
-          {/* Right side: Compare CTA + Phase + Count */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => { if (!project.isNew) setCompareModalOpen(true); }}
-              disabled={project.isNew}
-              className="h-7 px-2.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+        {/* Right: View Toggle (Kanban / Table) */}
+        <div className="flex items-center p-0.5 rounded-md" style={{ backgroundColor: C.bg }}>
+          {[
+            { id: "kanban", label: "Kanban", icon: Columns3 },
+            { id: "table", label: "Table", icon: AlignLeft },
+          ].map((mode) => (
+            <button key={mode.id} onClick={() => setViewMode(mode.id)}
+              className="px-3 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               style={{
-                borderColor: C.border,
-                color: project.isNew ? C.textDisabled : C.textSecondary,
-                backgroundColor: "white",
-                opacity: project.isNew ? 0.5 : 1,
+                backgroundColor: viewMode === mode.id ? "white" : "transparent",
+                color: viewMode === mode.id ? C.primary : C.textSecondary,
+                boxShadow: viewMode === mode.id ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
               }}
-              onMouseEnter={(e) => { if (!project.isNew) e.currentTarget.style.backgroundColor = C.bg; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "white"; }}
-              title={project.isNew ? "No previous versions to compare" : "Compare two BOM versions"}>
-              <GitCompareArrows className="w-3.5 h-3.5" />
-              Compare BOMs
+              onMouseEnter={(e) => { if (viewMode !== mode.id) e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.03)"; }}
+              onMouseLeave={(e) => { if (viewMode !== mode.id) e.currentTarget.style.backgroundColor = "transparent"; }}>
+              <mode.icon className="w-3.5 h-3.5" />
+              {mode.label}
             </button>
-
-            <div className="text-[11px] flex items-center gap-2" style={{ color: C.textSecondary }}>
-              <span style={{ color: C.textDisabled }}>Phase:</span>
-              <span style={{ color: C.textPrimary, fontWeight: 500 }}>{project.phase}</span>
-              <span style={{ color: C.borderLight }}>·</span>
-              <span>{activeCount} of {bomsForProject.length} active</span>
-            </div>
-          </div>
+          ))}
         </div>
+      </div>
 
-        {/* Body: Table or Kanban */}
-        <div className="p-4" style={{ backgroundColor: viewMode === "kanban" ? C.bg : "white" }}>
-          {viewMode === "table" ? renderTableView() : renderKanbanView()}
-        </div>
+      {/* Body: Table (renders its own bordered box) or Kanban (cards only, no outer box) */}
+      <div>
+        {viewMode === "table" ? renderTableView() : renderKanbanView()}
       </div>
 
       {/* Compare BOMs Modal */}
@@ -7450,10 +7564,11 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
   // Available BOM types to compare (filter to active ones in BOM_LIST)
   const bomTypes = BOM_LIST.map(b => ({ id: b.id, label: b.label, name: b.name }));
 
-  // Mock version history per BOM type (in real app: fetched from version log)
+  // Version history per BOM type. Newest first; head must equal the BOM's current version.
+  // E current=v1.8, C current=v2.0, Q current=v1.5 (see BOM_LIST).
   const versionHistory = {
     E: ["v1.8", "v1.7", "v1.5", "v1.0", "v0.5"],
-    C: ["v2.2", "v2.1", "v2.0", "v1.5", "v1.0"],
+    C: ["v2.0", "v1.5", "v1.0"],
     Q: ["v1.5", "v1.4", "v1.3", "v1.0"],
   };
 
@@ -7512,7 +7627,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
             <GitCompareArrows className="w-5 h-5" style={{ color: C.primary }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>
+            <div className="text-[18px] font-medium leading-6" style={{ color: C.textPrimary }}>
               Compare BOM Versions
             </div>
             <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>
@@ -7530,7 +7645,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
         <div className="px-6 py-4 border-b" style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}>
           {/* BOM type selector */}
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-[10px] uppercase tracking-wider font-semibold shrink-0 w-16" style={{ color: C.textDisabled }}>
+            <span className="text-[10px] tracking-wider font-medium shrink-0 w-16" style={{ color: C.textDisabled }}>
               BOM
             </span>
             <div className="flex items-center gap-1 p-0.5 rounded-md" style={{ backgroundColor: "white", border: `1px solid ${C.border}` }}>
@@ -7553,7 +7668,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
           {/* Version selectors */}
           <div className="flex items-center gap-3">
             <div className="flex-1 flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-wider font-semibold shrink-0 w-12" style={{ color: C.textDisabled }}>From</span>
+              <span className="text-[10px] tracking-wider font-medium shrink-0 w-12" style={{ color: C.textDisabled }}>From</span>
               <select value={fromVersion} onChange={(e) => setFromVersion(e.target.value)}
                 className="h-8 px-2 rounded-md border text-xs bg-white outline-none focus:outline-none focus-visible:ring-2 flex-1"
                 style={{ borderColor: C.border, color: C.textPrimary }}>
@@ -7562,7 +7677,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
             </div>
             <ArrowRight className="w-4 h-4 shrink-0" style={{ color: C.textDisabled }} />
             <div className="flex-1 flex items-center gap-2">
-              <span className="text-[10px] uppercase tracking-wider font-semibold shrink-0 w-8" style={{ color: C.textDisabled }}>To</span>
+              <span className="text-[10px] tracking-wider font-medium shrink-0 w-8" style={{ color: C.textDisabled }}>To</span>
               <select value={toVersion} onChange={(e) => setToVersion(e.target.value)}
                 className="h-8 px-2 rounded-md border text-xs bg-white outline-none focus:outline-none focus-visible:ring-2 flex-1"
                 style={{ borderColor: C.border, color: C.textPrimary }}>
@@ -7578,9 +7693,9 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
           <div className="mb-4 flex items-center gap-2 text-xs" style={{ color: C.textSecondary }}>
             <span><strong style={{ color: C.textPrimary }}>{totalChanges}</strong> change{totalChanges !== 1 ? "s" : ""} in {activeBomMeta?.label}</span>
             <span style={{ color: C.borderLight }}>·</span>
-            <span><span className="font-mono">{fromVersion}</span> → <span className="font-mono">{toVersion}</span></span>
+            <span><span className="tabular-nums">{fromVersion}</span> → <span className="tabular-nums">{toVersion}</span></span>
             {!isLatestVsPrevious && totalChanges === 0 && (
-              <span className="ml-auto text-[11px]" style={{ color: C.textDisabled }}>
+              <span className="ml-auto text-[12px]" style={{ color: C.textDisabled }}>
                 Detailed diff only available for latest vs previous
               </span>
             )}
@@ -7606,7 +7721,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
                   style={{ backgroundColor: "rgba(0,153,85,0.12)" }}>
                   <Plus className="w-3 h-3" style={{ color: C.success }} />
                 </span>
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.success }}>
+                <span className="text-[12px] font-medium tracking-wide" style={{ color: C.success }}>
                   Added · {effectiveDiff.added.length}
                 </span>
               </div>
@@ -7614,7 +7729,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
                 {effectiveDiff.added.map((p, i) => (
                   <div key={i} className="px-3 py-2.5">
                     <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</div>
-                    <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                    <div className="text-[12px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
                     <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.reason}</div>
                   </div>
                 ))}
@@ -7630,7 +7745,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
                   style={{ backgroundColor: "rgba(224,105,0,0.12)" }}>
                   <Edit3 className="w-3 h-3" style={{ color: C.warning }} />
                 </span>
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.warning }}>
+                <span className="text-[12px] font-medium tracking-wide" style={{ color: C.warning }}>
                   Modified · {effectiveDiff.modified.length}
                 </span>
               </div>
@@ -7638,7 +7753,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
                 {effectiveDiff.modified.map((p, i) => (
                   <div key={i} className="px-3 py-2.5">
                     <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</div>
-                    <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                    <div className="text-[12px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
                     <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.change}</div>
                   </div>
                 ))}
@@ -7654,7 +7769,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
                   style={{ backgroundColor: "rgba(211,47,47,0.12)" }}>
                   <X className="w-3 h-3" style={{ color: C.error }} />
                 </span>
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.error }}>
+                <span className="text-[12px] font-medium tracking-wide" style={{ color: C.error }}>
                   Removed · {effectiveDiff.removed.length}
                 </span>
               </div>
@@ -7662,7 +7777,7 @@ function CompareBomsModal({ activeProjectCode, onClose, onJumpToBom }) {
                 {effectiveDiff.removed.map((p, i) => (
                   <div key={i} className="px-3 py-2.5">
                     <div className="text-sm font-medium line-through" style={{ color: C.textSecondary }}>{p.name}</div>
-                    <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                    <div className="text-[12px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
                     <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.reason}</div>
                   </div>
                 ))}
@@ -7707,8 +7822,8 @@ function KanbanColumn({ label, subtitle, dotColor, count, children }) {
       {/* Column header */}
       <div className="flex items-center gap-2 px-2">
         <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
-        <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>{label}</span>
-        <span className="text-sm font-semibold tabular-nums" style={{ color: C.textSecondary }}>{count}</span>
+        <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{label}</span>
+        <span className="text-sm font-medium tabular-nums" style={{ color: C.textSecondary }}>{count}</span>
         {subtitle && (
           <span className="text-[10px] ml-auto" style={{ color: C.textDisabled }}>{subtitle}</span>
         )}
@@ -7738,11 +7853,11 @@ function KanbanCard({ bom, variant, onClick }) {
       {/* Header: BOM family + version + parties */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-sm font-semibold truncate" style={{ color: C.textPrimary }}>
+          <span className="text-sm font-medium truncate" style={{ color: C.textPrimary }}>
             {bom.label}
           </span>
           <span className="text-xs shrink-0" style={{ color: C.textDisabled }}>·</span>
-          <span className="text-xs font-mono shrink-0" style={{ color: C.textSecondary }}>
+          <span className="text-xs tabular-nums shrink-0" style={{ color: C.textSecondary }}>
             {bom.version}
           </span>
         </div>
@@ -7756,10 +7871,10 @@ function KanbanCard({ bom, variant, onClick }) {
       {/* Progress: Collab label + progress bar + status */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-medium truncate pr-2" style={{ color: C.textSecondary }}>
+          <span className="text-[12px] font-medium truncate pr-2" style={{ color: C.textSecondary }}>
             {bom.collabLabel}
           </span>
-          <span className="text-[10px] font-mono font-semibold shrink-0" style={{ color: progressColor }}>
+          <span className="text-[10px] tabular-nums font-medium shrink-0" style={{ color: progressColor }}>
             {bom.collabProgress}%
           </span>
         </div>
@@ -7774,6 +7889,31 @@ function KanbanCard({ bom, variant, onClick }) {
           <span className="truncate">{bom.collabStatus}</span>
         </div>
       </div>
+
+      {/* CTA — lifecycle-appropriate next action */}
+      {(() => {
+        const cta = variant === "draft"
+          ? { label: "Continue Editing", icon: Edit3, filled: false }
+          : variant === "review"
+          ? { label: "Review & Approve", icon: CheckCircle, filled: true }
+          : variant === "approved"
+          ? { label: "Validate & Merge", icon: GitMerge, filled: true }
+          : { label: "Open BOM", icon: ChevronRight, filled: false };
+        const Icon = cta.icon;
+        return (
+          <button
+            onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+            className="w-full h-8 rounded-md text-[12px] font-medium inline-flex items-center justify-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 border"
+            style={cta.filled
+              ? { backgroundColor: C.primary, color: "white", borderColor: C.primary }
+              : { backgroundColor: "white", color: C.textSecondary, borderColor: C.border }}
+            onMouseEnter={(e) => { if (cta.filled) e.currentTarget.style.opacity = "0.9"; else e.currentTarget.style.backgroundColor = C.surfaceTinted; }}
+            onMouseLeave={(e) => { if (cta.filled) e.currentTarget.style.opacity = "1"; else e.currentTarget.style.backgroundColor = "white"; }}>
+            <Icon className="w-3.5 h-3.5" />
+            {cta.label}
+          </button>
+        );
+      })()}
     </div>
   );
 }
@@ -7789,7 +7929,7 @@ function ArchivedKanbanCard({ bom }) {
         className="w-full px-3 py-2.5 flex items-center justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded-xl hover:bg-gray-50 transition-colors">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{bom.label}</span>
-          <span className="text-[10px] font-mono" style={{ color: C.textDisabled }}>{bom.code}</span>
+          <span className="text-[10px] tabular-nums" style={{ color: C.textDisabled }}>{bom.code}</span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-[10px]" style={{ color: C.textSecondary }}>
@@ -7809,25 +7949,25 @@ function ArchivedKanbanCard({ bom }) {
           {/* Cost section (if any) */}
           {bom.cost && (
             <div>
-              <div className="text-[10px] font-semibold mt-1.5 mb-1" style={{ color: C.textSecondary }}>Cost</div>
+              <div className="text-[10px] font-medium mt-1.5 mb-1" style={{ color: C.textSecondary }}>Cost</div>
               <div className="bg-gray-50 rounded-md px-2.5 py-1.5 flex items-center justify-between">
-                <span className="text-[11px] font-medium" style={{ color: C.textPrimary }}>{bom.cost.ver}</span>
+                <span className="text-[12px] font-medium" style={{ color: C.textPrimary }}>{bom.cost.ver}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-semibold"
+                  <span className="text-[10px] tabular-nums font-medium"
                     style={{ color: bom.cost.overTarget ? C.error : C.success }}>
                     {bom.cost.delta}
                   </span>
-                  <span className="text-[11px] font-mono" style={{ color: C.textPrimary }}>{bom.cost.target}</span>
+                  <span className="text-[12px] tabular-nums" style={{ color: C.textPrimary }}>{bom.cost.target}</span>
                 </div>
               </div>
             </div>
           )}
           {/* Versions */}
           <div>
-            <div className="text-[10px] font-semibold mt-1 mb-1" style={{ color: C.textSecondary }}>Versions</div>
+            <div className="text-[10px] font-medium mt-1 mb-1" style={{ color: C.textSecondary }}>Versions</div>
             <div className="flex flex-wrap gap-1">
               {bom.versions.map((v) => (
-                <span key={v} className="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-50"
+                <span key={v} className="text-[10px] tabular-nums px-2 py-0.5 rounded bg-gray-50"
                   style={{ color: C.textPrimary }}>
                   {v}
                 </span>
@@ -7919,6 +8059,25 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
     return Object.entries(counts)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  }, []);
+
+  // C-BOM (Category) / Q-BOM (PPAP Level) multi-select filters — parallel to E-BOM's Module.
+  // Empty array = show all (default). Each item toggles independently.
+  const [categoryFilter, setCategoryFilter] = useState([]); // C-BOM: selected categories
+  const [ppapFilter, setPpapFilter] = useState([]);         // Q-BOM: selected PPAP levels
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+
+  const categoryOptions = useMemo(() => {
+    const counts = {};
+    BOM_TREE.forEach((n) => { if (n.category) counts[n.category] = (counts[n.category] || 0) + 1; });
+    return Object.entries(counts).map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  }, []);
+  const ppapOptions = useMemo(() => {
+    const counts = {};
+    BOM_TREE.forEach((n) => { if (n.ppap) counts[n.ppap] = (counts[n.ppap] || 0) + 1; });
+    return Object.entries(counts).map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
   // Heatmap level filter — which severity levels to show
@@ -8023,13 +8182,14 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
   // - flat: flatten all leaf parts + apply groupBy
   const visibleNodes = useMemo(() => {
     // === Filter predicates (shared between count badges and filter application) ===
+    // "Missing" = required data gap per BOM: E=no supplier, C=no should-cost, Q=no PPAP.
     const qBomMissingIds = [3, 10, 14, 18];
-    const cBomMissingIds = [3]; // formerly sBomMissingIds — now part of C-BOM (Source & Cost)
-    const eBomLagIds = [5, 8];
+    const cBomMissingIds = [3];
+    const eBomMissingIds = [3, 11]; // E: parts with no supplier assigned
     const isMissingNode = (n) => {
       if (activeBom === "Q" && qBomMissingIds.includes(n.id) && scenarioStep < 7) return true;
       if (activeBom === "C" && cBomMissingIds.includes(n.id) && scenarioStep < 6) return true;
-      if (activeBom === "E" && eBomLagIds.includes(n.id)) return true;
+      if (activeBom === "E" && eBomMissingIds.includes(n.id)) return true;
       return false;
     };
     const matchesFilter = (n) => {
@@ -8183,8 +8343,32 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
       }
     }
 
+    // C-BOM (category) / Q-BOM (PPAP) multi-select filter — keep matching parts (+ ancestors in tree).
+    const multiFilter = activeBom === "C" ? { field: "category", sel: categoryFilter }
+                      : activeBom === "Q" ? { field: "ppap", sel: ppapFilter }
+                      : null;
+    if (multiFilter && multiFilter.sel.length > 0) {
+      const matches = (n) => multiFilter.sel.includes(n[multiFilter.field]);
+      if (structure === "tree") {
+        const ancestorMap = {};
+        BOM_TREE.forEach((n) => (n.children || []).forEach((cid) => { ancestorMap[cid] = n.id; }));
+        const keepIds = new Set();
+        BOM_TREE.forEach((n) => {
+          if (matches(n)) {
+            keepIds.add(n.id);
+            let pid = ancestorMap[n.id];
+            while (pid !== undefined) { keepIds.add(pid); pid = ancestorMap[pid]; }
+          }
+        });
+        keepIds.add(1);
+        result = result.filter((n) => keepIds.has(n.id));
+      } else {
+        result = result.filter((n) => n._isGroupHeader || matches(n));
+      }
+    }
+
     return result;
-  }, [expandedNodes, filter, structure, groupBy, activeBom, scenarioStep, heatLevels, overlay, moduleFilter]);
+  }, [expandedNodes, filter, structure, groupBy, activeBom, scenarioStep, heatLevels, overlay, moduleFilter, categoryFilter, ppapFilter]);
 
   // Per-part detail: Hero (id 3) is scenario subject; others come from ITEM_DETAILS map.
   // For any BOM_TREE node not in ITEM_DETAILS, synthesize a minimal mock so the Item 360 drawer
@@ -8262,7 +8446,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
             style={{ backgroundColor: C.primarySoft }}>
             <Network className="w-8 h-8" style={{ color: C.primary }} />
           </div>
-          <div className="text-base font-semibold mb-2" style={{ color: C.textPrimary }}>
+          <div className="text-base font-medium mb-2" style={{ color: C.textPrimary }}>
             No BOM to Collaborate On
           </div>
           <div className="text-sm max-w-md mx-auto mb-6" style={{ color: C.textSecondary }}>
@@ -8271,7 +8455,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
           <div className="inline-flex items-center gap-2">
             <button
               onClick={() => setView && setView("bomlist")}
-              className="px-4 py-2 rounded-md text-sm font-semibold text-white inline-flex items-center gap-2 hover:opacity-90"
+              className="px-4 py-2 rounded-md text-sm font-medium text-white inline-flex items-center gap-2 hover:opacity-90"
               style={{ backgroundColor: C.primary }}>
               <Upload className="w-4 h-4" />
               Upload E-BOM
@@ -8290,32 +8474,83 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      {/* Screen title row — active BOM name (e.g. "Engineering BOM") + version·parts chip + Compare/Timeline */}
+      <div className="px-6 pt-6 pb-3 flex items-center gap-3">
+        <h1 className="text-[20px] font-medium" style={{ color: C.textPrimary }}>{activeBomMeta.name}</h1>
+        <span className="text-[12px] h-5 px-1.5 inline-flex items-center rounded tabular-nums"
+          style={{ backgroundColor: C.bg, color: C.textSecondary }}>
+          {activeBomMeta.version} · {activeBomMeta.parts}p
+        </span>
+        {/* Compare + Timeline — page-title level */}
+        <div className="ml-auto flex items-center gap-1.5">
+          <button
+            onClick={() => { if (!project.isNew) setCompareOpen(true); }}
+            disabled={project.isNew}
+            className="h-8 px-3 rounded-md text-[12px] font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+            style={{
+              color: project.isNew ? C.textDisabled : C.textSecondary,
+              backgroundColor: "transparent",
+              opacity: project.isNew ? 0.5 : 1,
+            }}
+            onMouseEnter={(e) => { if (!project.isNew) e.currentTarget.style.backgroundColor = C.bg; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
+            title={project.isNew ? "No previous version to compare" : "Compare with previous version"}>
+            <GitCompareArrows className="w-3.5 h-3.5" />
+            Compare
+          </button>
+          <button
+            onClick={() => setTimelineOpen(!timelineOpen)}
+            className="h-8 px-3 rounded-md text-[12px] font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{
+              color: timelineOpen ? C.primary : C.textSecondary,
+              backgroundColor: timelineOpen ? C.primarySoft : "transparent",
+            }}
+            onMouseEnter={(e) => { if (!timelineOpen) e.currentTarget.style.backgroundColor = C.bg; }}
+            onMouseLeave={(e) => { if (!timelineOpen) e.currentTarget.style.backgroundColor = "transparent"; }}
+            title={timelineOpen ? "Hide timeline" : "Show timeline"}>
+            <History className="w-3.5 h-3.5" />
+            Timeline
+          </button>
+          {/* Promote BOM — state-aware primary action (lifecycle: draft → review → approved → released) */}
+          {(() => {
+            // Map current BOM lifecycle state to its next promotion action.
+            const promo = {
+              draft:    { label: "Submit for Review", icon: Send,        disabled: false },
+              review:   { label: "Approve",            icon: CheckCircle, disabled: false },
+              approved: { label: "Release",            icon: GitMerge,    disabled: false },
+              released: { label: "Released",           icon: CheckCircle, disabled: true },
+            }[activeBomMeta.lifecycle] || { label: "Submit for Review", icon: Send, disabled: false };
+            const PromoIcon = promo.icon;
+            return (
+              <button
+                disabled={promo.disabled}
+                className="h-8 px-3 rounded-md text-[12px] font-medium text-white flex items-center gap-1.5 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-90 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: promo.disabled ? C.textDisabled : C.primary,
+                  opacity: promo.disabled ? 0.6 : 1,
+                }}
+                title={promo.disabled
+                  ? `${activeBomMeta.name} is already released`
+                  : `${promo.label} — ${activeBomMeta.name}`}>
+                <PromoIcon className="w-3.5 h-3.5" />
+                {promo.label}
+              </button>
+            );
+          })()}
+        </div>
+      </div>
       {/* Top Action Bar — single row, all controls aligned to h-7 (28px) */}
       <div className="px-6 py-2.5 bg-white border-b flex items-center gap-3 flex-wrap" style={{ borderColor: C.border }}>
-        {/* Left: BOM identity + sync status */}
-        <div className="flex items-center gap-2 min-w-0 h-7">
-          <span className="text-sm font-semibold whitespace-nowrap leading-7" style={{ color: C.textPrimary }}>
-            {activeBomMeta.name}
-          </span>
-          <span className="text-[11px] h-5 px-1.5 inline-flex items-center rounded font-mono"
-            style={{ backgroundColor: C.bg, color: C.textSecondary }}>
-            {activeBomMeta.version} · {activeBomMeta.parts}p
-          </span>
-        </div>
-
-        {/* Divider — aligned to control row (h-5 within h-7 container) */}
-        <div className="w-px h-5" style={{ backgroundColor: C.border }} />
-
-        {/* Center: View Controls — Structure + GroupBy + Heatmap toggle (all h-7) */}
+        {/* View Controls — Tree/Flat (master) · Group · Module · Heatmap */}
         <div className="flex items-center gap-1.5">
-          {/* Segmented: Structure */}
+          {/* Segmented: Structure (Tree / Flat) — master control, leads the row */}
           <div className="h-7 flex items-center gap-0.5 p-0.5 rounded-md" style={{ backgroundColor: C.bg }}>
             {[
               { id: "tree", icon: GitBranch, label: "Tree" },
               { id: "flat", icon: AlignLeft, label: "Flat" },
             ].map((s) => (
               <button key={s.id} onClick={() => setStructure(s.id)}
-                className="h-6 px-2 rounded text-[11px] font-medium flex items-center gap-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                className="h-6 px-2 rounded text-[12px] font-medium flex items-center gap-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                 style={{
                   backgroundColor: structure === s.id ? "white" : "transparent",
                   color: structure === s.id ? C.primary : C.textSecondary,
@@ -8328,11 +8563,13 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
               </button>
             ))}
           </div>
+          {/* Divider — separates the master toggle from the shaping pickers */}
+          <div className="w-px h-5 mx-0.5" style={{ backgroundColor: C.border }} />
           {/* Group dropdown — visible in both tree and flat. Disabled in tree (hierarchy already groups). */}
           <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}
             disabled={structure === "tree"}
             title={structure === "tree" ? "Switch to Flat view to apply grouping" : undefined}
-            className="h-7 px-2 rounded-md border text-[11px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+            className="h-7 px-2 rounded-md border text-[12px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
             style={{
               borderColor: C.border,
               color: structure === "tree" ? C.textDisabled : C.textPrimary,
@@ -8366,6 +8603,72 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
               )}
             </select>
 
+          {/* Module dropdown (E-BOM only) — after Group, matching C/Q-BOM order */}
+          {activeBom === "E" && (
+            <select value={moduleFilter || "__all"} onChange={(e) => setModuleFilter(e.target.value === "__all" ? null : e.target.value)}
+              className="h-7 px-2 rounded-md border text-[12px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              style={{ borderColor: C.border, color: C.textPrimary }}>
+              <option value="__all">Module: ALL ({BOM_TREE.length})</option>
+              {moduleOptions.map((m) => (
+                <option key={m.name} value={m.name}>Module: {m.name} ({m.count})</option>
+              ))}
+            </select>
+          )}
+
+          {/* C-BOM (Category) / Q-BOM (PPAP) multi-select dropdown — parallel to E-BOM Module */}
+          {(activeBom === "C" || activeBom === "Q") && (() => {
+            const isC = activeBom === "C";
+            const label = isC ? "Category" : "PPAP";
+            const opts = isC ? categoryOptions : ppapOptions;
+            const sel = isC ? categoryFilter : ppapFilter;
+            const setSel = isC ? setCategoryFilter : setPpapFilter;
+            const toggle = (name) => setSel(sel.includes(name) ? sel.filter((x) => x !== name) : [...sel, name]);
+            const summary = sel.length === 0 ? "ALL" : sel.length === 1 ? sel[0] : `${sel.length} selected`;
+            return (
+              <div className="relative">
+                <button onClick={() => setFilterMenuOpen(!filterMenuOpen)}
+                  className="h-7 px-2 rounded-md border text-[12px] flex items-center gap-1.5 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                  style={{ borderColor: C.border, color: C.textPrimary }}>
+                  <span>{label}: {summary}</span>
+                  <ChevronDown className="w-3.5 h-3.5" style={{ color: C.textSecondary }} />
+                </button>
+                {filterMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-20" onClick={() => setFilterMenuOpen(false)} />
+                    <div className="absolute left-0 top-full mt-1 z-30 min-w-[200px] rounded-lg border bg-white shadow-lg py-1"
+                      style={{ borderColor: C.border }}>
+                      <button onClick={() => setSel([])}
+                        className="w-full flex items-center justify-between px-3 py-1.5 text-[12px] hover:bg-gray-50 transition-colors"
+                        style={{ color: sel.length === 0 ? C.primary : C.textPrimary }}>
+                        <span>All {label === "PPAP" ? "Levels" : "Categories"}</span>
+                        {sel.length === 0 && <Check className="w-3.5 h-3.5" />}
+                      </button>
+                      <div className="h-px my-1" style={{ backgroundColor: C.borderLight }} />
+                      {opts.map((o) => {
+                        const checked = sel.includes(o.name);
+                        return (
+                          <button key={o.name} onClick={() => toggle(o.name)}
+                            className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] hover:bg-gray-50 transition-colors"
+                            style={{ color: C.textPrimary }}>
+                            <span className="w-4 h-4 rounded border flex items-center justify-center shrink-0"
+                              style={{
+                                borderColor: checked ? C.primary : C.border,
+                                backgroundColor: checked ? C.primary : "white",
+                              }}>
+                              {checked && <Check className="w-3 h-3 text-white" />}
+                            </span>
+                            <span className="flex-1 text-left">{o.name}</span>
+                            <span className="tabular-nums" style={{ color: C.textDisabled }}>{o.count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Heatmap toggle — segmented-style (matches Structure visually) */}
           {availableOverlays.length > 1 && (() => {
             const overlayMeta = availableOverlays.find(o => o !== "none");
@@ -8379,7 +8682,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
               <div className="h-7 flex items-center p-0.5 rounded-md" style={{ backgroundColor: C.bg }}>
                 <button
                   onClick={() => setOverlay(isOn ? "none" : overlayMeta)}
-                  className="h-6 px-2 rounded text-[11px] font-medium flex items-center gap-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                  className="h-6 px-2 rounded text-[12px] font-medium flex items-center gap-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                   style={{
                     backgroundColor: isOn ? "white" : "transparent",
                     color: isOn ? C.primary : C.textSecondary,
@@ -8394,38 +8697,6 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
               </div>
             );
           })()}
-        </div>
-
-        {/* Right: Compare + Timeline buttons */}
-        <div className="ml-auto flex items-center gap-1">
-          <button
-            onClick={() => { if (!project.isNew) setCompareOpen(true); }}
-            disabled={project.isNew}
-            className="h-7 px-2.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
-            style={{
-              color: project.isNew ? C.textDisabled : C.textSecondary,
-              backgroundColor: "transparent",
-              opacity: project.isNew ? 0.5 : 1,
-            }}
-            onMouseEnter={(e) => { if (!project.isNew) e.currentTarget.style.backgroundColor = C.bg; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
-            title={project.isNew ? "No previous version to compare" : "Compare with previous version"}>
-            <GitCompareArrows className="w-3.5 h-3.5" />
-            Compare
-          </button>
-          <button
-            onClick={() => setTimelineOpen(!timelineOpen)}
-            className="h-7 px-2.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-            style={{
-              color: timelineOpen ? C.primary : C.textSecondary,
-              backgroundColor: timelineOpen ? C.primarySoft : "transparent",
-            }}
-            onMouseEnter={(e) => { if (!timelineOpen) e.currentTarget.style.backgroundColor = C.bg; }}
-            onMouseLeave={(e) => { if (!timelineOpen) e.currentTarget.style.backgroundColor = "transparent"; }}
-            title={timelineOpen ? "Hide timeline" : "Show timeline"}>
-            <History className="w-3.5 h-3.5" />
-            Timeline
-          </button>
         </div>
 
       </div>
@@ -8457,14 +8728,14 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
         const items = overlay === "costHeat"
           ? [
-              { id: "high", label: "+$1.5 or more over", color: "#FEE2E2", textColor: C.error, count: costLevels.high },
-              { id: "med", label: "+$0.5 ~ +$1.5", color: "#FEF3C7", textColor: C.warning, count: costLevels.med },
+              { id: "high", label: "+$1.5 or more over", color: "#fee4e2", textColor: C.error, count: costLevels.high },
+              { id: "med", label: "+$0.5 ~ +$1.5", color: "#fef0c7", textColor: C.warning, count: costLevels.med },
               { id: "neutral", label: "On Target", color: "white", textColor: C.textSecondary, count: costLevels.neutral, border: true },
-              { id: "savings", label: "Savings", color: "#D1FAE5", textColor: C.success, count: costLevels.savings },
+              { id: "savings", label: "Savings", color: "#d1fadf", textColor: C.success, count: costLevels.savings },
             ]
           : [
-              { id: "high", label: "High Risk", color: "#FEE2E2", textColor: C.error, count: riskLevels.high },
-              { id: "med", label: "Medium Risk", color: "#FEF3C7", textColor: C.warning, count: riskLevels.med },
+              { id: "high", label: "High Risk", color: "#fee4e2", textColor: C.error, count: riskLevels.high },
+              { id: "med", label: "Medium Risk", color: "#fef0c7", textColor: C.warning, count: riskLevels.med },
               { id: "low", label: "Low Risk", color: "white", textColor: C.textSecondary, count: riskLevels.low, border: true },
             ];
 
@@ -8472,7 +8743,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
         const hasFilter = heatLevels !== null && heatLevels.size > 0;
 
         return (
-          <div className="px-6 py-2 bg-white border-b flex items-center gap-2 text-[11px] flex-wrap"
+          <div className="px-6 py-2 bg-white border-b flex items-center gap-2 text-[12px] flex-wrap"
             style={{ borderColor: C.border }}>
             <span className="font-medium shrink-0" style={{ color: C.textSecondary }}>
               {overlay === "costHeat" ? "Cost Heatmap:" : "Risk Heatmap:"}
@@ -8499,7 +8770,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                   <span style={{ color: item.textColor, fontWeight: active && hasFilter ? 600 : 500 }}>
                     {item.label}
                   </span>
-                  <span className="text-[10px] font-mono"
+                  <span className="text-[10px] tabular-nums"
                     style={{ color: C.textDisabled }}>
                     {item.count}
                   </span>
@@ -8508,7 +8779,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
             })}
             {hasFilter && (
               <button onClick={() => setHeatLevels(null)}
-                className="text-[11px] font-medium px-2.5 h-7 rounded-md transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                className="text-[12px] font-medium px-2.5 h-7 rounded-md transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                 style={{ color: C.primary }}
                 title="Show all levels">
                 Show All
@@ -8529,38 +8800,38 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
             flex: leftPanelWidth === null ? "1 1 0%" : "0 0 auto",
             minWidth: 400,
           }}>
-          {/* BOM Filter Bar — refined: icon-led chips, semantic count badges, clearer hierarchy */}
+          {/* BOM Filter Bar — status filter chips (toggle to clear back to all) */}
           <div className="px-3 py-2 border-b flex items-center gap-2 overflow-x-auto"
             style={{ borderColor: C.border, backgroundColor: "white" }}>
-            <div className="flex items-center gap-1.5 shrink-0 pr-2 mr-0.5 border-r"
-              style={{ borderColor: C.borderLight }}>
-              <Filter className="w-3 h-3" style={{ color: C.textSecondary }} />
-              <span className="text-[10px] font-semibold uppercase tracking-wider"
-                style={{ color: C.textSecondary }}>Filter</span>
-            </div>
             {(() => {
-              // Compute filter counts from actual data
-              const qBomMissingIds = [3, 10, 14, 18];
-              const cBomMissingIds = [3];
-              const eBomLagIds = [5, 8];
+              // Compute filter counts from actual data.
+              // "Missing" = parts with a required data gap, scoped per BOM:
+              //   E-BOM: parts with no supplier assigned
+              //   C-BOM: parts with no should-cost / quote
+              //   Q-BOM: parts with no PPAP level registered
+              // (Conflicts/blockers are counted separately under "Blocked", not here.)
+              const qBomMissingIds = [3, 10, 14, 18]; // Q: no PPAP registered
+              const cBomMissingIds = [3];             // C: no should-cost / quote
+              const eBomMissingIds = [3, 11];         // E: no supplier assigned (AMOLED new spec + Battery Cell)
               const missingCount =
                 activeBom === "Q" && scenarioStep < 7 ? qBomMissingIds.length :
                 activeBom === "C" && scenarioStep < 6 ? cBomMissingIds.length :
-                activeBom === "E" ? eBomLagIds.length :
+                activeBom === "E" ? eBomMissingIds.length :
                 0;
               const blockedCount = BOM_TREE.filter((n) => Object.values(n.status || {}).some((s) => s === "block")).length;
               const commentsCount = BOM_TREE.filter((n) => (n.comments || 0) > 0).length;
-              // Each filter has: icon, label, count, semantic color (for count badge), and hideIfZero
+              // Filter pills — status subset filters. Clicking an active chip clears it (back to all).
+              //   "Missing" = parts with a required data gap (no supplier / no should-cost / no PPAP).
+              //   "Blocked" = part-level D/C/Q status === "block".
               return [
-                { id: "all", label: "All", icon: Layers, count: null, accent: C.textSecondary },
                 { id: "missing", label: "Missing", icon: AlertCircle, count: missingCount, accent: C.warning, hideIfZero: true },
                 { id: "blocked", label: "Blocked", icon: XCircle, count: blockedCount, accent: C.error, hideIfZero: true },
-                { id: "comments", label: "Has Comments", icon: MessageSquare, count: commentsCount, accent: C.textSecondary, hideIfZero: true },
+                { id: "comments", label: "Comments", icon: MessageSquare, count: commentsCount, accent: C.textSecondary, hideIfZero: true },
               ].filter(f => !(f.hideIfZero && f.count === 0)).map((f) => {
                 const isActive = filter === f.id;
                 return (
-                  <button key={f.id} onClick={() => setFilter(f.id)}
-                    className="h-7 px-2.5 rounded-full text-[11px] font-medium flex items-center gap-1.5 shrink-0 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                  <button key={f.id} onClick={() => setFilter(isActive ? "all" : f.id)}
+                    className="h-7 px-2.5 rounded-full text-[12px] font-medium flex items-center gap-1.5 shrink-0 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                     style={{
                       backgroundColor: isActive ? C.primary : "white",
                       color: isActive ? "white" : C.textPrimary,
@@ -8583,7 +8854,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                       style={{ color: isActive ? "white" : f.accent, opacity: isActive ? 0.9 : 1 }} />
                     <span className="whitespace-nowrap">{f.label}</span>
                     {f.count !== null && f.count !== undefined && (
-                      <span className="text-[10px] font-mono font-semibold px-1 py-px rounded leading-none min-w-[16px] text-center"
+                      <span className="text-[10px] tabular-nums font-medium px-1 py-px rounded leading-none min-w-[16px] text-center"
                         style={{
                           backgroundColor: isActive ? "rgba(255,255,255,0.22)" : f.accent + "1A",
                           color: isActive ? "white" : f.accent,
@@ -8598,45 +8869,12 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
           </div>
 
           <div className="flex-1 overflow-auto">
-          {/* E-BOM module filter pills — quick subsystem-level filtering */}
-          {activeBom === "E" && (
-            <div className="px-4 py-2 border-b flex items-center gap-1.5 flex-wrap"
-              style={{ borderColor: C.borderLight, backgroundColor: C.surfaceTinted }}>
-              <span className="text-[10px] font-semibold uppercase tracking-wider mr-1" style={{ color: C.textDisabled }}>
-                Module:
-              </span>
-              <button
-                onClick={() => setModuleFilter(null)}
-                className="h-6 px-2.5 rounded-full text-[10px] font-medium transition-colors border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                style={{
-                  backgroundColor: moduleFilter === null ? C.primary : "white",
-                  color: moduleFilter === null ? "white" : C.textSecondary,
-                  borderColor: moduleFilter === null ? C.primary : C.border,
-                }}>
-                All <span className="opacity-70 ml-0.5">{BOM_TREE.length}</span>
-              </button>
-              {moduleOptions.map((m) => {
-                const active = moduleFilter === m.name;
-                return (
-                  <button key={m.name}
-                    onClick={() => setModuleFilter(active ? null : m.name)}
-                    className="h-6 px-2.5 rounded-full text-[10px] font-medium transition-colors border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                    style={{
-                      backgroundColor: active ? C.primary : "white",
-                      color: active ? "white" : C.textSecondary,
-                      borderColor: active ? C.primary : C.border,
-                    }}>
-                    {m.name} <span className="opacity-70 ml-0.5">{m.count}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          {/* E-BOM module filter moved to the toolbar dropdown (Module: ALL ▾) above. */}
           {/* C-BOM Final price source legend */}
           {activeBom === "C" && (
             <div className="px-4 py-2 border-b flex items-center gap-3 flex-wrap text-[10px]"
               style={{ borderColor: C.borderLight, backgroundColor: C.surfaceTinted, color: C.textSecondary }}>
-              <span className="font-semibold uppercase tracking-wider" style={{ color: C.textDisabled }}>
+              <span className="font-medium tracking-wider" style={{ color: C.textDisabled }}>
                 Final price source:
               </span>
               <span className="inline-flex items-center gap-1">
@@ -8695,8 +8933,8 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                   </>
                 )}
 
-                {/* Issues (always) */}
-                <th className="text-center font-medium py-2.5 px-3 w-24">Issues</th>
+                {/* Status (always) — part-level D/C/Q indicators */}
+                <th className="text-center font-medium py-2.5 px-3 w-24">Status</th>
 
                 {/* Overlay-driven extra column (cost/risk heat) */}
                 {overlay === "costHeat" && activeBom !== "C" && (
@@ -8749,7 +8987,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                       <td colSpan={10}
                         className="border-b"
                         style={{
-                          backgroundColor: "#F3F4F6",
+                          backgroundColor: "#f2f4f7",
                           borderColor: C.border,
                           borderLeft: `3px solid ${C.primary}`,
                           position: "sticky",
@@ -8758,11 +8996,11 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                         }}>
                         <div className="flex items-center gap-2 py-2 px-3">
                           <GroupIcon className="w-3.5 h-3.5 shrink-0" style={{ color: C.primary }} />
-                          <span className="text-[10px] font-semibold uppercase tracking-wider shrink-0"
+                          <span className="text-[10px] font-medium tracking-wider shrink-0"
                             style={{ color: C.textSecondary }}>
                             {groupByLabel}
                           </span>
-                          <span className="text-xs font-bold truncate"
+                          <span className="text-xs font-medium truncate"
                             style={{ color: C.textPrimary }}>
                             {node._groupKey}
                           </span>
@@ -8771,7 +9009,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                             {node._groupCount} {node._groupCount === 1 ? "part" : "parts"}
                           </span>
                           {statsText && (
-                            <span className="ml-auto text-[11px] font-mono font-semibold shrink-0"
+                            <span className="ml-auto text-[12px] tabular-nums font-medium shrink-0"
                               style={{ color: C.textPrimary }}>
                               {statsText}
                             </span>
@@ -8845,13 +9083,13 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                       backgroundColor: isSelected && overlay === "none"
                         ? "rgba(83,45,246,0.05)"
                         : overlay === "costHeat"
-                          ? (mockCost.delta > 1.5 ? "#FEE2E2"
-                            : mockCost.delta > 0.5 ? "#FEF3C7"
-                            : mockCost.delta < -0.3 ? "#D1FAE5"
+                          ? (mockCost.delta > 1.5 ? "#fee4e2"
+                            : mockCost.delta > 0.5 ? "#fef0c7"
+                            : mockCost.delta < -0.3 ? "#d1fadf"
                             : "white")
                           : overlay === "riskHeat"
-                            ? (mockRisk === "High" ? "#FEE2E2"
-                              : mockRisk === "Med" ? "#FEF3C7"
+                            ? (mockRisk === "High" ? "#fee4e2"
+                              : mockRisk === "Med" ? "#fef0c7"
                               : "white")
                             : "white",
                     }}
@@ -8866,13 +9104,13 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                       if (isSelected && overlay === "none") {
                         e.currentTarget.style.backgroundColor = "rgba(83,45,246,0.05)";
                       } else if (overlay === "costHeat") {
-                        e.currentTarget.style.backgroundColor = mockCost.delta > 1.5 ? "#FEE2E2"
-                          : mockCost.delta > 0.5 ? "#FEF3C7"
-                          : mockCost.delta < -0.3 ? "#D1FAE5"
+                        e.currentTarget.style.backgroundColor = mockCost.delta > 1.5 ? "#fee4e2"
+                          : mockCost.delta > 0.5 ? "#fef0c7"
+                          : mockCost.delta < -0.3 ? "#d1fadf"
                           : "white";
                       } else if (overlay === "riskHeat") {
-                        e.currentTarget.style.backgroundColor = mockRisk === "High" ? "#FEE2E2"
-                          : mockRisk === "Med" ? "#FEF3C7"
+                        e.currentTarget.style.backgroundColor = mockRisk === "High" ? "#fee4e2"
+                          : mockRisk === "Med" ? "#fef0c7"
                           : "white";
                       } else {
                         e.currentTarget.style.backgroundColor = "white";
@@ -8883,17 +9121,41 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                         {node.lvl}
                       </td>
                     )}
-                    <td className="py-2 px-3">
-                      <div className="flex items-center gap-1" style={{ paddingLeft: structure === "tree" ? (node.lvl - 1) * 16 : 0 }}>
-                        {structure === "tree" && hasChildren ? (
-                          <button onClick={(e) => { e.stopPropagation(); toggleNode(node.id); }}
-                            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded hover:bg-gray-100 transition-colors p-0.5">
-                            {isExpanded
-                              ? <ChevronDown className="w-3 h-3" style={{ color: C.textSecondary }} />
-                              : <ChevronRight className="w-3 h-3" style={{ color: C.textSecondary }} />}
-                          </button>
-                        ) : structure === "tree" ? <span className="w-3" /> : null}
-                        <div className="min-w-0">
+                    <td className={structure === "tree" ? "py-0 px-3" : "py-2 px-3"}>
+                      <div className="flex items-stretch self-stretch" style={{ minHeight: structure === "tree" ? 40 : undefined }}>
+                        {structure === "tree" ? (
+                          <>
+                            {/* Tree guides: one dashed vertical rail per ancestor level */}
+                            {Array.from({ length: Math.max(0, node.lvl - 1) }).map((_, i) => (
+                              <span key={i} className="relative shrink-0" style={{ width: 20 }}>
+                                <span className="absolute top-0 bottom-0"
+                                  style={{ left: 9, borderLeft: `1px dashed ${C.border}` }} />
+                              </span>
+                            ))}
+                            {/* Node connector + toggle/leaf marker */}
+                            <span className="relative shrink-0 flex items-center" style={{ width: 26 }}>
+                              {/* horizontal connector from the parent rail to this node */}
+                              {node.lvl > 1 && (
+                                <span className="absolute"
+                                  style={{ left: -11, top: "50%", width: 13, borderTop: `1px dashed ${C.border}` }} />
+                              )}
+                              {hasChildren ? (
+                                <button onClick={(e) => { e.stopPropagation(); toggleNode(node.id); }}
+                                  className="relative z-[1] w-5 h-5 rounded-full border flex items-center justify-center bg-white hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                                  style={{ borderColor: C.border }}>
+                                  {isExpanded
+                                    ? <ChevronDown className="w-3 h-3" style={{ color: C.textSecondary }} />
+                                    : <ChevronRight className="w-3 h-3" style={{ color: C.textSecondary }} />}
+                                </button>
+                              ) : (
+                                /* leaf node — short dashed stub */
+                                <span className="block" style={{ width: 12, borderTop: `1px dashed ${C.border}` }} />
+                              )}
+                            </span>
+                          </>
+                        ) : null}
+                        <div className="min-w-0 flex items-center">
+                          <div className="min-w-0">
                           {/* Description first (human-readable name) */}
                           <div className="flex items-center gap-1.5 flex-wrap">
                             {node.isHero && !isSelected && (
@@ -8909,21 +9171,22 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                               {node.desc}
                             </span>
                             {isMissingInActiveBom && (
-                              <span className="text-[9px] px-1 py-0.5 rounded font-semibold shrink-0"
+                              <span className="text-[10px] px-1 py-0.5 rounded font-medium shrink-0"
                                 style={{ backgroundColor: C.errorLight, color: C.error }}>
                                 Not in {activeBom}-BOM
                               </span>
                             )}
                             {isLaggedInActiveBom && (
-                              <span className="text-[9px] px-1 py-0.5 rounded font-semibold shrink-0"
+                              <span className="text-[10px] px-1 py-0.5 rounded font-medium shrink-0"
                                 style={{ backgroundColor: C.warningLight, color: C.warning }}>
                                 Delayed
                               </span>
                             )}
                           </div>
                           {/* PartId as metadata (smaller, mono) */}
-                          <div className="font-mono text-[10px] mt-0.5" style={{ color: C.textDisabled }}>
+                          <div className="tabular-nums text-[10px] mt-0.5" style={{ color: C.textDisabled }}>
                             {node.partId}
+                          </div>
                           </div>
                         </div>
                       </div>
@@ -8932,12 +9195,12 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                     {activeBom === "E" && (
                       <>
                         <td className="py-2 px-3">
-                          <span className="text-[11px]" style={{ color: C.textPrimary }}>
+                          <span className="text-[12px]" style={{ color: C.textPrimary }}>
                             {node.category || "—"}
                           </span>
                         </td>
                         <td className="py-2 px-3">
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                          <span className="text-[10px] tabular-nums px-1.5 py-0.5 rounded"
                             style={{ backgroundColor: C.bg, color: C.textSecondary }}>
                             {node.type || "—"}
                           </span>
@@ -8950,7 +9213,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                           {isMissingInActiveBom ? (
                             <span className="text-[10px]" style={{ color: C.error }}>—</span>
                           ) : (
-                            <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded"
+                            <span className="text-[10px] tabular-nums font-medium px-1.5 py-0.5 rounded"
                               style={{
                                 backgroundColor: node.ppap === "Lv3" ? C.errorLight : node.ppap === "Lv2" ? C.warningLight : C.bg,
                                 color: node.ppap === "Lv3" ? C.error : node.ppap === "Lv2" ? C.warning : C.textSecondary,
@@ -8960,7 +9223,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                           )}
                         </td>
                         <td className="py-2 px-3 text-center">
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded"
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded"
                             style={{
                               backgroundColor: node.risk === "High" ? C.errorLight : node.risk === "Med" ? C.warningLight : C.bg,
                               color: node.risk === "High" ? C.error : node.risk === "Med" ? C.warning : C.textSecondary,
@@ -8973,38 +9236,38 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                     {activeBom === "C" && (
                       <>
                         <td className="py-2 px-3">
-                          <span className="text-[11px] truncate block" style={{ color: C.textPrimary }}
+                          <span className="text-[12px] truncate block" style={{ color: C.textPrimary }}
                             title={node.supplier}>
                             {isMissingInActiveBom ? <span style={{ color: C.error }}>— (not selected)</span> : (node.supplier || "—")}
                           </span>
                         </td>
                         <td className="py-2 px-3 text-right">
-                          <span className="font-mono text-[11px]"
+                          <span className="tabular-nums text-[12px]"
                             style={{ color: mockCost.carryover === null ? C.textDisabled : C.textSecondary }}
                             title={mockCost.carryover === null ? "No carryover — new spec" : "Previous version price"}>
                             {mockCost.carryover !== null ? `$${mockCost.carryover.toFixed(2)}` : "—"}
                           </span>
                         </td>
                         <td className="py-2 px-3 text-right">
-                          <span className="font-mono text-[11px]" style={{ color: mockCost.quoted === null ? C.textDisabled : C.textPrimary }}
+                          <span className="tabular-nums text-[12px]" style={{ color: mockCost.quoted === null ? C.textDisabled : C.textPrimary }}
                             title="Latest RFQ quote">
                             {mockCost.quoted !== null ? `$${mockCost.quoted.toFixed(2)}` : "—"}
                           </span>
                         </td>
                         <td className="py-2 px-3 text-right">
-                          <span className="font-mono text-[11px]" style={{ color: C.textSecondary }}
+                          <span className="tabular-nums text-[12px]" style={{ color: C.textSecondary }}
                             title="AI-derived should-cost">
                             ${mockCost.shouldCost.toFixed(2)}
                           </span>
                         </td>
                         <td className="py-2 px-3 text-right">
-                          <span className="font-mono text-[11px]" style={{ color: C.textDisabled }}
+                          <span className="tabular-nums text-[12px]" style={{ color: C.textDisabled }}
                             title="Market average">
                             ${mockCost.market.toFixed(2)}
                           </span>
                         </td>
                         <td className="py-2 px-3 text-right">
-                          <span className="font-mono text-[11px] font-semibold px-1.5 py-0.5 rounded"
+                          <span className="tabular-nums text-[12px] font-medium px-1.5 py-0.5 rounded"
                             style={{
                               backgroundColor: mockCost.delta > 0.5 ? C.errorLight : mockCost.delta < -0.3 ? C.successLight : C.bg,
                               color: mockCost.delta > 0.5 ? C.error : mockCost.delta < -0.3 ? C.success : C.textSecondary,
@@ -9047,7 +9310,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                               <span className="inline-flex items-center gap-1.5 justify-end"
                                 title={`Final price from: ${sourceLabel}`}>
                                 <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: sourceColor }} />
-                                <span className="font-mono text-[11px] font-semibold" style={{ color: C.textPrimary }}>
+                                <span className="tabular-nums text-[12px] font-medium" style={{ color: C.textPrimary }}>
                                   ${finalValue.toFixed(2)}
                                 </span>
                               </span>
@@ -9076,7 +9339,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                               <div key={k} className="flex flex-col items-center gap-0.5"
                                 title={`${k}: ${STATUS_MAP[v].label}`}>
                                 <StatusDot kind={v} size={6} />
-                                <span className="text-[8px] font-semibold"
+                                <span className="text-[10px] font-medium"
                                   style={{ color: STATUS_MAP[v].color || C.textDisabled }}>
                                   {k}
                                 </span>
@@ -9091,10 +9354,10 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                     {overlay === "costHeat" && activeBom !== "C" && (
                       <td className="py-2 px-3 text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          <span className="font-mono text-[11px] font-semibold" style={{ color: C.textPrimary }}>
+                          <span className="tabular-nums text-[12px] font-medium" style={{ color: C.textPrimary }}>
                             ${mockCost.quoted !== null ? mockCost.quoted.toFixed(2) : mockCost.shouldCost.toFixed(2)}
                           </span>
-                          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded font-medium"
+                          <span className="tabular-nums text-[10px] px-1.5 py-0.5 rounded font-medium"
                             style={{
                               backgroundColor: mockCost.delta > 1 ? C.errorLight : mockCost.delta < -0.3 ? C.successLight : C.bg,
                               color: mockCost.delta > 1 ? C.error : mockCost.delta < -0.3 ? C.success : C.textSecondary,
@@ -9166,15 +9429,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
           {selectedItemId && selectedItem ? (
             <Item360Drawer item={selectedItem} tab={drawerTab} setTab={setDrawerTab} scenarioStep={scenarioStep} onOpenChat={onOpenItemChat} activeBom={activeBom} />
           ) : (
-            <BomSummaryCard
-              activeBomMeta={activeBomMeta}
-              activeBom={activeBom}
-              project={project}
-              isHeroProject={isHeroProject}
-              scenarioStep={scenarioStep}
-              setSelectedItemId={setSelectedItemId}
-              setFilter={setFilter}
-            />
+            <BomSummaryCard />
           )}
         </div>
 
@@ -9227,10 +9482,18 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  // Group events by date (preserves order)
+  // Group events by version first, then by date within each version
+  // (version descends newest→oldest, matching event order). A version header
+  // shows which BOM version + phase the following events belong to.
   const grouped = [];
+  let lastVersion = null;
   let lastDate = null;
   events.forEach(ev => {
+    if (ev.version !== lastVersion) {
+      grouped.push({ kind: "version", version: ev.version, phase: ev.phase });
+      lastVersion = ev.version;
+      lastDate = null; // reset date grouping within a new version block
+    }
     if (ev.date !== lastDate) {
       grouped.push({ kind: "date", date: ev.date });
       lastDate = ev.date;
@@ -9262,11 +9525,15 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
       <div className="px-4 pt-4 pb-3 border-b flex items-start gap-2"
         style={{ borderColor: C.border }}>
         <div className="flex-1 min-w-0">
-          <div className="text-[16px] font-semibold leading-6" style={{ color: C.textPrimary }}>
+          <div className="text-[16px] font-medium leading-6" style={{ color: C.textPrimary }}>
             Timeline
           </div>
           <div className="text-xs mt-0.5" style={{ color: C.textSecondary }}>
             {activeBomMeta.name} · {activeBomMeta.version}
+            {events.length > 0 && (() => {
+              const versions = [...new Set(events.map(e => e.version).filter(Boolean))];
+              return versions.length > 1 ? ` · ${versions.length} versions` : null;
+            })()}
           </div>
         </div>
         <button onClick={onClose}
@@ -9294,9 +9561,29 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
       {events.length > 0 && (
         <div className="flex-1 overflow-y-auto px-4 py-3">
           {grouped.map((item, idx) => {
+            // Version block header — version chip + phase chip
+            if (item.kind === "version") {
+              const phaseColor = C.primary;
+              return (
+                <div key={`ver-${idx}`} className={`flex items-center gap-2 ${idx === 0 ? "pb-3" : "pt-4 pb-3"}`}>
+                  <span className="inline-flex items-center gap-1 text-[12px] font-medium px-2.5 py-0.5 rounded-md"
+                    style={{ backgroundColor: C.primary, color: "white" }}>
+                    <GitBranch className="w-3 h-3" />
+                    {item.version}
+                  </span>
+                  {item.phase && (
+                    <span className="inline-flex items-center text-[12px] font-medium px-2.5 py-0.5 rounded-full"
+                      style={{ backgroundColor: C.primaryLight, color: phaseColor }}>
+                      {item.phase}
+                    </span>
+                  )}
+                  <div className="flex-1 h-px" style={{ backgroundColor: C.borderLight }} />
+                </div>
+              );
+            }
             if (item.kind === "date") {
               return (
-                <div key={`date-${idx}`} className="px-1 pt-1 pb-2 text-[12px] font-semibold"
+                <div key={`date-${idx}`} className="px-1 pt-1 pb-2 text-[12px] font-medium"
                   style={{ color: C.textDisabled }}>
                   {item.date}
                 </div>
@@ -9306,9 +9593,9 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
             const { Icon, bg, fg } = getIconAndColor(ev.kind, ev.iconType);
             const isExpanded = expandedEvent === ev.id;
             const isLast = (() => {
-              // last in this date group?
+              // last in this date group? (a following date or version header ends the tail)
               for (let i = idx + 1; i < grouped.length; i++) {
-                if (grouped[i].kind === "date") return true;
+                if (grouped[i].kind === "date" || grouped[i].kind === "version") return true;
                 if (grouped[i].kind === "event") return false;
               }
               return true;
@@ -9339,7 +9626,7 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
                     disabled={!hasDetail}
                     className="w-full flex items-center text-left transition-colors disabled:cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded-sm"
                     style={{ cursor: hasDetail ? "pointer" : "default" }}>
-                    <span className="text-[13px] font-medium leading-5 flex-1" style={{ color: C.textPrimary }}>
+                    <span className="text-[14px] font-medium leading-5 flex-1" style={{ color: C.textPrimary }}>
                       {ev.title}
                     </span>
                     {hasDetail && (
@@ -9362,7 +9649,7 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
                       {persona && (
                         <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
                           style={{ backgroundColor: persona.color }}>
-                          <span className="text-[9px] font-bold text-white">{persona.initial}</span>
+                          <span className="text-[10px] font-medium text-white">{persona.initial?.charAt(0)}</span>
                         </div>
                       )}
                     </div>
@@ -9403,11 +9690,11 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
             <GitCompareArrows className="w-5 h-5" style={{ color: C.primary }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[18px] font-semibold leading-6" style={{ color: C.textPrimary }}>
+            <div className="text-[18px] font-medium leading-6" style={{ color: C.textPrimary }}>
               Compare {activeBomMeta.name} versions
             </div>
             <div className="text-sm mt-0.5" style={{ color: C.textSecondary }}>
-              {totalChanges} change{totalChanges !== 1 ? "s" : ""} between <span className="font-mono font-medium">{diff.previous}</span> and <span className="font-mono font-medium">{diff.current}</span>
+              {totalChanges} change{totalChanges !== 1 ? "s" : ""} between <span className="tabular-nums font-medium">{diff.previous}</span> and <span className="tabular-nums font-medium">{diff.current}</span>
             </div>
           </div>
           <button onClick={onClose}
@@ -9420,7 +9707,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
         {/* Version selector strip */}
         <div className="px-6 py-3 border-b flex items-center gap-3" style={{ borderColor: C.border, backgroundColor: C.surfaceTinted }}>
           <div className="flex-1 flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: C.textDisabled }}>From</span>
+            <span className="text-[10px] tracking-wider font-medium" style={{ color: C.textDisabled }}>From</span>
             <select className="h-7 px-2 rounded-md border text-xs bg-white outline-none focus:outline-none focus-visible:ring-2"
               style={{ borderColor: C.border, color: C.textPrimary }} defaultValue={diff.previous}>
               <option>{diff.previous}</option>
@@ -9428,7 +9715,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
           </div>
           <ArrowRight className="w-4 h-4 shrink-0" style={{ color: C.textDisabled }} />
           <div className="flex-1 flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: C.textDisabled }}>To</span>
+            <span className="text-[10px] tracking-wider font-medium" style={{ color: C.textDisabled }}>To</span>
             <select className="h-7 px-2 rounded-md border text-xs bg-white outline-none focus:outline-none focus-visible:ring-2"
               style={{ borderColor: C.border, color: C.textPrimary }} defaultValue={diff.current}>
               <option>{diff.current}</option>
@@ -9453,7 +9740,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
                   style={{ backgroundColor: "rgba(0,153,85,0.12)" }}>
                   <Plus className="w-3 h-3" style={{ color: C.success }} />
                 </span>
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.success }}>
+                <span className="text-[12px] font-medium tracking-wide" style={{ color: C.success }}>
                   Added · {diff.added.length}
                 </span>
               </div>
@@ -9462,7 +9749,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
                   <div key={i} className="px-3 py-2.5 flex items-start gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</div>
-                      <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                      <div className="text-[12px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
                       <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.reason}</div>
                     </div>
                   </div>
@@ -9479,7 +9766,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
                   style={{ backgroundColor: "rgba(224,105,0,0.12)" }}>
                   <Edit3 className="w-3 h-3" style={{ color: C.warning }} />
                 </span>
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.warning }}>
+                <span className="text-[12px] font-medium tracking-wide" style={{ color: C.warning }}>
                   Modified · {diff.modified.length}
                 </span>
               </div>
@@ -9488,7 +9775,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
                   <div key={i} className="px-3 py-2.5 flex items-start gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{p.name}</div>
-                      <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                      <div className="text-[12px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
                       <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.change}</div>
                     </div>
                   </div>
@@ -9505,7 +9792,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
                   style={{ backgroundColor: "rgba(211,47,47,0.12)" }}>
                   <X className="w-3 h-3" style={{ color: C.error }} />
                 </span>
-                <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: C.error }}>
+                <span className="text-[12px] font-medium tracking-wide" style={{ color: C.error }}>
                   Removed · {diff.removed.length}
                 </span>
               </div>
@@ -9514,7 +9801,7 @@ function CompareModal({ activeBom, activeBomMeta, diff, onClose }) {
                   <div key={i} className="px-3 py-2.5 flex items-start gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium line-through" style={{ color: C.textSecondary }}>{p.name}</div>
-                      <div className="text-[11px] font-mono mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
+                      <div className="text-[12px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>{p.partId}</div>
                       <div className="text-xs mt-1" style={{ color: C.textSecondary }}>{p.reason}</div>
                     </div>
                   </div>
@@ -9575,7 +9862,7 @@ function PromoteDropdown({ activeBom, onPromoteClick }) {
           <div className="absolute top-full right-0 mt-1 w-64 bg-white rounded-lg shadow-xl border z-50 overflow-hidden"
             style={{ borderColor: C.border }}>
             <div className="px-3 py-2 border-b" style={{ borderColor: C.border, backgroundColor: C.bg }}>
-              <div className="text-[10px] uppercase tracking-wide font-semibold"
+              <div className="text-[10px] tracking-wide font-medium"
                 style={{ color: C.textSecondary }}>
                 Promote to
               </div>
@@ -9598,13 +9885,13 @@ function PromoteDropdown({ activeBom, onPromoteClick }) {
                       </div>
                     </div>
                     {hasIssue && (
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0"
                         style={{ backgroundColor: C.warningLight, color: C.warning }}>
                         {b.missing > 0 ? `${b.missing} missing` : "delayed"}
                       </span>
                     )}
                     {!hasIssue && (
-                      <span className="text-[9px] font-medium px-1.5 py-0.5 rounded shrink-0"
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0"
                         style={{ backgroundColor: C.successLight, color: C.success }}>
                         ✓ synced
                       </span>
@@ -9622,270 +9909,21 @@ function PromoteDropdown({ activeBom, onPromoteClick }) {
 
 // === BOM SUMMARY CARD (empty state for Item 360 — shown when no item selected) ===
 // Provides quick orientation: BOM stats, recent activity, blocking items
-function BomSummaryCard({ activeBomMeta, activeBom, project, isHeroProject, scenarioStep, setSelectedItemId, setFilter }) {
-  // BOM-specific issue counts (mirrors row-level logic in tree)
-  const qBomMissingIds = [3, 10, 14, 18];
-  const cBomMissingIds = [3];
-  const eBomLagIds = [5, 8];
-  const missingIds =
-    activeBom === "Q" && scenarioStep < 7 ? qBomMissingIds :
-    activeBom === "C" && scenarioStep < 6 ? cBomMissingIds :
-    activeBom === "E" ? eBomLagIds :
-    [];
-  const issueCount = missingIds.length;
-
-  // Recent activity for this BOM — combines BOM timeline events + relevant chat messages
-  // Returns up to 4 most recent events (timeline takes precedence, chat fills if room)
-  const recentActivity = useMemo(() => {
-    // BOM-specific timeline events
-    const timelineEvents = (BOM_TIMELINE_EVENTS[activeBom] || []).map(e => ({
-      source: "system",
-      id: e.id,
-      ts: e.time || e.ts || "",
-      date: e.date,
-      type: e.iconType,
-      kind: e.kind,
-      actor: e.author,
-      title: e.title,
-      detail: e.detail,
-    }));
-
-    // Chat messages relevant to this BOM (filter by channel → BOM mapping)
-    const bomChannels = BOM_TO_CHANNELS[activeBom] || [];
-    const chatMessages = (isHeroProject ? ACTIVITY_FEED.slice(0, scenarioStep + 1) : ACTIVITY_FEED)
-      .filter(m => bomChannels.includes(m.channel))
-      .map(m => ({
-        source: "chat",
-        id: m.id,
-        ts: m.ts,
-        actor: m.persona,
-        message: m.message,
-        decision: m.decision,
-        decisionText: m.decisionText,
-        itemRef: m.itemRef,
-      }));
-
-    // Hero project (active scenario): newest first, system events priority, then chat
-    // For non-hero projects, show only timeline (chat is generic)
-    const combined = isHeroProject
-      ? [...timelineEvents.slice(0, 2), ...chatMessages.slice(-2).reverse()]
-      : timelineEvents.slice(0, 4);
-
-    return combined.slice(0, 4);
-  }, [activeBom, scenarioStep, isHeroProject]);
-
-  // Icon mapping for system event types (mirrors TimelinePanel + ItemActivityTab)
-  const getSystemEventMeta = (type, kind) => {
-    const iconMap = {
-      zap: Zap, check: CheckCircle, alert: AlertTriangle, send: Send,
-      message: MessageSquare, shield: ShieldCheck, upload: Upload, version: GitBranch,
-    };
-    const Icon = iconMap[type] || Activity;
-    const colorMap = {
-      success: { bg: "rgba(0,153,85,0.10)", fg: C.success },
-      error:   { bg: "rgba(211,47,47,0.10)", fg: C.error },
-      primary: { bg: "rgba(83,45,246,0.10)", fg: C.primary },
-      neutral: { bg: "rgba(0,0,0,0.06)", fg: C.textSecondary },
-    };
-    const { bg, fg } = colorMap[kind] || colorMap.neutral;
-    return { Icon, bg, fg };
-  };
-
-  // Click handler: jump to first missing part + activate Missing filter
-  const goToFirstIssue = () => {
-    if (missingIds.length > 0 && setSelectedItemId) {
-      setSelectedItemId(missingIds[0]);
-      if (setFilter) setFilter("missing");
-    }
-  };
-
+function BomSummaryCard() {
+  // Empty state — shown when no row is selected. Simple centered placeholder (per Figma).
   return (
-    <div className="p-6 space-y-5">
-      {/* Header */}
-      <div>
-        <div className="text-[10px] font-bold uppercase tracking-wide mb-1.5" style={{ color: C.textSecondary }}>
-          BOM Summary
-        </div>
-        <div className="text-lg font-semibold mb-1" style={{ color: C.textPrimary }}>
-          {activeBomMeta.name}
-        </div>
-        <div className="text-xs" style={{ color: C.textSecondary }}>
-          {activeBomMeta.description}
-        </div>
+    <div className="h-full w-full flex flex-col items-center justify-center gap-2 px-6 py-2 text-center"
+      style={{ backgroundColor: C.surfaceTinted }}>
+      <div className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center mb-1"
+        style={{ backgroundColor: C.borderLight }}>
+        <Package className="w-9 h-9" style={{ color: C.textDisabled }} />
       </div>
-
-      {/* Key Stats */}
-      <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-lg border p-3" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium mb-1" style={{ color: C.textSecondary }}>Version</div>
-          <div className="text-lg font-mono font-semibold" style={{ color: C.textPrimary }}>
-            {activeBomMeta.version}
-          </div>
-        </div>
-        <div className="rounded-lg border p-3" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium mb-1" style={{ color: C.textSecondary }}>Parts</div>
-          <div className="text-lg font-mono font-semibold" style={{ color: C.textPrimary }}>
-            {activeBomMeta.parts}
-          </div>
-        </div>
-        {/* Issues — clickable when issueCount > 0; jumps to first missing part */}
-        <button
-          onClick={issueCount > 0 ? goToFirstIssue : undefined}
-          disabled={issueCount === 0}
-          className="rounded-lg border p-3 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-default group"
-          style={{
-            borderColor: issueCount > 0 ? C.warning : C.border,
-            backgroundColor: issueCount > 0 ? C.warningLight : "white",
-            cursor: issueCount > 0 ? "pointer" : "default",
-          }}
-          onMouseEnter={(e) => { if (issueCount > 0) e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
-          title={issueCount > 0 ? `Click to view ${issueCount} issue${issueCount === 1 ? "" : "s"}` : undefined}>
-          <div className="flex items-center justify-between mb-1">
-            <div className="text-[10px] font-medium"
-              style={{ color: issueCount > 0 ? C.warning : C.textSecondary }}>
-              Issues
-            </div>
-            {issueCount > 0 && (
-              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5"
-                style={{ color: C.warning }} />
-            )}
-          </div>
-          <div className="text-lg font-mono font-semibold"
-            style={{ color: issueCount > 0 ? C.warning : C.success }}>
-            {issueCount > 0 ? issueCount : "—"}
-          </div>
-        </button>
-      </div>
-
-      {/* Sync Status — clickable; jumps to first missing/lagged part */}
-      {activeBomMeta.syncNote && (
-        <button
-          onClick={goToFirstIssue}
-          className="w-full rounded-lg border p-3 flex items-start gap-2 text-left transition-all hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-          style={{ borderColor: C.warning, backgroundColor: C.warningLight, cursor: "pointer" }}
-          title="Click to view affected parts">
-          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.warning }} />
-          <div className="text-xs flex-1 min-w-0" style={{ color: C.textPrimary }}>
-            <div className="font-semibold mb-0.5 flex items-center gap-1">
-              Sync Status
-              <ArrowRight className="w-3 h-3" style={{ color: C.warning }} />
-            </div>
-            <div style={{ color: C.textSecondary }}>{activeBomMeta.syncNote}</div>
-          </div>
-        </button>
-      )}
-
-      {/* Recent Activity — system events + chat (BOM-specific) */}
-      {recentActivity.length > 0 && (
-        <div>
-          <div className="text-[10px] font-bold uppercase tracking-wide mb-2" style={{ color: C.textSecondary }}>
-            Recent Activity
-          </div>
-          <div className="space-y-2">
-            {recentActivity.map((evt) => {
-              // === System event rendering ===
-              if (evt.source === "system") {
-                const meta = getSystemEventMeta(evt.type, evt.kind);
-                const Icon = meta.Icon;
-                return (
-                  <div key={`sys-${evt.id}`}
-                    className="w-full flex items-start gap-2 p-2 rounded-md"
-                    style={{ backgroundColor: C.bg }}>
-                    <div className="w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5"
-                      style={{ backgroundColor: meta.bg }}>
-                      <Icon className="w-3 h-3" style={{ color: meta.fg }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="text-[11px] font-semibold" style={{ color: C.textPrimary }}>
-                          {evt.title}
-                        </span>
-                        <span className="text-[9px] ml-auto shrink-0" style={{ color: C.textDisabled }}>{evt.ts}</span>
-                      </div>
-                      {evt.detail && (
-                        <div className="text-[11px] line-clamp-2" style={{
-                          color: C.textSecondary,
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                        }}>
-                          {evt.detail}
-                        </div>
-                      )}
-                      {evt.actor && (
-                        <div className="text-[10px] mt-0.5" style={{ color: C.textDisabled }}>
-                          by {evt.actor === "AI" ? "AI Assistant" : (PERSONAS[evt.actor]?.name || evt.actor)}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              }
-
-              // === Chat message rendering (clickable if itemRef exists) ===
-              const m = evt;
-              const canJump = m.itemRef && m.itemRef.id && setSelectedItemId;
-              const Wrapper = canJump ? "button" : "div";
-              return (
-                <Wrapper
-                  key={`chat-${m.id}`}
-                  {...(canJump ? {
-                    onClick: () => setSelectedItemId(m.itemRef.id),
-                    title: `Click to view ${m.itemRef.partName || "part"}`,
-                  } : {})}
-                  className={`w-full flex items-start gap-2 p-2 rounded-md text-left transition-all ${canJump ? "hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1" : ""}`}
-                  style={{
-                    backgroundColor: m.decision ? C.primarySoft : C.bg,
-                    cursor: canJump ? "pointer" : "default",
-                  }}>
-                  <PersonaAvatar p={m.actor === "AI" ? "PM" : m.actor} size={20} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className="text-[11px] font-semibold" style={{ color: C.textPrimary }}>
-                        {m.actor === "AI" ? "AI Assistant" : PERSONAS[m.actor]?.name}
-                      </span>
-                      {m.decision && (
-                        <span className="text-[8px] px-1 py-0.5 rounded font-bold"
-                          style={{ backgroundColor: C.primary, color: "white" }}>DECISION</span>
-                      )}
-                      <span className="text-[9px] ml-auto shrink-0" style={{ color: C.textDisabled }}>{m.ts}</span>
-                    </div>
-                    <div className="text-[11px] line-clamp-2" style={{
-                      color: C.textSecondary,
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                    }}>
-                      {m.message}
-                    </div>
-                    {canJump && (
-                      <div className="text-[10px] mt-1 font-medium flex items-center gap-1" style={{ color: C.primary }}>
-                        <ArrowRight className="w-3 h-3" />
-                        {m.itemRef.partName || "View part"}
-                      </div>
-                    )}
-                  </div>
-                </Wrapper>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Call to action — guide user */}
-      <div className="rounded-lg border-2 border-dashed py-6 px-4 text-center"
-        style={{ borderColor: C.borderLight }}>
-        <Package className="w-8 h-8 mx-auto mb-2" style={{ color: C.textDisabled }} />
-        <div className="text-xs font-medium mb-1" style={{ color: C.textPrimary }}>
-          Click a part to view details
-        </div>
-        <div className="text-[10px]" style={{ color: C.textSecondary }}>
-          Spec · Cost & Sourcing · Quality · Activity
-        </div>
-      </div>
+      <p className="text-[16px] font-medium" style={{ color: C.textSecondary }}>
+        Select a row to view details
+      </p>
+      <p className="text-[12px]" style={{ color: C.textSecondary }}>
+        Spec · Cost / Sourcing · Quality · Activity
+      </p>
     </div>
   );
 }
@@ -9920,17 +9958,17 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
   return (
     <div>
       {/* Header */}
-      <div className="p-4 border-b" style={{ borderColor: C.border, backgroundColor: isHero ? "#FFFBEB" : "white" }}>
+      <div className="p-4 border-b" style={{ borderColor: C.border, backgroundColor: isHero ? "#fffaeb" : "white" }}>
         <div className="flex items-start gap-3 mb-3">
           <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0"
             style={{ backgroundColor: isHero ? C.warningLight : C.bg }}>
             <Package className="w-6 h-6" style={{ color: isHero ? C.warning : C.textSecondary }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>
+            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
               {item.partName || item.desc}
             </div>
-            <div className="text-xs font-mono" style={{ color: C.textSecondary }}>
+            <div className="text-xs tabular-nums" style={{ color: C.textSecondary }}>
               {item.partId} · {item.itemCode || "N/A"}
             </div>
             <div className="flex items-center gap-1.5 mt-2">
@@ -9953,7 +9991,7 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
                 : "Start thread for this part"}>
               <MessageSquare className="w-4 h-4" />
               {itemMessageCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center"
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-medium flex items-center justify-center"
                   style={{ backgroundColor: C.primary, color: "white" }}>
                   {itemMessageCount}
                 </span>
@@ -9970,16 +10008,16 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5"
             style={{ color: isMissingInActiveBom ? C.error : C.warning }} />
           <div className="flex-1 min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-wider mb-0.5"
+            <div className="text-[10px] font-medium tracking-wider mb-0.5"
               style={{ color: isMissingInActiveBom ? C.error : C.warning }}>
               {isMissingInActiveBom ? `Not in ${activeBom}-BOM` : "Delayed from E-BOM"}
             </div>
-            <div className="text-[11px] leading-snug mb-2" style={{ color: C.textPrimary }}>
+            <div className="text-[12px] leading-snug mb-2" style={{ color: C.textPrimary }}>
               {isMissingInActiveBom && missingAction ? missingAction.desc : "This part has E-BOM updates that haven't synced. Review the latest spec."}
             </div>
             {isMissingInActiveBom && missingAction && (
               <button
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: C.primary }}>
                 <missingAction.icon className="w-3 h-3" />
                 {missingAction.label}
@@ -9987,7 +10025,7 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
             )}
             {isLaggedInActiveBom && (
               <button
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: C.primary }}>
                 <RefreshCw className="w-3 h-3" />
                 Sync from E-BOM
@@ -10038,11 +10076,11 @@ function SpecTab({ item, scenarioStep }) {
           style={{ backgroundColor: C.primarySoft, borderColor: C.primaryLight }}>
           <Sparkles className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.primary }} />
           <div className="text-xs" style={{ color: C.textPrimary }}>
-            <div className="font-semibold mb-0.5">AI Impact Preview</div>
+            <div className="font-medium mb-0.5">AI Impact Preview</div>
             <div style={{ color: C.textSecondary }}>
-              Cost <span className="font-semibold" style={{ color: C.error }}>+$8.50</span> ·
-              Lead Time <span className="font-semibold" style={{ color: C.error }}> +14d</span> ·
-              Supplier <span className="font-semibold"> 3 suppliers affected</span>
+              Cost <span className="font-medium" style={{ color: C.error }}>+$8.50</span> ·
+              Lead Time <span className="font-medium" style={{ color: C.error }}> +14d</span> ·
+              Supplier <span className="font-medium"> 3 suppliers affected</span>
             </div>
           </div>
         </div>
@@ -10063,7 +10101,7 @@ function SpecTab({ item, scenarioStep }) {
       </div>
 
       <div className="mt-5">
-        <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>Similar Parts (AI recommended)</div>
+        <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Similar Parts (AI recommended)</div>
         <div className="space-y-2">
           {[
             { id: "EI2-I6DA-002WB", desc: "PANEL,AMOLED,6.5IN,FHD+,90HZ", sim: 92 },
@@ -10072,7 +10110,7 @@ function SpecTab({ item, scenarioStep }) {
             <div key={s.id} className="p-2 rounded-md border flex items-center justify-between text-xs"
               style={{ borderColor: C.borderLight }}>
               <div>
-                <div className="font-mono" style={{ color: C.textPrimary }}>{s.id}</div>
+                <div className="tabular-nums" style={{ color: C.textPrimary }}>{s.id}</div>
                 <div style={{ color: C.textSecondary }}>{s.desc}</div>
               </div>
               <span className="px-1.5 py-0.5 rounded text-[10px] font-medium"
@@ -10110,8 +10148,8 @@ function CostTab({ item, scenarioStep }) {
       {/* Target vs Current */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>TARGET COST</div>
-          <div className="text-xl font-bold mt-0.5" style={{ color: C.textPrimary }}>${cost.target.toFixed(2)}</div>
+          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Target Cost</div>
+          <div className="text-xl font-medium mt-0.5" style={{ color: C.textPrimary }}>${cost.target.toFixed(2)}</div>
         </div>
         <div className="p-3 rounded-md border"
           style={{
@@ -10121,7 +10159,7 @@ function CostTab({ item, scenarioStep }) {
           <div className="text-[10px] font-medium" style={{ color: overTarget ? C.error : C.success }}>
             CURRENT
           </div>
-          <div className="text-xl font-bold mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
+          <div className="text-xl font-medium mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
             ${currentValue.toFixed(2)}
           </div>
           <div className="text-[10px] mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
@@ -10131,7 +10169,7 @@ function CostTab({ item, scenarioStep }) {
       </div>
 
       {/* Multi-source Price */}
-      <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>Multi-source Price</div>
+      <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Multi-source Price</div>
       <div className="space-y-1.5 mb-4">
         {[
           { label: "Historical", value: cost.historical, source: "Internal DB" },
@@ -10146,7 +10184,7 @@ function CostTab({ item, scenarioStep }) {
               <span className="font-medium" style={{ color: C.textPrimary }}>{p.label}</span>
               <span className="text-[10px]" style={{ color: C.textDisabled }}>· {p.source}</span>
             </div>
-            <span className="font-mono font-semibold" style={{ color: p.value ? C.textPrimary : C.textDisabled }}>
+            <span className="tabular-nums font-medium" style={{ color: p.value ? C.textPrimary : C.textDisabled }}>
               {p.value ? `$${p.value.toFixed(2)}` : "—"}
             </span>
           </div>
@@ -10155,7 +10193,7 @@ function CostTab({ item, scenarioStep }) {
 
       {/* Cost Bridge mini chart */}
       <div className="p-3 rounded-md border mb-4" style={{ borderColor: C.border }}>
-        <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>Cost Bridge</div>
+        <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Cost Bridge</div>
         <div className="flex items-end gap-1 h-24">
           {(() => {
             const maxV = Math.max(cost.historical, cost.shouldCost, cost.market, quoted || 0, cost.target);
@@ -10167,7 +10205,7 @@ function CostTab({ item, scenarioStep }) {
               { label: "Target", v: cost.target, c: C.info, dashed: true },
             ].map((b) => (
               <div key={b.label} className="flex-1 flex flex-col items-center">
-                <div className="text-[9px] font-mono mb-1" style={{ color: b.c }}>
+                <div className="text-[10px] tabular-nums mb-1" style={{ color: b.c }}>
                   {b.v ? `$${b.v.toFixed(1)}` : "—"}
                 </div>
                 <div className="w-full rounded-t"
@@ -10176,7 +10214,7 @@ function CostTab({ item, scenarioStep }) {
                     backgroundColor: b.c,
                     opacity: b.dashed ? 0.5 : 1,
                   }} />
-                <div className="text-[9px] mt-1 text-center" style={{ color: C.textSecondary }}>{b.label}</div>
+                <div className="text-[10px] mt-1 text-center" style={{ color: C.textSecondary }}>{b.label}</div>
               </div>
             ));
           })()}
@@ -10241,8 +10279,8 @@ function ProcurementTab({ item, scenarioStep }) {
           {/* Target vs Current KPI cards */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-              <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>TARGET COST</div>
-              <div className="text-xl font-bold mt-0.5" style={{ color: C.textPrimary }}>${cost.target.toFixed(2)}</div>
+              <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Target Cost</div>
+              <div className="text-xl font-medium mt-0.5" style={{ color: C.textPrimary }}>${cost.target.toFixed(2)}</div>
             </div>
             <div className="p-3 rounded-md border"
               style={{
@@ -10252,7 +10290,7 @@ function ProcurementTab({ item, scenarioStep }) {
               <div className="text-[10px] font-medium" style={{ color: overTarget ? C.error : C.success }}>
                 CURRENT
               </div>
-              <div className="text-xl font-bold mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
+              <div className="text-xl font-medium mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
                 ${currentValue.toFixed(2)}
               </div>
               <div className="text-[10px] mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
@@ -10262,7 +10300,7 @@ function ProcurementTab({ item, scenarioStep }) {
           </div>
 
           {/* Multi-source Price */}
-          <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>Multi-source Price</div>
+          <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Multi-source Price</div>
           <div className="space-y-1.5 mb-4">
             {[
               { label: "Historical", value: cost.historical, source: "Internal DB" },
@@ -10277,7 +10315,7 @@ function ProcurementTab({ item, scenarioStep }) {
                   <span className="font-medium" style={{ color: C.textPrimary }}>{p.label}</span>
                   <span className="text-[10px]" style={{ color: C.textDisabled }}>· {p.source}</span>
                 </div>
-                <span className="font-mono font-semibold" style={{ color: p.value ? C.textPrimary : C.textDisabled }}>
+                <span className="tabular-nums font-medium" style={{ color: p.value ? C.textPrimary : C.textDisabled }}>
                   {p.value ? `$${p.value.toFixed(2)}` : "—"}
                 </span>
               </div>
@@ -10286,7 +10324,7 @@ function ProcurementTab({ item, scenarioStep }) {
 
           {/* Cost Bridge mini chart */}
           <div className="p-3 rounded-md border mb-4" style={{ borderColor: C.border }}>
-            <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>Cost Bridge</div>
+            <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Cost Bridge</div>
             <div className="flex items-end gap-1 h-24">
               {(() => {
                 const maxV = Math.max(cost.historical, cost.shouldCost, cost.market, quoted || 0, cost.target);
@@ -10298,7 +10336,7 @@ function ProcurementTab({ item, scenarioStep }) {
                   { label: "Target", v: cost.target, c: C.info, dashed: true },
                 ].map((b) => (
                   <div key={b.label} className="flex-1 flex flex-col items-center">
-                    <div className="text-[9px] font-mono mb-1" style={{ color: b.c }}>
+                    <div className="text-[10px] tabular-nums mb-1" style={{ color: b.c }}>
                       {b.v ? `$${b.v.toFixed(1)}` : "—"}
                     </div>
                     <div className="w-full rounded-t"
@@ -10307,7 +10345,7 @@ function ProcurementTab({ item, scenarioStep }) {
                         backgroundColor: b.c,
                         opacity: b.dashed ? 0.5 : 1,
                       }} />
-                    <div className="text-[9px] mt-1 text-center" style={{ color: C.textSecondary }}>{b.label}</div>
+                    <div className="text-[10px] mt-1 text-center" style={{ color: C.textSecondary }}>{b.label}</div>
                   </div>
                 ));
               })()}
@@ -10319,7 +10357,7 @@ function ProcurementTab({ item, scenarioStep }) {
       {/* === SOURCING SECTION === */}
       {suppliers.length > 0 && (
         <>
-          <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>
+          <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>
             {isHero ? "Recommended Suppliers" : "Qualified Suppliers"}{" "}
             <span className="text-[10px]" style={{ color: C.textSecondary }}>
               · {isHero ? "Pre-qualified by AI" : "Master Supplier List"}
@@ -10337,18 +10375,18 @@ function ProcurementTab({ item, scenarioStep }) {
                   <div className="flex items-start justify-between mb-1.5">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <Building2 className="w-3.5 h-3.5" style={{ color: C.textSecondary }} />
-                      <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>{s.name}</span>
+                      <span className="text-xs font-medium" style={{ color: C.textPrimary }}>{s.name}</span>
                       {isAwarded && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded font-medium"
-                          style={{ backgroundColor: C.success, color: "white" }}>AWARDED</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                          style={{ backgroundColor: C.success, color: "white" }}>Awarded</span>
                       )}
                       {s.recommended && !isAwarded && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded font-medium"
-                          style={{ backgroundColor: C.primaryLight, color: C.primary }}>RECOMMENDED</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                          style={{ backgroundColor: C.primaryLight, color: C.primary }}>Recommended</span>
                       )}
                     </div>
                     {(responsesReceived || (!isHero && s.quote)) && (
-                      <span className="font-mono font-semibold text-xs"
+                      <span className="tabular-nums font-medium text-xs"
                         style={{ color: isAwarded ? C.success : C.textPrimary }}>
                         {s.quote ? `$${s.quote.toFixed(2)}` : "—"}
                       </span>
@@ -10379,7 +10417,7 @@ function ProcurementTab({ item, scenarioStep }) {
               style={{ backgroundColor: C.primarySoft, borderColor: C.primaryLight }}>
               <Sparkles className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.primary }} />
               <div className="text-xs">
-                <div className="font-semibold mb-0.5" style={{ color: C.textPrimary }}>AI Recommendation</div>
+                <div className="font-medium mb-0.5" style={{ color: C.textPrimary }}>AI Recommendation</div>
                 <div style={{ color: C.textSecondary }}>
                   <span className="font-medium">BOE Technology</span> — -$2.90 vs Should-cost (best); Risk Med but Performance is solid
                 </div>
@@ -10426,16 +10464,16 @@ function QualityTab({ item, scenarioStep }) {
       {/* Risk + PPAP Level + Progress */}
       <div className="grid grid-cols-3 gap-2 mb-4">
         <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>RISK</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: riskColor }}>{q.riskLevel}</div>
+          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Risk</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: riskColor }}>{q.riskLevel}</div>
         </div>
         <div className="p-3 rounded-md border" style={{ borderColor: C.border, backgroundColor: C.primarySoft }}>
           <div className="text-[10px] font-medium" style={{ color: C.primary }}>PPAP</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: C.primary }}>Lv {q.ppapLevel}</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: C.primary }}>Lv {q.ppapLevel}</div>
         </div>
         <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>PROGRESS</div>
-          <div className="text-lg font-bold mt-0.5"
+          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Progress</div>
+          <div className="text-lg font-medium mt-0.5"
             style={{ color: q.progress >= 80 ? C.success : q.progress >= 50 ? C.warning : C.error }}>
             {q.progress}%
           </div>
@@ -10462,7 +10500,7 @@ function QualityTab({ item, scenarioStep }) {
           <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: C.warning }} />
         )}
         <div className="flex-1 text-xs">
-          <div className="font-semibold" style={{ color: overallSync ? C.success : C.warning }}>
+          <div className="font-medium" style={{ color: overallSync ? C.success : C.warning }}>
             {overallSync ? "Q-BOM ↔ C-BOM Synced" : "Q-BOM Sync Needed"}
           </div>
           <div className="text-[10px]" style={{ color: C.textSecondary }}>
@@ -10472,7 +10510,7 @@ function QualityTab({ item, scenarioStep }) {
       </div>
 
       {/* PPAP Deliverables */}
-      <div className="text-xs font-semibold mb-2" style={{ color: C.textPrimary }}>
+      <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>
         PPAP Deliverables · Level {q.ppapLevel}
       </div>
       <div className="space-y-1.5 mb-4">
@@ -10546,7 +10584,7 @@ function ItemActivityTab({ item, scenarioStep }) {
       {/* Header summary */}
       <div className="flex items-center justify-between mb-3 pb-2 border-b" style={{ borderColor: C.borderLight }}>
         <div className="text-xs" style={{ color: C.textSecondary }}>
-          <span className="font-semibold" style={{ color: C.textPrimary }}>{activity.length}</span> events
+          <span className="font-medium" style={{ color: C.textPrimary }}>{activity.length}</span> events
         </div>
         <div className="text-[10px]" style={{ color: C.textDisabled }}>
           System events + chat messages
@@ -10566,7 +10604,7 @@ function ItemActivityTab({ item, scenarioStep }) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                  <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                  <span className="text-[10px] font-medium tracking-wide px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: meta.bg, color: meta.fg }}>
                     {meta.label}
                   </span>
@@ -10577,7 +10615,7 @@ function ItemActivityTab({ item, scenarioStep }) {
                     {item.ts}
                   </span>
                 </div>
-                <div className="text-[11px] leading-relaxed" style={{ color: C.textSecondary }}>
+                <div className="text-[12px] leading-relaxed" style={{ color: C.textSecondary }}>
                   {item.detail}
                 </div>
                 {item.actor && item.actor !== "system" && (
@@ -10598,7 +10636,7 @@ function ItemActivityTab({ item, scenarioStep }) {
             <PersonaAvatar p={m.persona === "AI" ? "PM" : m.persona} size={28} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded"
+                <span className="text-[10px] font-medium tracking-wide px-1.5 py-0.5 rounded"
                   style={{ backgroundColor: "rgba(0,0,0,0.05)", color: C.textSecondary }}>
                   Chat
                 </span>
@@ -10606,14 +10644,14 @@ function ItemActivityTab({ item, scenarioStep }) {
                   {m.persona === "AI" ? "AI Assistant" : PERSONAS[m.persona]?.name}
                 </span>
                 {m.decision && (
-                  <span className="text-[9px] px-1.5 py-0.5 rounded font-bold"
-                    style={{ backgroundColor: C.primary, color: "white" }}>DECISION</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                    style={{ backgroundColor: C.primary, color: "white" }}>Decision</span>
                 )}
                 <span className="text-[10px] ml-auto shrink-0" style={{ color: C.textDisabled }}>
                   {m.ts}
                 </span>
               </div>
-              <div className="text-[11px] leading-relaxed" style={{ color: C.textSecondary }}>
+              <div className="text-[12px] leading-relaxed" style={{ color: C.textSecondary }}>
                 {m.message}
               </div>
               {m.decisionText && (
@@ -10770,7 +10808,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
               <MessageSquare className="w-4 h-4" style={{ color: C.primary }} />
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-semibold" style={{ color: C.textPrimary }}>Chat</div>
+              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Chat</div>
               <div className="text-[10px] truncate" style={{ color: C.textSecondary }}>
                 {getScopeSubtitle()}
               </div>
@@ -10787,7 +10825,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
         {/* Scope Tabs */}
         <div className="flex items-center gap-1 p-0.5 rounded-md mb-2" style={{ backgroundColor: C.bg }}>
           <button onClick={() => setScope("all")}
-            className="flex-1 px-2 py-1 rounded text-[11px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            className="flex-1 px-2 py-1 rounded text-[12px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
             style={{
               backgroundColor: scope === "all" ? "white" : "transparent",
               color: scope === "all" ? C.primary : C.textSecondary,
@@ -10798,7 +10836,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
             All
           </button>
           <button onClick={() => setScope("bom")}
-            className="flex-1 px-2 py-1 rounded text-[11px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            className="flex-1 px-2 py-1 rounded text-[12px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
             style={{
               backgroundColor: scope === "bom" ? "white" : "transparent",
               color: scope === "bom" ? C.primary : C.textSecondary,
@@ -10810,7 +10848,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
           </button>
           <button onClick={() => setScope("item")}
             disabled={!itemContext}
-            className="flex-1 px-2 py-1 rounded text-[11px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+            className="flex-1 px-2 py-1 rounded text-[12px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
             style={{
               backgroundColor: scope === "item" ? "white" : "transparent",
               color: scope === "item" ? C.primary : (itemContext ? C.textSecondary : C.textDisabled),
@@ -10826,12 +10864,12 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
         {/* BOM picker (when scope === "bom") */}
         {scope === "bom" && (
           <div className="flex items-center gap-1 mb-2">
-            <span className="text-[10px] font-medium uppercase tracking-wide shrink-0" style={{ color: C.textDisabled }}>
+            <span className="text-[10px] font-medium tracking-wide shrink-0" style={{ color: C.textDisabled }}>
               BOM:
             </span>
             {["M", "E", "S", "Q", "C"].map((id) => (
               <button key={id} onClick={() => setBomFilter(id)}
-                className="px-2 py-0.5 rounded-full text-[10px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
+                className="px-2 py-0.5 rounded-full text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
                 style={{
                   backgroundColor: bomFilter === id ? C.primary : "transparent",
                   color: bomFilter === id ? "white" : C.textSecondary,
@@ -10850,10 +10888,10 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
             <Package className="w-3 h-3 shrink-0"
               style={{ color: itemContext.itemId === 3 ? C.warning : C.textSecondary }} />
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] font-semibold truncate" style={{ color: C.textPrimary }}>
+              <div className="text-[12px] font-medium truncate" style={{ color: C.textPrimary }}>
                 {itemContext.partName}
               </div>
-              <div className="text-[9px] font-mono" style={{ color: C.textSecondary }}>
+              <div className="text-[10px] tabular-nums" style={{ color: C.textSecondary }}>
                 {itemContext.partId}
               </div>
             </div>
@@ -10873,7 +10911,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search messages, parts, people..."
-            className="flex-1 text-[11px] outline-none bg-transparent"
+            className="flex-1 text-[12px] outline-none bg-transparent"
             style={{ color: C.textPrimary }} />
           {searchQuery && (
             <button onClick={() => setSearchQuery("")}
@@ -10909,11 +10947,11 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
               <div key={channel}>
                 {/* Channel header */}
                 <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: C.textSecondary }}>
+                  <span className="text-[10px] font-medium tracking-wide" style={{ color: C.textSecondary }}>
                     #{channel}
                   </span>
                   <div className="flex-1 h-px" style={{ backgroundColor: C.borderLight }} />
-                  <span className="text-[9px]" style={{ color: C.textDisabled }}>
+                  <span className="text-[10px]" style={{ color: C.textDisabled }}>
                     {msgs.length}
                   </span>
                 </div>
@@ -10973,7 +11011,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
           <Paperclip className="w-3.5 h-3.5" style={{ color: C.textDisabled }} />
           <AtSign className="w-3.5 h-3.5" style={{ color: C.textDisabled }} />
           <Smile className="w-3.5 h-3.5" style={{ color: C.textDisabled }} />
-          <button className="ml-1 px-2 py-1 rounded text-[10px] font-semibold text-white flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          <button className="ml-1 px-2 py-1 rounded text-[10px] font-medium text-white flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
             style={{ backgroundColor: C.primary }}>
             <Send className="w-3 h-3" />
             Send
@@ -11044,8 +11082,8 @@ function VisibilityPicker({ value, onChange, onClose, project }) {
         {/* Header */}
         <div className="px-5 pt-4 pb-3 border-b flex items-start justify-between gap-3" style={{ borderColor: C.border }}>
           <div>
-            <div className="text-base font-semibold" style={{ color: C.textPrimary }}>Visible to</div>
-            <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>
+            <div className="text-base font-medium" style={{ color: C.textPrimary }}>Visible to</div>
+            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Choose who can see this message
             </div>
           </div>
@@ -11058,7 +11096,7 @@ function VisibilityPicker({ value, onChange, onClose, project }) {
 
         {/* Team Groups section */}
         <div className="px-5 py-4">
-          <div className="text-[11px] font-semibold uppercase tracking-wide mb-2" style={{ color: C.textDisabled }}>
+          <div className="text-[12px] font-medium tracking-wide mb-2" style={{ color: C.textDisabled }}>
             Team Groups
           </div>
           <div className="space-y-2">
@@ -11082,14 +11120,14 @@ function VisibilityPicker({ value, onChange, onClose, project }) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-semibold" style={{ color: C.textPrimary }}>{g.label}</span>
+                        <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{g.label}</span>
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium inline-flex items-center gap-0.5"
                           style={{ backgroundColor: C.bg, color: C.textSecondary }}>
                           <Users className="w-2.5 h-2.5" />
                           {g.count}
                         </span>
                       </div>
-                      <div className="text-[11px] mt-0.5 truncate" style={{ color: C.textSecondary }}>
+                      <div className="text-[12px] mt-0.5 truncate" style={{ color: C.textSecondary }}>
                         {g.preview}
                       </div>
                     </div>
@@ -11102,7 +11140,7 @@ function VisibilityPicker({ value, onChange, onClose, project }) {
 
         {/* Specific Users section */}
         <div className="px-5 pb-4">
-          <div className="text-[11px] font-semibold uppercase tracking-wide mb-2 flex items-center justify-between" style={{ color: C.textDisabled }}>
+          <div className="text-[12px] font-medium tracking-wide mb-2 flex items-center justify-between" style={{ color: C.textDisabled }}>
             <span>Specific Users</span>
             <button className="text-[10px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center gap-0.5"
               style={{ color: C.primary }}>
@@ -11111,14 +11149,14 @@ function VisibilityPicker({ value, onChange, onClose, project }) {
             </button>
           </div>
           {localUsers.length === 0 ? (
-            <div className="text-[11px] italic" style={{ color: C.textDisabled }}>
+            <div className="text-[12px] italic" style={{ color: C.textDisabled }}>
               No additional users selected
             </div>
           ) : (
             <div className="flex flex-wrap gap-1.5">
               {localUsers.map((u) => (
                 <span key={u}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium"
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[12px] font-medium"
                   style={{ backgroundColor: C.bg, color: C.textPrimary }}>
                   {u}
                   <button onClick={() => removeUser(u)} className="hover:opacity-70 focus:outline-none">
@@ -11168,13 +11206,13 @@ function ChatMessage({ message: m, onOpenItem, showItemChip }) {
       <PersonaAvatar p={isAI ? "PM" : m.persona} size={28} />
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-1.5 mb-0.5 flex-wrap">
-          <span className="text-xs font-semibold" style={{ color: C.textPrimary }}>
+          <span className="text-xs font-medium" style={{ color: C.textPrimary }}>
             {isAI ? "AI Assistant" : PERSONAS[m.persona]?.name}
           </span>
           {isAI && <Sparkles className="w-3 h-3 shrink-0" style={{ color: C.primary }} />}
           <span className="text-[10px]" style={{ color: C.textDisabled }}>{m.ts}</span>
           {m.channel && (
-            <span className="text-[9px] px-1 py-0.5 rounded font-mono"
+            <span className="text-[10px] px-1 py-0.5 rounded tabular-nums"
               style={{ backgroundColor: C.bg, color: C.textSecondary }}>
               #{m.channel}
             </span>
@@ -11199,7 +11237,7 @@ function ChatMessage({ message: m, onOpenItem, showItemChip }) {
               color: m.itemRef.id === 3 ? C.warning : C.textSecondary,
             }}>
             <Package className="w-2.5 h-2.5" />
-            <span className="font-mono">{m.itemRef.partId}</span>
+            <span className="tabular-nums">{m.itemRef.partId}</span>
           </button>
         )}
         {m.mentions && m.mentions.length > 0 && (
@@ -11257,7 +11295,7 @@ function CostAnalysis({ activeProjectCode, scenarioStep }) {
       <div className="mb-5">
         <div className="flex items-center gap-2 text-xs mb-1" style={{ color: C.textSecondary }}>
           <Box className="w-3.5 h-3.5" />
-          <span className="font-mono">{project.code}</span>
+          <span className="tabular-nums">{project.code}</span>
           <span>·</span>
           <span>{project.name}</span>
         </div>
@@ -11325,18 +11363,18 @@ function CostCompareTab({ isHeroProject }) {
     <div>
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>NEWLY ADDED</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: C.success }}>4 items</div>
+          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Newly Added</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: C.success }}>4 items</div>
           <div className="text-[10px]" style={{ color: C.textSecondary }}>+$84.20 total</div>
         </div>
         <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>REMOVED</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: C.textSecondary }}>4 items</div>
+          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Removed</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: C.textSecondary }}>4 items</div>
           <div className="text-[10px]" style={{ color: C.textSecondary }}>-$198.09 total</div>
         </div>
         <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
           <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>SIMILAR (Changed)</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: C.warning }}>3 items</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: C.warning }}>3 items</div>
           <div className="text-[10px]" style={{ color: C.textSecondary }}>+$8.55 net</div>
         </div>
       </div>
@@ -11361,20 +11399,20 @@ function CostCompareTab({ isHeroProject }) {
                     borderColor: C.borderLight,
                     backgroundColor: r.change === "Newly Added" ? C.successLight
                       : r.change === "Removed" ? C.bg
-                      : r.change === "Similar Description" ? "#FFFBEB"
-                      : r.isHero ? "#FFFBEB" : "white",
+                      : r.change === "Similar Description" ? "#fffaeb"
+                      : r.isHero ? "#fffaeb" : "white",
                   }}>
                   <td className="py-2.5 px-2">
-                    <div className="font-mono text-[10px]" style={{ color: C.textPrimary }}>{r.partId}</div>
+                    <div className="tabular-nums text-[10px]" style={{ color: C.textPrimary }}>{r.partId}</div>
                     <div className="text-[10px]" style={{ color: C.textSecondary }}>{r.desc}</div>
                   </td>
-                  <td className="text-right font-mono py-2.5 px-2" style={{ color: r.source ? C.textPrimary : C.textDisabled }}>
+                  <td className="text-right tabular-nums py-2.5 px-2" style={{ color: r.source ? C.textPrimary : C.textDisabled }}>
                     {r.source ? `$${r.source.toFixed(2)}` : "—"}
                   </td>
-                  <td className="text-right font-mono py-2.5 px-2" style={{ color: r.target ? C.textPrimary : C.textDisabled }}>
+                  <td className="text-right tabular-nums py-2.5 px-2" style={{ color: r.target ? C.textPrimary : C.textDisabled }}>
                     {r.target ? `$${r.target.toFixed(2)}` : "—"}
                   </td>
-                  <td className="text-right font-mono font-semibold py-2.5 px-2"
+                  <td className="text-right tabular-nums font-medium py-2.5 px-2"
                     style={{ color: delta > 0 ? C.error : delta < 0 ? C.success : C.textDisabled }}>
                     {delta === 0 ? "—" : `${delta > 0 ? "+" : ""}$${delta.toFixed(2)}`}
                   </td>
@@ -11389,7 +11427,7 @@ function CostCompareTab({ isHeroProject }) {
                       </span>
                     )}
                   </td>
-                  <td className="text-center py-2.5 px-2 font-mono" style={{ color: C.textSecondary }}>
+                  <td className="text-center py-2.5 px-2 tabular-nums" style={{ color: C.textSecondary }}>
                     {r.similarity ? `${r.similarity}%` : "—"}
                   </td>
                 </tr>
@@ -11434,7 +11472,7 @@ function CostDriverTab({ isHeroProject }) {
         {Object.entries(driverGroups).map(([type, total]) => (
           <div key={type} className="p-3 rounded-md border" style={{ borderColor: C.border }}>
             <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>{type.toUpperCase()}</div>
-            <div className="text-lg font-bold mt-0.5" style={{ color: C.primary }}>${total.toFixed(2)}</div>
+            <div className="text-lg font-medium mt-0.5" style={{ color: C.primary }}>${total.toFixed(2)}</div>
             <div className="text-[10px]" style={{ color: C.textSecondary }}>
               {drivers.filter((d) => d.type === type).length} item(s)
             </div>
@@ -11454,10 +11492,10 @@ function CostDriverTab({ isHeroProject }) {
           {drivers.map((d) => (
             <tr key={d.partId} className="border-b" style={{ borderColor: C.borderLight }}>
               <td className="py-2.5 px-2">
-                <div className="font-mono text-[10px]" style={{ color: C.textPrimary }}>{d.partId}</div>
+                <div className="tabular-nums text-[10px]" style={{ color: C.textPrimary }}>{d.partId}</div>
                 <div className="text-[10px]" style={{ color: C.textSecondary }}>{d.desc}</div>
               </td>
-              <td className="text-right font-mono font-semibold py-2.5 px-2"
+              <td className="text-right tabular-nums font-medium py-2.5 px-2"
                 style={{ color: d.delta > 0 ? C.error : C.success }}>
                 {d.delta > 0 ? "+" : ""}{d.delta.toFixed(2)}
               </td>
@@ -11499,7 +11537,7 @@ function CostPhaseTab({ isHeroProject, project }) {
     <div>
       {/* Line chart simulation */}
       <div className="mb-5 p-4 rounded-md border" style={{ borderColor: C.border }}>
-        <div className="text-xs font-semibold mb-3" style={{ color: C.textPrimary }}>
+        <div className="text-xs font-medium mb-3" style={{ color: C.textPrimary }}>
           Cost Trend by Phase
         </div>
         <div className="flex items-end gap-4 h-48 px-4">
@@ -11511,7 +11549,7 @@ function CostPhaseTab({ isHeroProject, project }) {
                     height: `${(d.current / maxValue) * 100}%`,
                     backgroundColor: C.info,
                   }}>
-                  <span className="absolute -top-5 text-[9px] font-mono font-semibold" style={{ color: C.info }}>
+                  <span className="absolute -top-5 text-[10px] tabular-nums font-medium" style={{ color: C.info }}>
                     ${d.current.toFixed(0)}
                   </span>
                 </div>
@@ -11522,9 +11560,9 @@ function CostPhaseTab({ isHeroProject, project }) {
                   }} />
               </div>
               <div className="text-center">
-                <div className="text-[10px] font-semibold" style={{ color: C.textPrimary }}>{d.phase}</div>
-                <div className="text-[9px]" style={{ color: C.textSecondary }}>{d.date}</div>
-                <div className="text-[10px] font-mono font-semibold mt-0.5"
+                <div className="text-[10px] font-medium" style={{ color: C.textPrimary }}>{d.phase}</div>
+                <div className="text-[10px]" style={{ color: C.textSecondary }}>{d.date}</div>
+                <div className="text-[10px] tabular-nums font-medium mt-0.5"
                   style={{ color: d.delta < 0 ? C.success : C.error }}>
                   {d.delta < 0 ? "" : "+"}{d.delta.toFixed(1)}
                 </div>
@@ -11559,10 +11597,10 @@ function CostPhaseTab({ isHeroProject, project }) {
           {phaseData.map((d) => (
             <tr key={d.phase} className="border-b" style={{ borderColor: C.borderLight }}>
               <td className="py-2.5 px-2 font-medium" style={{ color: C.textPrimary }}>{d.phase}</td>
-              <td className="py-2.5 px-2 font-mono" style={{ color: C.textSecondary }}>{d.date}</td>
-              <td className="text-right font-mono py-2.5 px-2" style={{ color: C.textPrimary }}>${d.current.toFixed(2)}</td>
-              <td className="text-right font-mono py-2.5 px-2" style={{ color: C.textSecondary }}>${d.target.toFixed(2)}</td>
-              <td className="text-right font-mono font-semibold py-2.5 px-2"
+              <td className="py-2.5 px-2 tabular-nums" style={{ color: C.textSecondary }}>{d.date}</td>
+              <td className="text-right tabular-nums py-2.5 px-2" style={{ color: C.textPrimary }}>${d.current.toFixed(2)}</td>
+              <td className="text-right tabular-nums py-2.5 px-2" style={{ color: C.textSecondary }}>${d.target.toFixed(2)}</td>
+              <td className="text-right tabular-nums font-medium py-2.5 px-2"
                 style={{ color: d.delta < 0 ? C.success : C.error }}>
                 {d.delta > 0 ? "+" : ""}${d.delta.toFixed(2)}
               </td>
@@ -11594,7 +11632,7 @@ function CostWaterfallTab({ isHeroProject }) {
   return (
     <div>
       <div className="mb-4 p-4 rounded-md border" style={{ borderColor: C.border }}>
-        <div className="text-xs font-semibold mb-3" style={{ color: C.textPrimary }}>
+        <div className="text-xs font-medium mb-3" style={{ color: C.textPrimary }}>
           Cost Bridge — Source BOM → Target BOM
         </div>
         <div className="flex items-end gap-2 h-72 px-2 relative">
@@ -11628,12 +11666,12 @@ function CostWaterfallTab({ isHeroProject }) {
                     }} />
                   <div className="absolute w-full text-center"
                     style={{ top: `${Math.max(0, top - 6)}%` }}>
-                    <span className="text-[9px] font-mono font-semibold" style={{ color }}>
+                    <span className="text-[10px] tabular-nums font-medium" style={{ color }}>
                       {w.value > 0 && w.type !== "start" && w.type !== "end" ? "+" : ""}${Math.abs(w.value).toFixed(0)}
                     </span>
                   </div>
                 </div>
-                <div className="text-[9px] text-center font-medium leading-tight px-0.5"
+                <div className="text-[10px] text-center font-medium leading-tight px-0.5"
                   style={{ color: C.textSecondary }}>
                   {w.label}
                 </div>
@@ -11646,16 +11684,16 @@ function CostWaterfallTab({ isHeroProject }) {
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
         <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>SOURCE BOM</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: C.textPrimary }}>$800.85</div>
+          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Source BOM</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: C.textPrimary }}>$800.85</div>
         </div>
         <div className="p-3 rounded-md border" style={{ borderColor: C.border, backgroundColor: C.primarySoft }}>
-          <div className="text-[10px] font-medium" style={{ color: C.primary }}>TARGET BOM</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: C.primary }}>$686.96</div>
+          <div className="text-[10px] font-medium" style={{ color: C.primary }}>Target BOM</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: C.primary }}>$686.96</div>
         </div>
         <div className="p-3 rounded-md border" style={{ borderColor: C.border, backgroundColor: C.successLight }}>
-          <div className="text-[10px] font-medium" style={{ color: C.success }}>TOTAL SAVINGS</div>
-          <div className="text-lg font-bold mt-0.5" style={{ color: C.success }}>-$113.89</div>
+          <div className="text-[10px] font-medium" style={{ color: C.success }}>Total Savings</div>
+          <div className="text-lg font-medium mt-0.5" style={{ color: C.success }}>-$113.89</div>
           <div className="text-[10px]" style={{ color: C.success }}>-14.2%</div>
         </div>
       </div>
@@ -11769,7 +11807,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
             style={{ backgroundColor: C.primarySoft }}>
             <ShieldCheck className="w-8 h-8" style={{ color: C.primary }} />
           </div>
-          <div className="text-base font-semibold mb-2" style={{ color: C.textPrimary }}>
+          <div className="text-base font-medium mb-2" style={{ color: C.textPrimary }}>
             APQP Not Started Yet
           </div>
           <div className="text-sm max-w-md mx-auto mb-6" style={{ color: C.textSecondary }}>
@@ -11778,7 +11816,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
           <div className="inline-flex items-center gap-2">
             <button
               onClick={() => setView && setView("bomlist")}
-              className="px-4 py-2 rounded-md text-sm font-semibold text-white inline-flex items-center gap-2 hover:opacity-90"
+              className="px-4 py-2 rounded-md text-sm font-medium text-white inline-flex items-center gap-2 hover:opacity-90"
               style={{ backgroundColor: C.primary }}>
               <Upload className="w-4 h-4" />
               Upload E-BOM First
@@ -11809,7 +11847,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                 transform: ganttOpen ? "rotate(0deg)" : "rotate(-90deg)",
               }} />
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.primary }}>
+              <div className="text-[10px] font-medium tracking-wide" style={{ color: C.primary }}>
                 APQP Phase Timeline
               </div>
               <div className="text-xs mt-0.5" style={{ color: C.textSecondary }}>
@@ -11840,7 +11878,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
         {/* Gantt rows */}
         <div className="relative">
           {/* Time axis labels */}
-          <div className="flex justify-between text-[9px] font-mono mb-1 pl-44" style={{ color: C.textDisabled }}>
+          <div className="flex justify-between text-[10px] tabular-nums mb-1 pl-44" style={{ color: C.textDisabled }}>
             <span>03/16</span>
             <span>03/30</span>
             <span>04/13</span>
@@ -11885,7 +11923,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                             backgroundColor: lightColor,
                             border: `1px solid ${color}`,
                           }}>
-                          <div className="text-[9px] font-bold" style={{ color: color }}>
+                          <div className="text-[10px] font-medium" style={{ color: color }}>
                             {ph.status === "complete" ? "✓" : ph.status === "active" ? "●" : "○"}
                           </div>
                         </div>
@@ -11907,9 +11945,9 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                       backgroundColor: C.primary,
                       left: 0,
                     }} />
-                  <div className="absolute -top-3 -left-4 text-[9px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap"
+                  <div className="absolute -top-3 -left-4 text-[10px] font-medium px-1.5 py-0.5 rounded whitespace-nowrap"
                     style={{ backgroundColor: C.primary, color: "white" }}>
-                    TODAY
+                    Today
                   </div>
                 </div>
               </>
@@ -11925,10 +11963,10 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
         {/* Overall Progress — primary KPI */}
         <div className="flex items-center gap-4 shrink-0">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide" style={{ color: C.textSecondary }}>
               Overall Progress
             </div>
-            <div className="text-3xl font-bold mt-1 tabular-nums" style={{ color: C.primary }}>
+            <div className="text-[32px] font-medium mt-1 tabular-nums" style={{ color: C.primary }}>
               {progress}%
             </div>
           </div>
@@ -11944,28 +11982,28 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
         {/* Inline metrics — secondary KPIs */}
         <div className="flex items-center gap-6 flex-wrap">
           <div>
-            <div className="text-[10px] font-medium uppercase tracking-wide" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide" style={{ color: C.textSecondary }}>
               Subjects
             </div>
-            <div className="text-base font-semibold mt-0.5 tabular-nums" style={{ color: C.textPrimary }}>
-              {totalSubjects} <span className="text-[11px] font-normal" style={{ color: C.textSecondary }}>total</span>
+            <div className="text-base font-medium mt-0.5 tabular-nums" style={{ color: C.textPrimary }}>
+              {totalSubjects} <span className="text-[12px] font-normal" style={{ color: C.textSecondary }}>total</span>
             </div>
           </div>
           <div>
-            <div className="text-[10px] font-medium uppercase tracking-wide" style={{ color: C.textSecondary }}>
+            <div className="text-[10px] font-medium tracking-wide" style={{ color: C.textSecondary }}>
               Approved
             </div>
-            <div className="text-base font-semibold mt-0.5 tabular-nums" style={{ color: C.success }}>
-              {totalApproved} <span className="text-[11px] font-normal" style={{ color: C.textSecondary }}>/ {totalSubjects}</span>
+            <div className="text-base font-medium mt-0.5 tabular-nums" style={{ color: C.success }}>
+              {totalApproved} <span className="text-[12px] font-normal" style={{ color: C.textSecondary }}>/ {totalSubjects}</span>
             </div>
           </div>
           {overdue > 0 && (
             <div>
-              <div className="text-[10px] font-medium uppercase tracking-wide" style={{ color: C.error }}>
+              <div className="text-[10px] font-medium tracking-wide" style={{ color: C.error }}>
                 Overdue
               </div>
-              <div className="text-base font-semibold mt-0.5 tabular-nums" style={{ color: C.error }}>
-                {overdue} <span className="text-[11px] font-normal">need action</span>
+              <div className="text-base font-medium mt-0.5 tabular-nums" style={{ color: C.error }}>
+                {overdue} <span className="text-[12px] font-normal">need action</span>
               </div>
             </div>
           )}
@@ -12005,7 +12043,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
 
           {/* Right side: primary action */}
           <div className="ml-auto">
-            <button className="px-3 py-1.5 rounded-md text-xs font-semibold text-white inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            <button className="px-3 py-1.5 rounded-md text-xs font-medium text-white inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               style={{ backgroundColor: C.primary }}>
               <Plus className="w-3.5 h-3.5" />
               Request PPAP
@@ -12024,15 +12062,15 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
               <div className="px-3 py-2.5 flex items-center justify-between border-b"
                 style={{ borderColor: C.borderLight }}>
                 <div>
-                  <div className="text-xs font-semibold flex items-center gap-1.5" style={{ color: C.textPrimary }}>
+                  <div className="text-xs font-medium flex items-center gap-1.5" style={{ color: C.textPrimary }}>
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: stage.color }} />
                     {stage.label}
                   </div>
-                  <div className="text-[9px] mt-0.5" style={{ color: C.textSecondary }}>
+                  <div className="text-[10px] mt-0.5" style={{ color: C.textSecondary }}>
                     {stage.desc}
                   </div>
                 </div>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                <span className="text-[12px] font-medium px-2 py-0.5 rounded-full"
                   style={{ backgroundColor: "white", color: C.textSecondary, border: `1px solid ${C.borderLight}` }}>
                   {cards.length}
                 </span>
@@ -12062,28 +12100,28 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                       <div className="p-2.5 pl-3">
                         {/* Title */}
                         <div className="min-w-0 mb-1.5">
-                          <div className="text-xs font-semibold leading-snug" style={{ color: C.textPrimary }}>
+                          <div className="text-xs font-medium leading-snug" style={{ color: C.textPrimary }}>
                             {card.name}
                           </div>
-                          <div className="text-[10px] font-mono mt-0.5" style={{ color: C.textDisabled }}>
+                          <div className="text-[10px] tabular-nums mt-0.5" style={{ color: C.textDisabled }}>
                             {card.partId}
                           </div>
                         </div>
 
                         {/* Badges row — minimal: PPAP Lv (outlined neutral) + Risk text only when High */}
                         <div className="flex items-center gap-1 flex-wrap mb-2">
-                          <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded border"
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border"
                             style={{ backgroundColor: "white", color: C.textSecondary, borderColor: C.border }}>
                             PPAP Lv{card.ppapLevel}
                           </span>
                           {card.risk === "High" && (
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded"
                               style={{ backgroundColor: C.errorLight, color: C.error }}>
                               High Risk
                             </span>
                           )}
                           {card.dDay !== null && card.stage !== "approved" && (isOverdue || isUrgent) && (
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded ml-auto"
+                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded ml-auto"
                               style={{
                                 backgroundColor: isOverdue ? C.error : C.warning,
                                 color: "white",
@@ -12092,7 +12130,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                             </span>
                           )}
                           {card.dDay !== null && card.stage !== "approved" && !isOverdue && !isUrgent && (
-                            <span className="text-[9px] font-medium ml-auto"
+                            <span className="text-[10px] font-medium ml-auto"
                               style={{ color: C.textDisabled }}>
                               D-{card.dDay}
                             </span>
@@ -12110,10 +12148,10 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                         {/* Progress bar — single neutral primary color */}
                         <div className="mb-1.5">
                           <div className="flex items-center justify-between mb-0.5">
-                            <span className="text-[9px]" style={{ color: C.textSecondary }}>
+                            <span className="text-[10px]" style={{ color: C.textSecondary }}>
                               Deliverables
                             </span>
-                            <span className="text-[9px] font-mono font-semibold" style={{ color: C.textPrimary }}>
+                            <span className="text-[10px] tabular-nums font-medium" style={{ color: C.textPrimary }}>
                               {card.deliverableDone}/{card.deliverableTotal}
                             </span>
                           </div>
@@ -12130,7 +12168,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
                         {card.comments > 0 && (
                           <div className="flex items-center gap-1 pt-1.5 mt-1 border-t" style={{ borderColor: C.borderLight }}>
                             <MessageSquare className="w-3 h-3" style={{ color: C.textDisabled }} />
-                            <span className="text-[9px]" style={{ color: C.textSecondary }}>
+                            <span className="text-[10px]" style={{ color: C.textSecondary }}>
                               {card.comments} comments
                             </span>
                           </div>
@@ -12152,7 +12190,7 @@ function ApqpKanban({ scenarioStep, onOpenItem, setView, activeProjectCode }) {
           style={{ backgroundColor: C.primarySoft, border: `1px solid ${C.primaryLight}` }}>
           <Sparkles className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.primary }} />
           <div className="text-xs">
-            <div className="font-semibold mb-0.5" style={{ color: C.textPrimary }}>
+            <div className="font-medium mb-0.5" style={{ color: C.textPrimary }}>
               Scenario in progress — AMOLED Panel PPAP moved to "In Review"
             </div>
             <div style={{ color: C.textSecondary }}>
@@ -12179,7 +12217,7 @@ const SCENARIO_STEPS = [
 ];
 
 // === ROOT APP ===
-export default function App() {
+function CaidentiaApp() {
   const [activePersona, setActivePersona] = useState("PM");
   const [view, setView] = useState("projects");
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -12305,7 +12343,7 @@ export default function App() {
   const activeProject = PROJECTS.find((p) => p.code === activeProjectCode) || PROJECTS[0];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: C.bg, fontFamily: "Roboto, system-ui, -apple-system, sans-serif" }}>
+    <div className="min-h-screen" style={{ backgroundColor: C.bg, fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif' }}>
       <GNB
         activePersona={activePersona}
         setActivePersona={setActivePersona}
@@ -12430,6 +12468,22 @@ export default function App() {
               {/* RIGHT: Content card (only left corners rounded) */}
               <div className="bg-white rounded-l-3xl flex-1 min-w-0 flex flex-col overflow-hidden">
                 <div className="flex-1 min-h-0 overflow-y-auto">
+                  {/* Screen title (from LNB menu) — Heading 4 (20px), 24px padding all sides */}
+                  {(() => {
+                    const SCREEN_TITLES = {
+                      cockpit: "Overview",
+                      info: "Project Info",
+                      collaborators: "Collaborators",
+                      // "bomlist" & "bom" render their own title rows inside their screens
+                    };
+                    const screenTitle = SCREEN_TITLES[view];
+                    if (!screenTitle) return null;
+                    return (
+                      <div className="p-6 pb-0">
+                        <h1 className="text-[20px] font-medium" style={{ color: C.textPrimary }}>{screenTitle}</h1>
+                      </div>
+                    );
+                  })()}
                   {view === "cockpit" && (
                     <ProjectCockpit
                       onOpenItem={onOpenItem}
@@ -12533,4 +12587,105 @@ export default function App() {
       )}
     </div>
   );
+}
+
+// === PASSWORD GATE ===
+// Soft access lock for the prototype. NOTE: this is a client-side gate — it keeps
+// casual viewers out, but the password lives in the bundle and is not real security.
+function PasswordGate({ onUnlock }) {
+  const [value, setValue] = useState("");
+  const [error, setError] = useState(false);
+  const [show, setShow] = useState(false);
+  const PASSWORD = "caidentia2026";
+
+  const submit = () => {
+    if (value === PASSWORD) {
+      setError(false);
+      onUnlock();
+    } else {
+      setError(true);
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center px-6"
+      style={{ backgroundColor: C.bg }}>
+      <div className="w-full max-w-[380px]">
+        {/* Brand */}
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <span className="text-[18px] font-medium" style={{ color: C.textPrimary }}>SAMSUNG SDS</span>
+          <span className="text-[18px] font-medium" style={{ color: C.primary }}>Caidentia</span>
+        </div>
+
+        {/* Card */}
+        <div className="rounded-2xl border bg-white p-8" style={{ borderColor: C.border }}>
+          <div className="flex flex-col items-center text-center mb-6">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+              style={{ backgroundColor: C.primaryLight }}>
+              <Lock className="w-5 h-5" style={{ color: C.primary }} />
+            </div>
+            <h1 className="text-[20px] font-medium" style={{ color: C.textPrimary }}>
+              Protected prototype
+            </h1>
+            <p className="text-[14px] mt-1.5" style={{ color: C.textSecondary }}>
+              Enter the password to continue.
+            </p>
+          </div>
+
+          {/* Password field */}
+          <div className="relative">
+            <input
+              type={show ? "text" : "password"}
+              value={value}
+              autoFocus
+              onChange={(e) => { setValue(e.target.value); if (error) setError(false); }}
+              onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+              placeholder="Password"
+              className="w-full h-11 pl-3 pr-10 rounded-lg border text-[14px] outline-none transition-colors focus:outline-none"
+              style={{
+                borderColor: error ? C.error : C.border,
+                color: C.textPrimary,
+                backgroundColor: "white",
+              }}
+              onFocus={(e) => { if (!error) e.currentTarget.style.borderColor = C.primary; }}
+              onBlur={(e) => { if (!error) e.currentTarget.style.borderColor = C.border; }} />
+            <button
+              type="button"
+              onClick={() => setShow(!show)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
+              style={{ color: C.textSecondary }}
+              title={show ? "Hide password" : "Show password"}>
+              <Eye className="w-4 h-4" />
+            </button>
+          </div>
+
+          {error && (
+            <p className="text-[12px] mt-2" style={{ color: C.error }}>
+              Incorrect password. Please try again.
+            </p>
+          )}
+
+          {/* Unlock button */}
+          <button
+            onClick={submit}
+            className="w-full h-11 mt-4 rounded-lg text-[14px] font-medium text-white flex items-center justify-center gap-1.5 transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{ backgroundColor: C.primary }}>
+            Unlock
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <p className="text-[12px] text-center mt-5" style={{ color: C.textDisabled }}>
+          For authorized reviewers only.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// === ROOT — password gate wraps the prototype ===
+export default function App() {
+  const [unlocked, setUnlocked] = useState(false);
+  if (!unlocked) return <PasswordGate onUnlock={() => setUnlocked(true)} />;
+  return <CaidentiaApp />;
 }
