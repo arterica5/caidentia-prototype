@@ -4116,9 +4116,9 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
   }
 
   return (
-    <div className="p-6" style={{ minHeight: "100%" }}>
+    <div className="pt-0 pb-6 pr-6 pl-0" style={{ minHeight: "100%" }}>
       {/* AI Insight Banner */}
-      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+      <div className="mb-3 p-6 rounded-3xl border flex items-start gap-3"
         style={{ backgroundColor: isResolved ? C.successLight : (blocking > 0 ? C.primarySoft : C.successLight),
                  borderColor: isResolved || blocking === 0 ? C.success : C.primaryLight }}>
         <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
@@ -4164,38 +4164,20 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
         </button>
       </div>
 
-      {/* KPI Row — Figma style: 48px tinted icon box + label/value, hairline gaps */}
-      <div className="grid grid-cols-4 mb-3 rounded-3xl overflow-hidden" style={{ gap: 2, backgroundColor: C.borderLight }}>
-        {[
-          { icon: Clock, tint: "#f9f5ff", iconColor: C.primary, label: "Gate Runway",
-            value: `${project.phaseDays} days` },
-          { icon: AlertTriangle, tint: "#ecfdff", iconColor: C.info, label: "Pending Decisions",
-            value: `${blocking}` },
-          { icon: DollarSign, tint: "#fff1f3", iconColor: C.error, label: "Cost vs Target",
-            value: tmcGap === 0 ? "—" : tmcGap > 0 ? `+$${tmcGap}k` : `-$${Math.abs(tmcGap)}k` },
-          { icon: ShieldCheck, tint: "#fefbe8", iconColor: C.warning, label: "Risk Items",
-            value: isResolved ? "0" : (isHeroProject ? "6" : "0") },
-        ].map((k) => {
-          const Icon = k.icon;
-          return (
-            <div key={k.label} className="bg-white flex items-start gap-4 p-6">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ backgroundColor: k.tint }}>
-                <Icon className="w-6 h-6" style={{ color: k.iconColor }} />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-[12px] font-medium leading-4" style={{ color: C.textSecondary }}>{k.label}</span>
-                <span className="text-[24px] font-medium leading-8" style={{ color: C.textPrimary }}>{k.value}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* KPI Row — shared Figma-style tinted cards */}
+      <KpiRowFigma cards={[
+        { icon: Clock, iconColor: C.primary, label: "Gate Runway", value: `${project.phaseDays} days` },
+        { icon: AlertTriangle, iconColor: C.info, label: "Pending Decisions", value: `${blocking}` },
+        { icon: DollarSign, iconColor: C.error, label: "Cost vs Target",
+          value: tmcGap === 0 ? "—" : tmcGap > 0 ? `+$${tmcGap}k` : `-$${Math.abs(tmcGap)}k` },
+        { icon: ShieldCheck, iconColor: C.warning, label: "Risk Items",
+          value: isResolved ? "0" : (isHeroProject ? "6" : "0") },
+      ]} />
 
       {/* Row: Gate Readiness (donut + bars) + Pending Decisions list */}
       <div className="grid grid-cols-5 gap-3 mb-3">
         {/* Gate Readiness — phase */}
-        <div className="col-span-2 rounded-3xl bg-white p-8">
+        <div className="col-span-2 rounded-3xl bg-white p-6">
           <div className="text-[20px] font-medium mb-2" style={{ color: C.textPrimary }}>
             Gate Readiness - {project.phase}
           </div>
@@ -4219,7 +4201,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
         </div>
 
         {/* Pending Decisions — card list with Review buttons */}
-        <div className="col-span-3 rounded-3xl bg-white p-8 flex flex-col">
+        <div className="col-span-3 rounded-3xl bg-white p-6 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Pending Decisions</div>
             <button
@@ -4268,7 +4250,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
       {/* Row: Risk Summary (narrow) + Recent Activity (wide) */}
       <div className="grid grid-cols-5 gap-3">
         {/* Risk Summary */}
-        <div className="col-span-2 rounded-3xl bg-white p-8">
+        <div className="col-span-2 rounded-3xl bg-white p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Risk Summary</div>
             <button
@@ -4301,7 +4283,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
         </div>
 
         {/* Recent Activity */}
-        <div className="col-span-3 rounded-3xl bg-white p-8">
+        <div className="col-span-3 rounded-3xl bg-white p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Recent Activity</div>
             <button
@@ -4424,9 +4406,9 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
   };
 
   return (
-    <div className="p-6" style={{ minHeight: "100%" }}>
+    <div className="pt-0 pb-6 pr-6 pl-0" style={{ minHeight: "100%" }}>
       {/* AI Banner for DE */}
-      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+      <div className="mb-3 p-6 rounded-3xl border flex items-start gap-3"
         style={{
           backgroundColor: isResolved ? C.successLight : C.primarySoft,
           borderColor: isResolved ? C.success : C.primaryLight,
@@ -4456,39 +4438,20 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </button>
       </div>
 
-      {/* KPI Row — DE-specific (4 cards, standardized) */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        <KpiCard
-          icon={AtSign}
-          iconColor={pendingDecisions > 0 ? C.primary : C.success}
-          label="My Pending Decisions"
-          value={pendingDecisions}
-          sub={pendingDecisions > 0 ? "Accept / Keep needed" : "All cleared"} />
-
-        <KpiCard
-          icon={GitBranch}
-          iconColor={specChanges > 0 ? C.warning : C.success}
-          label="Spec Changes (Rev B)"
-          value={specChanges}
-          sub="vs Rev A baseline" />
-
-        <KpiCard
-          icon={AlertTriangle}
-          iconColor={conflicts > 0 ? C.error : C.success}
-          label="Conflicts"
-          value={conflicts}
-          sub={conflicts > 0 ? "AMOLED Panel" : "All clear"} />
-
-        <KpiCard
-          icon={Package}
-          iconColor={newParts > 0 ? C.warning : C.success}
-          label="New Parts (No Supplier)"
-          value={newParts}
-          sub={newParts > 0 ? "RFQ needed" : "All assigned"} />
-      </div>
+      {/* KPI Row — shared Figma-style tinted cards */}
+      <KpiRowFigma cards={[
+        { icon: AtSign, iconColor: pendingDecisions > 0 ? C.primary : C.success,
+          label: "My Pending Decisions", value: pendingDecisions },
+        { icon: GitBranch, iconColor: specChanges > 0 ? C.warning : C.success,
+          label: "Spec Changes (Rev B)", value: specChanges },
+        { icon: AlertTriangle, iconColor: conflicts > 0 ? C.error : C.success,
+          label: "Conflicts", value: conflicts },
+        { icon: Package, iconColor: newParts > 0 ? C.warning : C.success,
+          label: "New Parts (No Supplier)", value: newParts },
+      ]} />
 
       {/* Row 1: BOM Status chart (1/3) + BOM Review Queue (2/3) */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-3 gap-3 mb-3">
         {/* BOM Status distribution chart */}
         <MiniProgressCard
           title="BOM Status"
@@ -4502,10 +4465,10 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             { label: "Conflict", value: conflicts, color: C.error },
           ]} />
         {/* My BOM Review Queue */}
-        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
             <div>
-              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>My BOM Review Queue</div>
+              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>My BOM Review Queue</div>
               <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
                 Accept or keep each change submitted by collaborators
               </div>
@@ -4527,7 +4490,7 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               {bomReviewQueue.map((q) => {
                 const meta = statusMeta[q.status];
                 return (
-                  <div key={q.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                  <div key={q.id} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
                     <button
                       onClick={() => onOpenItem && onOpenItem(q.id)}
                       className="flex-1 min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded">
@@ -4561,9 +4524,9 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       {/* Row 2: Changes I Submitted + DVT Validation + Process Sheet (3-up) */}
       <div className="grid grid-cols-3 gap-4">
         {/* Changes I Submitted */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Changes I Submitted</div>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Changes I Submitted</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>Tracking your spec changes</div>
           </div>
           <div className="divide-y" style={{ borderColor: C.borderLight }}>
@@ -4599,9 +4562,9 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           </div>
         </div>
         {/* DVT Validation Required */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>DVT Validation Required</div>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>DVT Validation Required</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Design verification tests pending execution
             </div>
@@ -4633,9 +4596,9 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
 
         {/* Process Sheet Completeness */}
-        <div className="rounded-xl border bg-white p-5" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white p-6" style={{ borderColor: C.border }}>
           <div className="mb-4">
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Process Sheet Completeness</div>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Process Sheet Completeness</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>Rev B by sub-system</div>
           </div>
           <div className="space-y-3.5">
@@ -4738,9 +4701,9 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
   const gapColor = (v) => v > 0 ? C.error : v < 0 ? C.success : C.textDisabled;
 
   return (
-    <div className="p-6" style={{ minHeight: "100%" }}>
+    <div className="pt-0 pb-6 pr-6 pl-0" style={{ minHeight: "100%" }}>
       {/* AI Banner for CM */}
-      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+      <div className="mb-3 p-6 rounded-3xl border flex items-start gap-3"
         style={{
           backgroundColor: isResolved ? C.successLight : C.primarySoft,
           borderColor: isResolved ? C.success : C.primaryLight,
@@ -4770,41 +4733,21 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </button>
       </div>
 
-      {/* KPI Row — CM-specific (4 cards, standardized) */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        <KpiCard
-          icon={DollarSign}
-          iconColor={parseFloat(shouldVsQuotedGap) > 0 ? C.error : C.success}
-          label="Should vs Quoted Gap"
-          value={`${parseFloat(shouldVsQuotedGap) >= 0 ? "+" : "−"}$${Math.abs(parseFloat(shouldVsQuotedGap)).toFixed(2)}`}
-          sub={parseFloat(shouldVsQuotedGap) >= 0 ? "Quoted higher" : "Quoted lower"} />
-
-        <KpiCard
-          icon={Target}
-          iconColor={validShould.length < costRows.length ? C.warning : C.success}
-          label="Should-cost Coverage"
-          value={shouldCoverage}
-          sub={validShould.length < costRows.length
-            ? `${costRows.length - validShould.length} parts need Should-cost`
-            : "All parts covered"} />
-
-        <KpiCard
-          icon={Send}
-          iconColor={rfqOutstanding > 0 ? C.warning : C.success}
-          label="RFQ Outstanding"
-          value={rfqOutstanding}
-          sub={rfqOutstanding > 0 ? "Battery + Camera" : "All received"} />
-
-        <KpiCard
-          icon={AlertTriangle}
-          iconColor={costConflicts > 0 ? C.error : C.success}
-          label="Cost Conflicts"
-          value={costConflicts}
-          sub={costConflicts > 0 ? "AMOLED + Touch IC" : "All clear"} />
-      </div>
+      {/* KPI Row — shared Figma-style tinted cards */}
+      <KpiRowFigma cards={[
+        { icon: DollarSign, iconColor: parseFloat(shouldVsQuotedGap) > 0 ? C.error : C.success,
+          label: "Should vs Quoted Gap",
+          value: `${parseFloat(shouldVsQuotedGap) >= 0 ? "+" : "−"}$${Math.abs(parseFloat(shouldVsQuotedGap)).toFixed(2)}` },
+        { icon: Target, iconColor: validShould.length < costRows.length ? C.warning : C.success,
+          label: "Should-cost Coverage", value: shouldCoverage },
+        { icon: Send, iconColor: rfqOutstanding > 0 ? C.warning : C.success,
+          label: "RFQ Outstanding", value: rfqOutstanding },
+        { icon: AlertTriangle, iconColor: costConflicts > 0 ? C.error : C.success,
+          label: "Cost Conflicts", value: costConflicts },
+      ]} />
 
       {/* Row: Cost breakdown chart (1/3) + Cost Reconcile table (2/3) */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-3 gap-3 mb-3">
         {/* Cost comparison chart — Target vs Quoted vs Should-cost */}
         <MiniProgressCard
           title="Cost Position"
@@ -4820,10 +4763,10 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             { label: "Should-cost", value: Math.round(targetTotal * 0.98), color: C.info },
           ]} />
         {/* Cost Reconcile Table */}
-        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
             <div>
-              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>Cost Reconcile — Rev B</div>
+              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Cost Reconcile — Rev B</div>
               <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               FEPT Target · Quoted · Should-cost · Gap
             </div>
@@ -4888,11 +4831,11 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       </div>
 
       {/* Row: RFQ Status (1/2) + My Action Queue (1/2) */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         {/* RFQ Status */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>RFQ Status</div>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>RFQ Status</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Supplier quote engagement progress
             </div>
@@ -4924,9 +4867,9 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
 
         {/* My Action Queue */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>My Action Queue</div>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>My Action Queue</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               CM tasks requiring your input
             </div>
@@ -4942,7 +4885,7 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               {actionQueue.map((a) => {
                 const meta = actionMeta[a.status];
                 return (
-                  <div key={a.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                  <div key={a.id} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{a.title}</div>
                       <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
@@ -5035,9 +4978,9 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
   };
 
   return (
-    <div className="p-6" style={{ minHeight: "100%" }}>
+    <div className="pt-0 pb-6 pr-6 pl-0" style={{ minHeight: "100%" }}>
       {/* AI Banner for SM */}
-      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+      <div className="mb-3 p-6 rounded-3xl border flex items-start gap-3"
         style={{
           backgroundColor: isResolved ? C.successLight : C.primarySoft,
           borderColor: isResolved ? C.success : C.primaryLight,
@@ -5067,39 +5010,20 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </button>
       </div>
 
-      {/* KPI Row — SM-specific (4 cards, standardized) */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        <KpiCard
-          icon={AtSign}
-          iconColor={itemsNeedingInput > 0 ? C.error : C.success}
-          label="Items Needing GCM Input"
-          value={itemsNeedingInput}
-          sub={itemsNeedingInput > 0 ? "Aligned cost not set" : "All set"} />
-
-        <KpiCard
-          icon={AlertTriangle}
-          iconColor={soleSourcePct > 10 ? C.error : C.success}
-          label="Sole Source Items"
-          value={soleSourceCount}
-          sub={`${soleSourcePct}% of BOM · Target 10%`} />
-
-        <KpiCard
-          icon={Layers}
-          iconColor={geoExposure > 35 ? C.error : C.success}
-          label="China Geo Exposure"
-          value={`${geoExposure}%`}
-          sub={geoExposure > 35 ? "Above 35% threshold" : "Within threshold"} />
-
-        <KpiCard
-          icon={GitMerge}
-          iconColor={altSourcingActive > 0 ? C.info : C.success}
-          label="Alt Sourcing Active"
-          value={altSourcingActive}
-          sub={altSourcingActive > 0 ? "Evaluation in progress" : "None active"} />
-      </div>
+      {/* KPI Row — shared Figma-style tinted cards */}
+      <KpiRowFigma cards={[
+        { icon: AtSign, iconColor: itemsNeedingInput > 0 ? C.error : C.success,
+          label: "Items Needing GCM Input", value: itemsNeedingInput },
+        { icon: AlertTriangle, iconColor: soleSourcePct > 10 ? C.error : C.success,
+          label: "Sole Source Items", value: soleSourceCount },
+        { icon: Layers, iconColor: geoExposure > 35 ? C.error : C.success,
+          label: "China Geo Exposure", value: `${geoExposure}%` },
+        { icon: GitMerge, iconColor: altSourcingActive > 0 ? C.info : C.success,
+          label: "Alt Sourcing Active", value: altSourcingActive },
+      ]} />
 
       {/* Row: Sourcing mix chart (1/3) + Market Commodities (2/3) */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-3 gap-3 mb-3">
         {/* Sourcing mix — single vs dual vs multi source */}
         <MiniProgressCard
           title="Sourcing Mix"
@@ -5113,10 +5037,10 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             { label: "Multi source", value: 80 - soleSourceCount - (altSourcingActive + 12), color: C.success },
           ]} />
         {/* Market Commodities */}
-        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
             <div>
-              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
+              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>
                 Market Commodities — Live Tracking
               </div>
               <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
@@ -5173,12 +5097,12 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       </div>
 
       {/* Row: SSS Risk Dashboard (1/2) + My GCM Action Queue (1/2) */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         {/* SSS Risk Dashboard */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
             <div>
-              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>SSS Risk Dashboard</div>
+              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>SSS Risk Dashboard</div>
               <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
                 Sole / Single / Dual+ source distribution
               </div>
@@ -5216,9 +5140,9 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
 
         {/* My GCM Action Queue */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>My GCM Action Queue</div>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>My GCM Action Queue</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Sourcing decisions requiring your input
             </div>
@@ -5234,7 +5158,7 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               {actionQueue.map((a) => {
                 const meta = actionMeta[a.state];
                 return (
-                  <div key={a.id} className="px-5 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                  <div key={a.id} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{a.title}</div>
                       <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
@@ -5277,10 +5201,10 @@ function ApqpGanttChart() {
   ];
   const todayPos = 60;
   return (
-    <div className="rounded-xl border bg-white p-5 mb-5" style={{ borderColor: C.border }}>
+    <div className="rounded-3xl bg-white p-6 mb-5" style={{ borderColor: C.border }}>
       <div className="flex items-center justify-between mb-3">
         <div>
-          <div className="text-sm font-medium" style={{ color: C.textPrimary }}>APQP Program Timeline</div>
+          <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>APQP Program Timeline</div>
           <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
             Advanced Product Quality Planning — 5-phase progress
           </div>
@@ -5442,9 +5366,9 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
   })[state] || state;
 
   return (
-    <div className="p-6" style={{ minHeight: "100%" }}>
+    <div className="pt-0 pb-6 pr-6 pl-0" style={{ minHeight: "100%" }}>
       {/* AI Banner for QM */}
-      <div className="mb-5 p-4 rounded-lg border flex items-start gap-3"
+      <div className="mb-3 p-6 rounded-3xl border flex items-start gap-3"
         style={{
           backgroundColor: isResolved ? C.successLight : C.primarySoft,
           borderColor: isResolved ? C.success : C.primaryLight,
@@ -5477,39 +5401,20 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       {/* APQP Program Timeline — top of QM Overview (replaces standalone APQP menu) */}
       <ApqpGanttChart />
 
-      {/* KPI Row — QM-specific (4 cards, standardized) */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        <KpiCard
-          icon={ShieldCheck}
-          iconColor={ppapItemsOpen > 0 ? C.error : C.success}
-          label="PPAP Items Open"
-          value={ppapItemsOpen}
-          sub={ppapItemsOpen > 0 ? "DVT phase target 0" : "All cleared"} />
-
-        <KpiCard
-          icon={AtSign}
-          iconColor={pcrRequiringSqe > 0 ? C.warning : C.success}
-          label="PCR Requiring SQE"
-          value={pcrRequiringSqe}
-          sub={pcrRequiringSqe > 0 ? "Part change requests" : "All reviewed"} />
-
-        <KpiCard
-          icon={AlertTriangle}
-          iconColor={dvtIssuesOpen > 0 ? C.error : C.success}
-          label="DVT Issues Open"
-          value={dvtIssuesOpen}
-          sub={dvtIssuesOpen > 0 ? "Validation pending" : "All resolved"} />
-
-        <KpiCard
-          icon={Package}
-          iconColor={newPartsNoPpap > 0 ? C.error : C.success}
-          label="New Parts (No PPAP)"
-          value={newPartsNoPpap}
-          sub={newPartsNoPpap > 0 ? "Battery + Camera" : "All registered"} />
-      </div>
+      {/* KPI Row — shared Figma-style tinted cards */}
+      <KpiRowFigma cards={[
+        { icon: ShieldCheck, iconColor: ppapItemsOpen > 0 ? C.error : C.success,
+          label: "PPAP Items Open", value: ppapItemsOpen },
+        { icon: AtSign, iconColor: pcrRequiringSqe > 0 ? C.warning : C.success,
+          label: "PCR Requiring SQE", value: pcrRequiringSqe },
+        { icon: AlertTriangle, iconColor: dvtIssuesOpen > 0 ? C.error : C.success,
+          label: "DVT Issues Open", value: dvtIssuesOpen },
+        { icon: Package, iconColor: newPartsNoPpap > 0 ? C.error : C.success,
+          label: "New Parts (No PPAP)", value: newPartsNoPpap },
+      ]} />
 
       {/* Row: PPAP progress chart (1/3) + PCR Tracker (2/3) */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-3 gap-3 mb-3">
         {/* PPAP progress — complete vs in-progress vs not-started */}
         {(() => {
           const done = ppapStatus.filter(p => p.state === "complete").length;
@@ -5531,10 +5436,10 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           );
         })()}
         {/* PCR Tracker */}
-        <div className="col-span-2 rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
             <div>
-              <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
+              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>
                 PCR Tracker — Cross-functional SSOT
               </div>
               <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
@@ -5596,11 +5501,11 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       </div>
 
       {/* Row: PPAP Status (1/2) + DVT Open Issues (1/2) */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         {/* PPAP Status */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>PPAP Status</div>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>PPAP Status</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Per-part PPAP submission progress
             </div>
@@ -5630,9 +5535,9 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
 
         {/* DVT Open Issues */}
-        <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-          <div className="px-5 py-4 border-b" style={{ borderColor: C.border }}>
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>DVT Open Issues</div>
+        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
+          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+            <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>DVT Open Issues</div>
             <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
               Design verification test results pending
             </div>
@@ -5706,6 +5611,33 @@ function KpiCard({ icon: Icon, iconColor, label, value, sub }) {
   );
 }
 
+// === KpiRowFigma — shared Overview KPI row (Figma style: 48px tinted icon box + label/value) ===
+// cards: [{ icon, iconColor, label, value }] — exactly 4 recommended.
+// Tints cycle through the Figma accent palette (purple / cyan / rose / yellow).
+const KPI_TINTS = ["#f9f5ff", "#ecfdff", "#fff1f3", "#fefbe8"];
+function KpiRowFigma({ cards }) {
+  return (
+    <div className="grid grid-cols-4 gap-3 mb-3">
+      {cards.map((k, i) => {
+        const Icon = k.icon;
+        return (
+          <div key={k.label} className="bg-white flex items-start gap-4 p-6 rounded-3xl">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+              style={{ backgroundColor: k.tint || KPI_TINTS[i % KPI_TINTS.length] }}>
+              <Icon className="w-6 h-6" style={{ color: k.iconColor }} />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-[12px] font-medium leading-4" style={{ color: C.textSecondary }}>{k.label}</span>
+              <span className="text-[24px] font-medium leading-8" style={{ color: C.textPrimary }}>{k.value}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+
 function ReadinessRing({ value }) {
   const r = 50;
   const c = 2 * Math.PI * r;
@@ -5735,8 +5667,8 @@ function MiniProgressCard({ title, subtitle, headline, headlineSub, headlineColo
   const total = segments.reduce((s, x) => s + (x.value || 0), 0) || 1;
   const maxVal = Math.max(...segments.map((s) => s.value || 0), 1);
   return (
-    <div className="p-5 rounded-xl border bg-white flex flex-col" style={{ borderColor: C.border }}>
-      <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{title}</div>
+    <div className="p-6 rounded-3xl bg-white flex flex-col">
+      <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>{title}</div>
       {subtitle && <div className="text-[12px] mt-0.5 mb-3" style={{ color: C.textSecondary }}>{subtitle}</div>}
 
       {headline !== undefined && (
@@ -12465,16 +12397,16 @@ function CaidentiaApp() {
                 />
               </div>
 
-              {/* RIGHT: Content card (only left corners rounded) */}
-              <div className="bg-white rounded-l-3xl flex-1 min-w-0 flex flex-col overflow-hidden">
+              {/* RIGHT: Content area — Overview is transparent (widgets are their own cards); other views use a white card */}
+              <div className={`flex-1 min-w-0 flex flex-col overflow-hidden ${view === "cockpit" ? "" : "bg-white rounded-l-3xl"}`}>
                 <div className="flex-1 min-h-0 overflow-y-auto">
                   {/* Screen title (from LNB menu) — Heading 4 (20px), 24px padding all sides */}
                   {(() => {
                     const SCREEN_TITLES = {
-                      cockpit: "Overview",
                       info: "Project Info",
                       collaborators: "Collaborators",
-                      // "bomlist" & "bom" render their own title rows inside their screens
+                      // "cockpit" (Overview) renders its own content with no title row.
+                      // "bomlist" & "bom" render their own title rows inside their screens.
                     };
                     const screenTitle = SCREEN_TITLES[view];
                     if (!screenTitle) return null;
