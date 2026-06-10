@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Bell, Search, User, Settings, ChevronDown, ChevronRight, ChevronLeft,
   Package, GitBranch, DollarSign, Send, ShieldCheck, Building2, Users, UsersRound,
-  AlertTriangle, AlertCircle, CheckCircle, XCircle, Clock, Filter,
+  AlertTriangle, AlertCircle, CheckCircle, XCircle, Clock, Filter, Check,
   Plus, MoreHorizontal, MessageSquare, Sparkles, TrendingUp, TrendingDown,
   ArrowRight, Hash, Paperclip, AtSign, Smile, Layers, FileText, Zap,
   Eye, Edit3, Activity, Box, Target, BarChart3, ShoppingCart, FlaskConical,
@@ -918,16 +918,22 @@ const BOM_LIST = [
     collabStatus: "PPAP Lv3 Pending" },
 ];
 
-// Archived BOMs — historical versions kept for reference (Kanban only)
+// Archived BOMs — historical versions kept for record keeping. They retain the
+// parts count and last activity captured at the time the version was superseded.
 const ARCHIVED_BOMS = [
   { id: "E-old", label: "E-BOM", code: "BOM260400319", versions: ["Ver 2", "Ver 1"],
+    parts: 68, lastActivity: { actor: "DE", action: "Superseded by v1.8", ts: "2026-04-18" },
     cost: { ver: "Ver 1", delta: "+$1,900", target: "$48,500", overTarget: true } },
-  { id: "E-old2", label: "E-BOM", code: "BOM260300257", versions: ["Ver 1"], cost: null },
+  { id: "E-old2", label: "E-BOM", code: "BOM260300257", versions: ["Ver 1"],
+    parts: 52, lastActivity: { actor: "DE", action: "Archived", ts: "2026-03-22" }, cost: null },
   { id: "C-old", label: "C-BOM", code: "BOM260300258", versions: ["Ver 2", "Ver 1"],
+    parts: 50, lastActivity: { actor: "CM", action: "Superseded by v2.0", ts: "2026-03-30" },
     cost: { ver: "Ver 1", delta: "+$420", target: "$48,500", overTarget: true } },
   { id: "C-old2", label: "C-BOM", code: "BOM260400320", versions: ["Ver 3", "Ver 2", "Ver 1"],
+    parts: 70, lastActivity: { actor: "CM", action: "Approved", ts: "2026-04-12" },
     cost: { ver: "Ver 2", delta: "-$300", target: "$48,500", overTarget: false } },
-  { id: "Q-old", label: "Q-BOM", code: "BOM260300259", versions: ["Ver 1"], cost: null },
+  { id: "Q-old", label: "Q-BOM", code: "BOM260300259", versions: ["Ver 1"],
+    parts: 9, lastActivity: { actor: "QM", action: "Archived", ts: "2026-03-25" }, cost: null },
 ];
 
 // BOM Status helpers:
@@ -979,9 +985,9 @@ const HERO_ITEM = {
   category: "Display Module", type: "Buy & Sell", uom: "EA",
   status: { D: "warn", C: "block", Q: "block" },
   spec: {
-    "Display Size": "6.7 inch (changed: 6.5\" → 6.7\")",
+    "Display Size": "6.7\" (changed: 6.5\" → 6.7\")",
     "Resolution": "FHD+ (2400×1080)",
-    "Refresh Rate": "120Hz (Changed: 90Hz → 120Hz)",
+    "Refresh Rate": "120Hz (changed: 90Hz → 120Hz)",
     "Panel Type": "AMOLED",
     "Touch Controller": "I2C",
     "Color Depth": "10-bit",
@@ -1477,13 +1483,22 @@ const INBOX_FEED = [
 
 
 const BLOCKING_ITEMS = [
-  { ...HERO_ITEM, blockReason: "PPAP not started, Cost above target (+$7.20)" },
-  { id: 10, partId: "6U8-HKJJ-JRPWM", partName: "Mainboard 5G",
+  { ...HERO_ITEM, bom: "Q", blockReason: "PPAP not started, Cost above target (+$7.20)" },
+  { id: 10, partId: "6U8-HKJJ-JRPWM", partName: "Mainboard 5G", bom: "Q",
     blockReason: "Quality Risk Assessment pending",
     status: { D: "ok", C: "ok", Q: "warn" } },
-  { id: 6, partId: "1W6-4YP3-X6FU2", partName: "Touch Controller I2C",
+  { id: 6, partId: "1W6-4YP3-X6FU2", partName: "Touch Controller I2C", bom: "C",
     blockReason: "Cost variance with market price (+12%)",
     status: { D: "ok", C: "warn", Q: "ok" } },
+  { id: 14, partId: "3K2-PWQ9-CAM01", partName: "Camera Module 50MP", bom: "C",
+    blockReason: "Sole-source risk — second source approval needed",
+    status: { D: "ok", C: "warn", Q: "warn" } },
+  { id: 18, partId: "9B4-TZX7-BATT2", partName: "Battery Pack 5000mAh", bom: "C",
+    blockReason: "Should-cost gap unresolved (+$0.40), RFQ outstanding",
+    status: { D: "ok", C: "warn", Q: "ok" } },
+  { id: 11, partId: "2N8-GLV2-DISP3", partName: "Gorilla Glass Victus 2", bom: "E",
+    blockReason: "Spec change Rev B — downstream re-validation required",
+    status: { D: "warn", C: "ok", Q: "ok" } },
 ];
 
 // === STATUS BADGE ===
@@ -1493,6 +1508,19 @@ const STATUS_MAP = {
   warn:     { color: "#dc6803", bg: "#fffaeb", label: "Attention" },
   block:    { color: "#d92d20", bg: "#fef3f2", label: "Blocked" },
   done:     { color: "#039855", bg: "#ecfdf3", label: "Done" },
+};
+
+// Display label for BOM status keys. The data stores "D" (Design) historically,
+// but the UI shows it as "E" to match the E-BOM (Engineering) naming. C/Q unchanged.
+const STATUS_KEY_LABEL = { D: "E", C: "C", Q: "Q" };
+const statusKeyLabel = (k) => STATUS_KEY_LABEL[k] || k;
+
+// Date display helper — converts ISO "YYYY-MM-DD" to "MM/DD/YYYY" for full-date contexts.
+// Inputs that aren't ISO (e.g. "Apr 25", "TBD", "2 hours ago") pass through unchanged.
+const fmtDate = (s) => {
+  if (typeof s !== "string") return s;
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? `${m[2]}/${m[3]}/${m[1]}` : s;
 };
 
 function StatusDot({ kind = "ok", size = 8 }) {
@@ -1506,8 +1534,8 @@ function StatusDot({ kind = "ok", size = 8 }) {
 function StatusPill({ kind, label }) {
   const s = STATUS_MAP[kind] || STATUS_MAP.ok;
   return (
-    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium"
-      style={{ color: s.color, backgroundColor: s.bg }}>
+    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium border"
+      style={{ color: s.color, backgroundColor: s.bg, borderColor: s.color + "40" }}>
       <StatusDot kind={kind} size={6} />
       {label || s.label}
     </span>
@@ -1582,7 +1610,7 @@ function GNB({ activePersona, setActivePersona, view, setView, scenarioStep, tot
             </span>
           </button>
 
-          {/* Notification Bell */}
+          {/* Notifications — hover shows a preview dropdown, click opens the full inbox in the body */}
           {(() => {
             const myUnreadCount = INBOX_FEED.filter((m) => {
               if (m.to !== activePersona) return false;
@@ -1590,9 +1618,11 @@ function GNB({ activePersona, setActivePersona, view, setView, scenarioStep, tot
               return !m.read;
             }).length;
             return (
-              <div className="relative">
-                <button onClick={() => setNotifOpen(!notifOpen)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+              <div className="relative"
+                onMouseEnter={() => setNotifOpen(true)}
+                onMouseLeave={() => setNotifOpen(false)}>
+                <button onClick={() => { setView("inbox"); setNotifOpen(false); }}
+                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors relative"
                   title="Notifications">
                   <Bell className="w-[22px] h-[22px]" style={{ color: "#4B5565" }} strokeWidth={1.5} />
                   {myUnreadCount > 0 && (
@@ -1614,26 +1644,6 @@ function GNB({ activePersona, setActivePersona, view, setView, scenarioStep, tot
               </div>
             );
           })()}
-
-          {/* Inbox button */}
-          <button onClick={() => setView("inbox")}
-            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors relative"
-            title="Inbox">
-            <Inbox className="w-[22px] h-[22px]" style={{ color: "#4B5565" }} strokeWidth={1.5} />
-            {(() => {
-              const total = INBOX_FEED.filter((m) => {
-                if (m.to !== activePersona) return false;
-                if (m.source === "scenario" && scenarioStep < m.scenarioStep) return false;
-                return !m.read;
-              }).length;
-              return total > 0 ? (
-                <span className="absolute -top-0.5 -right-0.5 text-[10px] font-medium text-white rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: C.error, minWidth: 14, height: 14, padding: "0 3px" }}>
-                  {total}
-                </span>
-              ) : null;
-            })()}
-          </button>
 
           {/* Persona Avatar (selector) */}
           <div className="relative">
@@ -2042,7 +2052,7 @@ function PageHeader({ breadcrumbs = [], title, starable = false, onStar, isStarr
 function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setActiveBom,
                          dDay, readiness, blocking: blockingProp,
                          activePersona, setActivePersona,
-                         onOpenChat, primaryCta, isCollapsed, setIsCollapsed }) {
+                         onOpenChat, primaryCta, isCollapsed, setIsCollapsed, setSelectedItemId }) {
   const isHeroProject = project.code === ACTIVE_PROJECT_CODE;
   const isResolved = isHeroProject && scenarioStep >= 8;
   const blocking = blockingProp !== undefined ? blockingProp : (isResolved ? 0 : project.blocking);
@@ -2164,7 +2174,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
                       const hasIssue = bom.syncDelta > 0 || bom.missing > 0;
                       return (
                         <button key={bom.id}
-                          onClick={() => { if (!isDisabled && setActiveBom) setActiveBom(bom.id); }}
+                          onClick={() => { if (!isDisabled && setActiveBom) { setActiveBom(bom.id); if (setSelectedItemId) setSelectedItemId(null); } }}
                           disabled={isDisabled}
                           className="w-8 h-7 rounded flex items-center justify-center text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed relative"
                           style={{
@@ -2257,35 +2267,6 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
           </div>
         </div>
 
-        {/* Quick actions — separated from identity group with extra spacing */}
-        <div className="flex items-center gap-2 mt-2">
-          <button
-            onClick={() => onOpenChat && onOpenChat(null)}
-            title="Chat"
-            className="relative w-9 h-9 rounded-full flex items-center justify-center border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-            style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
-            <MessageSquare className="w-4 h-4" />
-            {/* Unread message badge — Hero project demo: 3 unread mentions awaiting PM response.
-                Auto-hides when scenario is resolved (PM has processed all activity). */}
-            {(() => {
-              const isHero = project.code === "BPM260400354";
-              const isResolved = scenarioStep >= 8;
-              if (!isHero || isResolved) return null;
-              const unreadCount = 3;
-              return (
-                <span
-                  className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[10px] font-medium text-white border-2 border-white"
-                  style={{ backgroundColor: C.error }}>
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              );
-            })()}
-          </button>
-          <CollaboratorsCircleButton
-            members={getCollaboratorsForProject(project)}
-            activePersona={activePersona}
-            setActivePersona={setActivePersona} />
-        </div>
       </div>
 
       {/* Divider between Header and Menu */}
@@ -2304,7 +2285,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
                   setView={setView}
                   isExpanded={item.expandable ? bomExpanded : undefined}
                   onClick={item.expandable
-                    ? () => { setView("bom"); setBomExpanded(true); }
+                    ? () => { setView("bom"); setBomExpanded(true); if (setSelectedItemId) setSelectedItemId(null); }
                     : undefined}
                 />
                 {/* BOM Collaboration sub-items */}
@@ -2323,6 +2304,7 @@ function ProjectLeftNav({ view, setView, project, scenarioStep, activeBom, setAc
                             if (isDisabled) return;
                             setView("bom");
                             if (setActiveBom) setActiveBom(bom.id);
+                            if (setSelectedItemId) setSelectedItemId(null);
                           }}
                           disabled={isDisabled}
                           className="flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
@@ -3389,9 +3371,9 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
         setView={setView}
       />
 
-      <div className="px-8 pt-2 pb-6">
+      <div className="px-6 pb-6" style={{ marginTop: -4 }}>
       {/* Unified content box — radius 24 (rounded-3xl) */}
-      <div className="rounded-3xl border bg-white overflow-hidden" style={{ borderColor: C.border }}>
+      <div className="rounded-3xl border bg-white overflow-hidden" style={{ borderColor: C.border, borderRadius: 24 }}>
 
       {/* (1) Filter bar section — 24px horizontal padding */}
       <div className="px-6 py-3 flex items-center gap-x-5 gap-y-3 flex-wrap">
@@ -3464,18 +3446,21 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
             const isActive = statusFilter === chip.id;
             return (
               <React.Fragment key={chip.id}>
-                <button onClick={() => setStatusFilter(chip.id)}
+                <button onClick={() => setStatusFilter(isActive ? "all" : chip.id)}
                   className="flex items-center gap-1.5 px-3.5 py-1 text-[12px] transition-colors focus:outline-none focus-visible:ring-2"
                   style={{
-                    backgroundColor: isActive ? "white" : "transparent",
-                    color: isActive ? C.primary : C.textSecondary,
-                    boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+                    backgroundColor: isActive ? C.primary : "transparent",
+                    color: isActive ? "white" : C.textSecondary,
                     borderRadius: 1000,
-                  }}>
+                  }}
+                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = "white"; }}
+                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = "transparent"; }}>
                   <span>{chip.label}</span>
-                  <span className="font-medium" style={{ color: isActive ? C.primary : C.textPrimary }}>{chip.count}</span>
+                  <span className="font-medium" style={{ color: isActive ? "white" : C.textPrimary }}>{chip.count}</span>
                 </button>
-                {i < arr.length - 1 && <div className="w-px h-3" style={{ backgroundColor: C.border }} />}
+                {!isActive && statusFilter !== arr[i + 1]?.id && i < arr.length - 1 && (
+                  <div className="w-px h-3" style={{ backgroundColor: C.border }} />
+                )}
               </React.Fragment>
             );
           })}
@@ -3919,18 +3904,55 @@ function ProjectList({ activeProjectCode, setActiveProjectCode, setView }) {
 
 
 // === SCREEN 1. PROJECT COCKPIT ===
-function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, activePersona }) {
+function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, activePersona, setActiveBom, setSelectedItemId }) {
   const project = PROJECTS.find((p) => p.code === activeProjectCode) || PROJECTS[0];
   const isHeroProject = project.code === ACTIVE_PROJECT_CODE;
 
   // Scenario operates only on Hero Project (NPI Smartphone #2)
   const isResolved = isHeroProject && scenarioStep >= 8;
   const readiness = isResolved ? 96 : project.readiness;
-  const blocking = isResolved ? 0 : project.blocking;
   const tmcGap = isResolved ? -2.1 : project.tmcGap;
 
   // Hero project uses BLOCKING_ITEMS scenario data; others get generic placeholder
   const blockingItems = isHeroProject ? BLOCKING_ITEMS : generateGenericBlockingItems(project);
+
+  // Pending-decisions count — kept in sync with the actual item list for the Hero project
+  // so the KPI tile, widget, and "View All" modal all agree.
+  const blocking = isResolved ? 0 : (isHeroProject ? blockingItems.length : project.blocking);
+
+  // "View All" modals for Pending Decisions & Recent Activity (keeps Overview context)
+  const [decisionsModalOpen, setDecisionsModalOpen] = useState(false);
+  const [activityModalOpen, setActivityModalOpen] = useState(false);
+
+  // Recent Activity feed — shared by the widget (top 3) and the View All modal (full list).
+  const recentActivity = [
+    { persona: "QM", name: "Quinn R.", role: "Quality Manager", time: "29 min ago",
+      bom: "Q", bomLabel: "Q-BOM",
+      msg: "D-23 to the Develop Phase Gate. The new AMOLED Panel addition is blocked on both Cost & PPAP. Please review." },
+    { persona: "SM", name: "Sam Lee", role: "Sourcing Manager", time: "28 min ago",
+      bom: "C", bomLabel: "C-BOM",
+      msg: "Display Module: Gorilla Glass Victus 2 confirmed. +20% strength gain. Spec docs updated." },
+    { persona: "CM", name: "Cory Chen", role: "Cost Manager", time: "29 min ago",
+      bom: "Q", bomLabel: "Q-BOM",
+      msg: "Drafting PFMEA for the Bonding process. We likely need to add a Critical entry for OCA lamination." },
+    { persona: "DE", name: "Dean Park", role: "Design Engineer", time: "1 hour ago",
+      bom: "E", bomLabel: "E-BOM",
+      msg: "AMOLED Panel 6.7\" Rev B spec uploaded. Connector pin-map revised — please re-validate downstream." },
+    { persona: "SM", name: "Sam Lee", role: "Sourcing Manager", time: "2 hours ago",
+      bom: "C", bomLabel: "C-BOM",
+      msg: "Main Board 5G: second-source RFQ issued to 2 suppliers. Quotes expected within 3 days." },
+    { persona: "QM", name: "Quinn R.", role: "Quality Manager", time: "3 hours ago",
+      bom: "Q", bomLabel: "Q-BOM",
+      msg: "Camera Module PPAP Level 3 submission received. Dimensional report under review." },
+    { persona: "CM", name: "Cory Chen", role: "Cost Manager", time: "5 hours ago",
+      bom: "C", bomLabel: "C-BOM",
+      msg: "Battery Pack should-cost updated with new cell pricing. Gap to quoted narrowed to +$0.40." },
+  ];
+
+  // Helper: BOM tag colors for activity / decision source chips.
+  const bomTintOf = (b) => ({ E: C.infoLight, C: C.warningLight, Q: "#f4eafe" }[b] || C.borderLight);
+  const bomColorOf = (b) => ({ E: C.info, C: C.warning, Q: "#7c3aed" }[b] || C.textSecondary);
+  const goToBom = (b) => { if (setActiveBom) setActiveBom(b); if (setSelectedItemId) setSelectedItemId(null); if (setView) setView("bom"); };
 
   // Per-phase Gate Readiness 3 sub-indicators (Design / Source & Cost / Quality)
   // Values average to the main readiness % for math consistency.
@@ -4152,7 +4174,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
               setView && setView("bom");
             } else if (isHeroProject && blockingItems.length > 0) {
               // Has blocking + hero: open first blocking item in BOM Coll
-              onOpenItem && onOpenItem(blockingItems[0].id);
+              onOpenItem && onOpenItem(blockingItems[0].id, blockingItems[0].bom);
             } else {
               // Has blocking + non-hero: jump to BOM Coll
               setView && setView("bom");
@@ -4204,13 +4226,15 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
         <div className="col-span-3 rounded-3xl bg-white p-6 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Pending Decisions</div>
-            <button
-              onClick={() => setView && setView("bom")}
-              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
-              style={{ color: C.primary }}>
-              View All
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            {blocking > 0 && (
+              <button
+                onClick={() => setDecisionsModalOpen(true)}
+                className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
+                style={{ color: C.primary }}>
+                View More
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             {(blocking > 0 ? blockingItems : []).slice(0, 4).map((item) => (
@@ -4228,7 +4252,7 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
                 </div>
                 {isHeroProject && (
                   <button
-                    onClick={() => onOpenItem && onOpenItem(item.id)}
+                    onClick={() => onOpenItem && onOpenItem(item.id, item.bom)}
                     className="h-6 px-2 rounded border text-[12px] font-medium shrink-0 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                     style={{ borderColor: C.primary, color: C.primary, backgroundColor: "white" }}>
                     Review
@@ -4253,13 +4277,6 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
         <div className="col-span-2 rounded-3xl bg-white p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Risk Summary</div>
-            <button
-              onClick={() => setView && setView("bom")}
-              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
-              style={{ color: C.primary }}>
-              View All
-              <ChevronRight className="w-4 h-4" />
-            </button>
           </div>
           <div className="flex flex-col gap-4">
             {[
@@ -4287,37 +4304,141 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
           <div className="flex items-center justify-between mb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Recent Activity</div>
             <button
-              onClick={() => setView && setView("bom")}
+              onClick={() => setActivityModalOpen(true)}
               className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
               style={{ color: C.primary }}>
-              View All
+              View More
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           <div className="flex flex-col">
-            {[
-              { persona: "QM", name: "Quinn R.", role: "Quality Manager", time: "29 min ago",
-                msg: "D-23 to the Develop Phase Gate. The new AMOLED Panel addition is blocked on both Cost & PPAP. Please review." },
-              { persona: "SM", name: "Sam Lee", role: "Sourcing Manager", time: "28 min ago",
-                msg: "Display Module: Gorilla Glass Victus 2 confirmed. +20% strength gain. Spec docs updated." },
-              { persona: "CM", name: "Cory Chen", role: "Cost Manager", time: "29 min ago",
-                msg: "Drafting PFMEA for the Bonding process. We likely need to add a Critical entry for OCA lamination." },
-            ].map((a, i) => (
-              <div key={i} className="flex items-start gap-2 py-2">
-                <PersonaAvatar p={a.persona} size={32} />
-                <div className="flex-1 min-w-0 flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-medium" style={{ color: C.textPrimary }}>{a.name}</span>
-                    <span className="text-[12px]" style={{ color: C.textSecondary }}>{a.time}</span>
+            {recentActivity.slice(0, 3).map((a, i) => {
+              const bomTint = bomTintOf(a.bom);
+              const bomColor = bomColorOf(a.bom);
+              return (
+                <div key={i} className="flex items-start gap-2 py-2">
+                  <PersonaAvatar p={a.persona} size={32} />
+                  <div className="flex-1 min-w-0 flex flex-col">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[14px] font-medium" style={{ color: C.textPrimary }}>{a.name}</span>
+                      <span className="text-[10px]" style={{ color: C.textSecondary }}>{a.role}</span>
+                      <span className="text-[12px]" style={{ color: C.textSecondary }}>· {a.time}</span>
+                      <button
+                        onClick={() => goToBom(a.bom)}
+                        title={`View activity in ${a.bomLabel}`}
+                        className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+                        style={{ backgroundColor: bomTint, color: bomColor }}>
+                        {a.bomLabel}
+                      </button>
+                    </div>
+                    <p className="text-[14px] leading-5 mt-0.5" style={{ color: C.textPrimary }}>{a.msg}</p>
                   </div>
-                  <span className="text-[10px] leading-[14px]" style={{ color: C.textSecondary }}>{a.role}</span>
-                  <p className="text-[14px] leading-5 mt-0.5" style={{ color: C.textPrimary }}>{a.msg}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
+
+      {/* ===== View All Modal: Pending Decisions ===== */}
+      {decisionsModalOpen && (
+        <>
+          <div className="fixed inset-0 z-40" style={{ backgroundColor: "rgba(16, 24, 40, 0.4)" }}
+            onClick={() => setDecisionsModalOpen(false)} />
+          <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
+            style={{ transform: "translate(-50%, -50%)", width: "min(640px, 92vw)", maxHeight: "80vh" }}>
+            <div className="flex items-center justify-between px-6 py-4 border-b shrink-0" style={{ borderColor: C.border }}>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" style={{ color: C.error }} />
+                <span className="text-[16px] font-medium" style={{ color: C.textPrimary }}>
+                  Pending Decisions <span style={{ color: C.textSecondary }}>· {blockingItems.length}</span>
+                </span>
+              </div>
+              <button onClick={() => setDecisionsModalOpen(false)}
+                className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2"
+                style={{ color: C.textSecondary }} title="Close">
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="overflow-y-auto px-6 py-4 flex flex-col gap-2">
+              {blockingItems.map((item) => {
+                const b = item.bom || "Q";
+                return (
+                  <div key={item.id} className="flex items-center gap-2 px-4 py-3 rounded-xl"
+                    style={{ backgroundColor: C.surfaceTinted }}>
+                    <div className="flex-1 min-w-0 flex flex-col gap-1">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <span className="text-[14px] font-medium" style={{ color: C.textPrimary }}>
+                          {item.partName || item.partId}
+                        </span>
+                        <span className="text-[14px] tabular-nums" style={{ color: C.textSecondary }}>{item.partId}</span>
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded self-center"
+                          style={{ backgroundColor: bomTintOf(b), color: bomColorOf(b) }}>
+                          {b}-BOM
+                        </span>
+                      </div>
+                      <span className="text-[14px]" style={{ color: C.textSecondary }}>{item.blockReason}</span>
+                    </div>
+                    <button
+                      onClick={() => { setDecisionsModalOpen(false); onOpenItem && onOpenItem(item.id, item.bom); }}
+                      className="h-7 px-3 rounded border text-[12px] font-medium shrink-0 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2"
+                      style={{ borderColor: C.primary, color: C.primary, backgroundColor: "white" }}>
+                      Review
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ===== View All Modal: Recent Activity ===== */}
+      {activityModalOpen && (
+        <>
+          <div className="fixed inset-0 z-40" style={{ backgroundColor: "rgba(16, 24, 40, 0.4)" }}
+            onClick={() => setActivityModalOpen(false)} />
+          <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
+            style={{ transform: "translate(-50%, -50%)", width: "min(640px, 92vw)", maxHeight: "80vh" }}>
+            <div className="flex items-center justify-between px-6 py-4 border-b shrink-0" style={{ borderColor: C.border }}>
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4" style={{ color: C.primary }} />
+                <span className="text-[16px] font-medium" style={{ color: C.textPrimary }}>
+                  Recent Activity <span style={{ color: C.textSecondary }}>· {recentActivity.length}</span>
+                </span>
+              </div>
+              <button onClick={() => setActivityModalOpen(false)}
+                className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2"
+                style={{ color: C.textSecondary }} title="Close">
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="overflow-y-auto px-6 py-2 flex flex-col">
+              {recentActivity.map((a, i) => (
+                <div key={i} className="flex items-start gap-2 py-3"
+                  style={{ borderBottom: i < recentActivity.length - 1 ? `1px solid ${C.borderLight}` : "none" }}>
+                  <PersonaAvatar p={a.persona} size={32} />
+                  <div className="flex-1 min-w-0 flex flex-col">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[14px] font-medium" style={{ color: C.textPrimary }}>{a.name}</span>
+                      <span className="text-[10px]" style={{ color: C.textSecondary }}>{a.role}</span>
+                      <span className="text-[12px]" style={{ color: C.textSecondary }}>· {a.time}</span>
+                      <button
+                        onClick={() => { setActivityModalOpen(false); goToBom(a.bom); }}
+                        title={`View activity in ${a.bomLabel}`}
+                        className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
+                        style={{ backgroundColor: bomTintOf(a.bom), color: bomColorOf(a.bom) }}>
+                        {a.bomLabel}
+                      </button>
+                    </div>
+                    <p className="text-[14px] leading-5 mt-0.5" style={{ color: C.textPrimary }}>{a.msg}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -4328,17 +4449,22 @@ function ProjectCockpit({ onOpenItem, scenarioStep, activeProjectCode, setView, 
 // + BOM Review Queue + Changes Submitted + DVT Validation + Process Sheet Completeness
 function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
   // ===== Mock data for DE scenario (Hero project) =====
-  // BOM Review Queue: changes others submitted that DE needs to accept/decide/review
+  // BOM Review Queue: changes others submitted that DE needs to review.
+  // 'blocking' items are gate-blocking and surface at the top so DE sees them immediately.
+  // Every actionable row uses "Review" — the actual resolve happens in the part detail (Item360).
   const bomReviewQueue = isResolved ? [] : [
     { id: 3, partId: "EI2-I6DA-003WB", partName: "AMOLED Panel 6.7\"",
-      meta: "Display spec: 6.5\" 90Hz → 6.7\" 120Hz",
-      status: "conflict", action: "Resolve" },
+      meta: "BOE Technology recommended by SM ($38.90, 3 quotes compared)",
+      status: "supplier-review", action: "Review" },
+    { id: 10, partId: "6U8-HKJJ-JRPWM", partName: "Mainboard 5G",
+      meta: "Blocked: thermal re-validation pending for new AMOLED draw",
+      status: "blocking", action: "Review" },
     { id: 7, partId: "GL2-7HKR-WA1Z3", partName: "Cover Glass Gorilla Victus 2",
       meta: "Thickness: 0.65mm → 0.70mm — CM proposed",
-      status: "pending", action: "Decide" },
+      status: "pending", action: "Review" },
     { id: 9, partId: "QE3-8DHV-XIRG8", partName: "Fan Module",
       meta: "Blade material: PC → PC+ABS — supplier suggested",
-      status: "pending", action: "Decide" },
+      status: "pending", action: "Review" },
     { id: 6, partId: "1W6-4YP3-X6FU2", partName: "Touch Controller IC",
       meta: "New part added by CM",
       status: "pending", action: "Review" },
@@ -4400,9 +4526,11 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
 
   // Status meta for review queue
   const statusMeta = {
-    conflict: { label: "Conflict", bg: C.errorLight, fg: C.error, actionBorder: C.error },
-    pending:  { label: "Pending",  bg: C.warningLight, fg: C.warning, actionBorder: C.warning },
-    accepted: { label: "Accepted", bg: C.successLight, fg: C.success, actionBorder: null },
+    blocking:        { label: "Blocking",        bg: C.errorLight,   fg: C.error,   actionBorder: C.error },
+    "supplier-review": { label: "Supplier Review", bg: C.primarySoft, fg: C.primary, actionBorder: C.primary },
+    conflict:        { label: "Conflict",        bg: C.errorLight,   fg: C.error,   actionBorder: C.error },
+    pending:         { label: "Pending",         bg: C.warningLight, fg: C.warning, actionBorder: C.warning },
+    accepted:        { label: "Accepted",        bg: C.successLight, fg: C.success, actionBorder: null },
   };
 
   return (
@@ -4450,6 +4578,72 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           label: "New Parts (No Supplier)", value: newParts },
       ]} />
 
+      {/* === Supplier Submissions From SM ===
+          When SM submits a recommended supplier for DE's review (spec fit confirmation).
+          Hidden once the scenario is resolved. */}
+      {!isResolved && (() => {
+        const submissions = [
+          {
+            partId: 3, partName: "AMOLED Panel 6.7\"",
+            supplier: "BOE Technology",
+            quote: 38.90, deltaVsShould: -2.90,
+            risk: "Med", cap: 88, perf: 85,
+            submittedBy: "Sam Lee", submittedAt: "28 min ago",
+            quotesCompared: 3,
+          },
+        ];
+        if (submissions.length === 0) return null;
+        return (
+          <div className="mb-3 rounded-3xl bg-white">
+            <div className="px-6 pt-6 pb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>
+                  Supplier Submissions From SM
+                </div>
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1"
+                  style={{ backgroundColor: C.primarySoft, color: C.primary }}>
+                  <Sparkles className="w-3 h-3" />
+                  {submissions.length} pending
+                </span>
+              </div>
+            </div>
+            <div className="divide-y" style={{ borderColor: C.borderLight }}>
+              {submissions.map((s, i) => (
+                <div key={i} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                  <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: C.primarySoft, color: C.primary }}>
+                    <Package className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{s.supplier}</span>
+                      <ArrowRight className="w-3 h-3" style={{ color: C.textDisabled }} />
+                      <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{s.partName}</span>
+                    </div>
+                    <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
+                      <span className="tabular-nums" style={{ color: C.textPrimary }}>${s.quote.toFixed(2)}</span>
+                      <span style={{ color: C.success }}> ({s.deltaVsShould < 0 ? "−" : "+"}${Math.abs(s.deltaVsShould).toFixed(2)} vs Should-cost)</span>
+                      <span style={{ color: C.borderLight }}> · </span>
+                      Risk {s.risk} · Cap {s.cap} · Perf {s.perf}
+                      <span style={{ color: C.borderLight }}> · </span>
+                      Submitted by {s.submittedBy} · {s.submittedAt}
+                      <span style={{ color: C.borderLight }}> · </span>
+                      {s.quotesCompared} quotes compared
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onOpenItem && onOpenItem(s.partId, "E", { tab: "validation" })}
+                    className="h-7 px-3 rounded-md text-[12px] font-medium text-white shrink-0 transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                    style={{ backgroundColor: C.primary }}>
+                    Review Fit
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Row 1: BOM Status chart (1/3) + BOM Review Queue (2/3) */}
       <div className="grid grid-cols-3 gap-3 mb-3">
         {/* BOM Status distribution chart */}
@@ -4465,18 +4659,43 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             { label: "Conflict", value: conflicts, color: C.error },
           ]} />
         {/* My BOM Review Queue */}
-        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="col-span-2 rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4 flex items-center justify-between">
             <div>
-              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>My BOM Review Queue</div>
+              <div className="flex items-center gap-2">
+                <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>My BOM Review Queue</div>
+                {(() => {
+                  const blockingCount = bomReviewQueue.filter(q => q.status === "blocking").length;
+                  const supplierCount = bomReviewQueue.filter(q => q.status === "supplier-review").length;
+                  return (
+                    <>
+                      {blockingCount > 0 && (
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1"
+                          style={{ backgroundColor: C.errorLight, color: C.error }}>
+                          <AlertTriangle className="w-3 h-3" />
+                          {blockingCount} Blocking
+                        </span>
+                      )}
+                      {supplierCount > 0 && (
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full inline-flex items-center gap-1"
+                          style={{ backgroundColor: C.primarySoft, color: C.primary }}>
+                          <Sparkles className="w-3 h-3" />
+                          {supplierCount} Supplier Review
+                        </span>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
               <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
                 Accept or keep each change submitted by collaborators
               </div>
             </div>
             <button onClick={() => setView && setView("bom")}
-              className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
               style={{ color: C.primary }}>
-              Open BOM workspace →
+              View More
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           {bomReviewQueue.length === 0 ? (
@@ -4487,27 +4706,35 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             </div>
           ) : (
             <div className="divide-y" style={{ borderColor: C.borderLight }}>
-              {bomReviewQueue.map((q) => {
+              {[...bomReviewQueue].sort((a, b) => {
+                // Blocking first, then conflict, pending, accepted last.
+                const rank = { blocking: 0, "supplier-review": 1, conflict: 2, pending: 3, accepted: 4 };
+                return (rank[a.status] ?? 9) - (rank[b.status] ?? 9);
+              }).map((q) => {
                 const meta = statusMeta[q.status];
+                const isBlocking = q.status === "blocking";
                 return (
-                  <div key={q.id} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
+                  <div key={q.id} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50"
+                    style={isBlocking ? { borderLeft: `3px solid ${C.error}` } : undefined}>
                     <button
-                      onClick={() => onOpenItem && onOpenItem(q.id)}
+                      onClick={() => onOpenItem && onOpenItem(q.id, "E")}
                       className="flex-1 min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded">
-                      <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{q.partName}</div>
-                      <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{q.partName}</span>
+                        <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shrink-0"
+                          style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                          {meta.label}
+                        </span>
+                      </div>
+                      <div className="text-[12px] mt-0.5" style={{ color: isBlocking ? C.error : C.textSecondary }}>
                         <span className="tabular-nums" style={{ color: C.textDisabled }}>{q.partId}</span>
                         <span style={{ color: C.borderLight }}> · </span>
                         {q.meta}
                       </div>
                     </button>
-                    <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shrink-0"
-                      style={{ backgroundColor: meta.bg, color: meta.fg }}>
-                      {meta.label}
-                    </span>
                     {q.action && (
                       <button
-                        onClick={() => onOpenItem && onOpenItem(q.id)}
+                        onClick={() => onOpenItem && onOpenItem(q.id, "E")}
                         className="h-7 px-2.5 rounded-md text-[12px] font-medium border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                         style={{ borderColor: meta.actionBorder, color: meta.actionBorder, backgroundColor: "white" }}>
                         {q.action}
@@ -4524,11 +4751,10 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       {/* Row 2: Changes I Submitted + DVT Validation + Process Sheet (3-up) */}
       <div className="grid grid-cols-3 gap-4">
         {/* Changes I Submitted */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Changes I Submitted</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>Tracking your spec changes</div>
-          </div>
+                      </div>
           <div className="divide-y" style={{ borderColor: C.borderLight }}>
             {changesSubmitted.map((c) => {
               const stateMeta = {
@@ -4540,35 +4766,32 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               return (
                 <div key={c.id} className="px-5 py-3 flex items-start gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-medium" style={{ color: C.textPrimary }}>{c.title}</div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-medium" style={{ color: C.textPrimary }}>{c.title}</span>
+                      <span className="text-[10px] font-medium tracking-wide px-1.5 py-0.5 rounded shrink-0"
+                        style={{ backgroundColor: stateMeta.bg, color: stateMeta.fg }}>
+                        {stateMeta.label}
+                      </span>
+                    </div>
                     <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{c.meta}</div>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[10px] font-medium tracking-wide px-1.5 py-0.5 rounded"
-                      style={{ backgroundColor: stateMeta.bg, color: stateMeta.fg }}>
-                      {stateMeta.label}
-                    </span>
-                    {stateMeta.action && (
-                      <button onClick={() => setView && setView("bom")}
-                        className="h-6 px-2 rounded text-[10px] font-medium border hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-                        style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
-                        {stateMeta.action}
-                      </button>
-                    )}
-                  </div>
+                  {stateMeta.action && (
+                    <button onClick={() => setView && setView("bom")}
+                      className="h-6 px-2 rounded text-[10px] font-medium border shrink-0 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                      {stateMeta.action}
+                    </button>
+                  )}
                 </div>
               );
             })}
           </div>
         </div>
         {/* DVT Validation Required */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>DVT Validation Required</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-              Design verification tests pending execution
-            </div>
-          </div>
+                      </div>
           {dvtItems.length === 0 ? (
             <div className="text-center py-12">
               <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
@@ -4577,20 +4800,29 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             </div>
           ) : (
             <div className="divide-y" style={{ borderColor: C.borderLight }}>
-              {dvtItems.map((d) => (
-                <div key={d.id} className="px-5 py-3 flex items-start gap-3 transition-colors hover:bg-gray-50">
-                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                    style={{ backgroundColor: d.urgent ? C.error : C.warning }} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{d.title}</div>
-                    <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
+              {dvtItems.map((d) => {
+                const urgencyMeta = d.urgent
+                  ? { label: "Urgent", bg: C.errorLight, fg: C.error }
+                  : { label: "Normal", bg: C.warningLight, fg: C.warning };
+                return (
+                  <div key={d.id} className="px-5 py-3 flex items-start gap-2 transition-colors hover:bg-gray-50">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{d.title}</span>
+                        <span className="text-[10px] font-medium tracking-wide px-1.5 py-0.5 rounded shrink-0"
+                          style={{ backgroundColor: urgencyMeta.bg, color: urgencyMeta.fg }}>
+                          {urgencyMeta.label}
+                        </span>
+                      </div>
+                      <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{d.detail}</div>
+                    </div>
+                    <span className="text-[12px] font-medium shrink-0"
+                      style={{ color: d.due === "TBD" ? C.textDisabled : C.textSecondary }}>
+                      {d.due}
+                    </span>
                   </div>
-                  <span className="text-[12px] font-medium shrink-0"
-                    style={{ color: d.due === "TBD" ? C.textDisabled : C.textSecondary }}>
-                    {d.due}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -4599,8 +4831,7 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         <div className="rounded-3xl bg-white p-6" style={{ borderColor: C.border }}>
           <div className="mb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Process Sheet Completeness</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>Rev B by sub-system</div>
-          </div>
+                      </div>
           <div className="space-y-3.5">
             {processSheets.map((p) => (
               <div key={p.label}>
@@ -4624,7 +4855,7 @@ function DeCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
 // === CM COCKPIT ===
 // Cost Manager-focused dashboard:
 // 5 KPIs (Should vs Quoted Gap, Should-cost Coverage, RFQ Outstanding, Cost Conflicts, Total Cost)
-// + Cost Reconcile table + RFQ Status + My Action Queue
+// + Cost Status table + RFQ Status + My Action Queue
 function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
   // ===== Mock data — Cost reconciliation rows (Hero project parts) =====
   // Hero scenario step 4+: should-cost computed; step 6+: RFQ responses in; step 7+: BOE awarded
@@ -4656,6 +4887,10 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
 
   // ===== My action queue (CM-specific actions) =====
   const actionQueue = isResolved ? [] : [
+    { id: "a0", title: "AMOLED Panel — Final cost roll-up requested",
+      meta: "From Dean Park · 5 min ago · Design Validation complete (Rev B locked). BOE at $38.90 — verify and confirm.",
+      status: "mention", action: "Review",
+      mentionFrom: "DE", partId: 3, partName: "AMOLED Panel 6.7\"" },
     { id: "a1", title: "Resolve AMOLED cost conflict",   meta: "Quoted $38.90 vs Should $41.80 — verify supplier capability", status: "conflict", action: "Resolve" },
     { id: "a2", title: "Enter Should-cost for Battery Cell", meta: "3 items missing Should-cost",                                      status: "pending",  action: "Enter cost" },
     { id: "a3", title: "Confirm Camera Module RFQ target",   meta: "FEPT target $18.00 needs CM approval",                            status: "pending",  action: "Confirm" },
@@ -4687,6 +4922,7 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
 
   // Action queue meta
   const actionMeta = {
+    mention:  { label: "From DE",  bg: C.primarySoft,  fg: C.primary, border: C.primary },
     conflict: { label: "Conflict", bg: C.errorLight,   fg: C.error,   border: C.error },
     pending:  { label: "Pending",  bg: C.warningLight, fg: C.warning, border: C.warning },
   };
@@ -4729,7 +4965,7 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           onClick={() => setView && setView("bom")}
           className="text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0"
           style={{ color: isResolved ? C.success : C.primary }}>
-          {isResolved ? "View C-BOM →" : "Open cost reconcile →"}
+          {isResolved ? "View C-BOM →" : "View in C-BOM →"}
         </button>
       </div>
 
@@ -4746,7 +4982,7 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           label: "Cost Conflicts", value: costConflicts },
       ]} />
 
-      {/* Row: Cost breakdown chart (1/3) + Cost Reconcile table (2/3) */}
+      {/* Row: Cost breakdown chart (1/3) + Cost Status table (2/3) */}
       <div className="grid grid-cols-3 gap-3 mb-3">
         {/* Cost comparison chart — Target vs Quoted vs Should-cost */}
         <MiniProgressCard
@@ -4762,21 +4998,19 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             { label: "Quoted", value: Math.round(totalCost), color: parseFloat(totalGap) > 0 ? C.error : C.success },
             { label: "Should-cost", value: Math.round(targetTotal * 0.98), color: C.info },
           ]} />
-        {/* Cost Reconcile Table */}
-        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        {/* Cost Status Table (read-only summary; editing happens in C-BOM workspace) */}
+        <div className="col-span-2 rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4 flex items-center justify-between">
             <div>
-              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Cost Reconcile — Rev B</div>
-              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-              FEPT Target · Quoted · Should-cost · Gap
+              <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Cost Status — Rev B</div>
             </div>
+            <button onClick={() => setView && setView("bom")}
+              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
+              style={{ color: C.primary }}>
+              View More
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
-          <button onClick={() => setView && setView("bom")}
-            className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-            style={{ color: C.primary }}>
-            Open cost reconcile →
-          </button>
-        </div>
         <table className="w-full">
           <thead>
             <tr style={{ color: C.textDisabled, borderBottom: `1px solid ${C.borderLight}` }}>
@@ -4784,7 +5018,7 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
               <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Target</th>
               <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Quoted</th>
               <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Should-cost</th>
-              <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Gap (Q−T)</th>
+              <th className="text-right font-medium text-[10px] tracking-wider py-2.5 px-3">Gap vs Target</th>
               <th className="text-left font-medium text-[10px] tracking-wider py-2.5 px-5 w-32">Status</th>
             </tr>
           </thead>
@@ -4833,13 +5067,10 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       {/* Row: RFQ Status (1/2) + My Action Queue (1/2) */}
       <div className="grid grid-cols-2 gap-3">
         {/* RFQ Status */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>RFQ Status</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-              Supplier quote engagement progress
-            </div>
-          </div>
+                      </div>
           {rfqRows.length === 0 ? (
             <div className="text-center py-12">
               <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
@@ -4867,13 +5098,10 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
 
         {/* My Action Queue */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>My Action Queue</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-              CM tasks requiring your input
-            </div>
-          </div>
+                      </div>
           {actionQueue.length === 0 ? (
             <div className="text-center py-12">
               <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
@@ -4884,18 +5112,35 @@ function CmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             <div className="divide-y" style={{ borderColor: C.borderLight }}>
               {actionQueue.map((a) => {
                 const meta = actionMeta[a.status];
+                const isMention = a.status === "mention";
+                const handleClick = () => {
+                  if (isMention && a.partId && onOpenItem) {
+                    onOpenItem(a.partId, "C", { tab: "procurement" });
+                  } else if (setView) {
+                    setView("bom");
+                  }
+                };
                 return (
-                  <div key={a.id} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50">
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{a.title}</div>
-                      <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>{a.meta}</div>
-                    </div>
-                    <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shrink-0"
-                      style={{ backgroundColor: meta.bg, color: meta.fg }}>
-                      {meta.label}
-                    </span>
-                    <button
-                      onClick={() => setView && setView("bom")}
+                  <div key={a.id} className="px-6 py-3 flex items-center gap-3 transition-colors hover:bg-gray-50"
+                    style={isMention ? { borderLeft: `3px solid ${C.primary}` } : undefined}>
+                    {isMention && (
+                      <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
+                        style={{ backgroundColor: C.primarySoft, color: C.primary }}>
+                        <AtSign className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+                    <button onClick={handleClick}
+                      className="flex-1 min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{a.title}</span>
+                        <span className="text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shrink-0"
+                          style={{ backgroundColor: meta.bg, color: meta.fg }}>
+                          {meta.label}
+                        </span>
+                      </div>
+                      <div className="text-[12px] mt-0.5" style={{ color: isMention ? C.textPrimary : C.textSecondary }}>{a.meta}</div>
+                    </button>
+                    <button onClick={handleClick}
                       className="h-7 px-2.5 rounded-md text-[12px] font-medium border transition-colors shrink-0 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                       style={{ borderColor: meta.border, color: meta.border, backgroundColor: "white" }}>
                       {a.action}
@@ -5037,20 +5282,18 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
             { label: "Multi source", value: 80 - soleSourceCount - (altSourcingActive + 12), color: C.success },
           ]} />
         {/* Market Commodities */}
-        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="col-span-2 rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4 flex items-center justify-between">
             <div>
               <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>
                 Market Commodities — Live Tracking
               </div>
-              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-                High-volatility items requiring GCM response
-            </div>
-          </div>
+                        </div>
           <button onClick={() => setView && setView("bom")}
-            className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
             style={{ color: C.primary }}>
-            Full commodity view →
+            View More
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
         <div className="px-5 py-3 divide-y" style={{ borderColor: C.borderLight }}>
@@ -5099,18 +5342,16 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       {/* Row: SSS Risk Dashboard (1/2) + My GCM Action Queue (1/2) */}
       <div className="grid grid-cols-2 gap-3">
         {/* SSS Risk Dashboard */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4 flex items-center justify-between">
             <div>
               <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>SSS Risk Dashboard</div>
-              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-                Sole / Single / Dual+ source distribution
-              </div>
-            </div>
+                          </div>
             <button onClick={() => setView && setView("bom")}
-              className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
               style={{ color: C.primary }}>
-              Full risk view →
+              View More
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           <div className="px-5 py-5 space-y-4">
@@ -5140,13 +5381,10 @@ function SmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
 
         {/* My GCM Action Queue */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>My GCM Action Queue</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-              Sourcing decisions requiring your input
-            </div>
-          </div>
+                      </div>
           {actionQueue.length === 0 ? (
             <div className="text-center py-12">
               <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
@@ -5205,10 +5443,7 @@ function ApqpGanttChart() {
       <div className="flex items-center justify-between mb-3">
         <div>
           <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>APQP Program Timeline</div>
-          <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-            Advanced Product Quality Planning — 5-phase progress
-          </div>
-        </div>
+                  </div>
         <div className="flex items-center gap-3 text-[10px]" style={{ color: C.textSecondary }}>
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: C.success }} />Complete</span>
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: C.info }} />Active</span>
@@ -5436,20 +5671,18 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
           );
         })()}
         {/* PCR Tracker */}
-        <div className="col-span-2 rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
+        <div className="col-span-2 rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4 flex items-center justify-between">
             <div>
               <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>
                 PCR Tracker — Cross-functional SSOT
               </div>
-              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-                Engineering · SQE · GCM — same real-time view
-              </div>
-            </div>
+                          </div>
           <button onClick={() => setView && setView("bom")}
-            className="text-xs font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            className="flex items-center gap-1 text-[12px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded"
             style={{ color: C.primary }}>
-            Open BOM workspace →
+            View More
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
         <table className="w-full">
@@ -5503,13 +5736,10 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
       {/* Row: PPAP Status (1/2) + DVT Open Issues (1/2) */}
       <div className="grid grid-cols-2 gap-3">
         {/* PPAP Status */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>PPAP Status</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-              Per-part PPAP submission progress
-            </div>
-          </div>
+                      </div>
           <div className="divide-y" style={{ borderColor: C.borderLight }}>
             {ppapStatus.map((p) => (
               <div key={p.id} className="px-5 py-3 transition-colors hover:bg-gray-50">
@@ -5535,13 +5765,10 @@ function QmCockpit({ project, scenarioStep, isResolved, onOpenItem, setView }) {
         </div>
 
         {/* DVT Open Issues */}
-        <div className="rounded-3xl bg-white" style={{ borderColor: C.border }}>
-          <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: C.border }}>
+        <div className="rounded-3xl bg-white">
+          <div className="px-6 pt-6 pb-4">
             <div className="text-[20px] font-medium" style={{ color: C.textPrimary }}>DVT Open Issues</div>
-            <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
-              Design verification test results pending
-            </div>
-          </div>
+                      </div>
           {dvtIssues.length === 0 ? (
             <div className="text-center py-12">
               <CheckCircle className="w-10 h-10 mx-auto mb-2" style={{ color: C.success }} />
@@ -5782,7 +6009,7 @@ function GeneralInfo({ activeProjectCode, activePersona, setActivePersona }) {
                       <div className="text-[12px] font-medium" style={{ color: isActive ? C.primary : C.textPrimary }}>
                         {ms.phase}
                       </div>
-                      <div className="text-[10px]" style={{ color: C.textSecondary }}>{ms.date}</div>
+                      <div className="text-[10px]" style={{ color: C.textSecondary }}>{fmtDate(ms.date)}</div>
                     </div>
                     {i < meta.keyMilestones.length - 1 && (
                       <div className="h-px flex-1 mb-6"
@@ -6185,6 +6412,38 @@ function CollaboratorsScreen({ activeProjectCode }) {
     { id: "decisions", label: "Decisions" },
   ];
 
+  // Areas shown as their own permission columns in the table header (Files/Decisions stay implicit).
+  const PERM_COLUMNS = [
+    { id: "ebom", label: "E-BOM" },
+    { id: "cbom", label: "C-BOM" },
+    { id: "qbom", label: "Q-BOM" },
+  ];
+
+  // Renders a single per-area permission cell: Edit (filled) / View (outlined) / — (none).
+  const PermissionCell = ({ level }) => {
+    if (level === "edit") {
+      return (
+        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center justify-center"
+          title="Edit access"
+          style={{ backgroundColor: C.primaryLight, color: C.primary }}>
+          Edit
+        </span>
+      );
+    }
+    if (level === "view") {
+      return (
+        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center justify-center border"
+          title="View-only access"
+          style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
+          View
+        </span>
+      );
+    }
+    return (
+      <span className="text-[12px]" title="No access" style={{ color: C.textDisabled }}>—</span>
+    );
+  };
+
   const defaultPermissionsFor = (key, isExternal) => {
     if (isExternal) {
       // External suppliers — restricted: only see what they need to quote/respond
@@ -6277,25 +6536,9 @@ function CollaboratorsScreen({ activeProjectCode }) {
 
   return (
     <div className="p-6 space-y-4" style={{ minHeight: "100%" }}>
-      {/* === Header / toolbar (shared above both tables) === */}
-      <div className="rounded-xl border bg-white px-5 py-3 flex items-center justify-between flex-wrap gap-3" style={{ borderColor: C.border }}>
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
-            Collaborators
-            <span className="text-xs font-normal ml-2" style={{ color: C.textSecondary }}>
-              Internal {filteredInternal.length} · External {filteredExternal.length}
-            </span>
-          </div>
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: C.textDisabled }} />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
-              className="h-7 pl-7 pr-3 rounded-md border text-xs outline-none focus:outline-none focus-visible:ring-2"
-              style={{ borderColor: C.border, backgroundColor: C.surfaceTinted, width: 220, color: C.textPrimary }} />
-          </div>
-        </div>
+      {/* === Title + actions row === */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="text-[20px] font-medium" style={{ color: C.textPrimary }}>Collaborators</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveAction("update")}
@@ -6322,9 +6565,9 @@ function CollaboratorsScreen({ activeProjectCode }) {
       </div>
 
       {/* === INTERNAL TABLE === */}
-      <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-        <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-          <div className="text-[12px] font-medium tracking-wider" style={{ color: C.textSecondary }}>
+      <div className="rounded-xl bg-white overflow-hidden">
+        <div className="px-1 py-1 flex items-center justify-between">
+          <div className="text-[12px] font-medium" style={{ color: C.textSecondary }}>
             Internal · {filteredInternal.length}
           </div>
         </div>
@@ -6332,8 +6575,8 @@ function CollaboratorsScreen({ activeProjectCode }) {
           <table className="w-full text-xs">
             <thead style={{ backgroundColor: C.bg }}>
               <tr style={{ color: C.textSecondary, borderBottom: `1px solid ${C.border}` }}>
-                <th className="text-center font-medium py-2 px-3 w-8">
-                  <input type="checkbox" className="rounded"
+                <th className="text-center font-medium py-2 pl-4 pr-1 w-10">
+                  <input type="checkbox" className="rounded" style={{ accentColor: C.primary }}
                     checked={filteredInternal.length > 0 && filteredInternal.every(c => selectedIds.has(`int-${c.persona}`))}
                     onChange={(e) => {
                       const ids = filteredInternal.map(c => `int-${c.persona}`);
@@ -6343,7 +6586,9 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 <th className="text-left font-medium py-2 px-3 w-32">Name</th>
                 <th className="text-left font-medium py-2 px-3 w-28">Role</th>
                 <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
-                <th className="text-left font-medium py-2 px-3 w-40">Access</th>
+                <th className="text-center font-medium py-2 px-2 w-16">E-BOM</th>
+                <th className="text-center font-medium py-2 px-2 w-16">C-BOM</th>
+                <th className="text-center font-medium py-2 px-2 w-16">Q-BOM</th>
                 <th className="text-left font-medium py-2 px-3 w-48">Email</th>
                 <th className="text-left font-medium py-2 px-3 w-24">Contact</th>
               </tr>
@@ -6354,14 +6599,6 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 const isSelected = selectedIds.has(memberId);
                 const meta = PERSONAS[c.persona] || {};
                 const perms = permissions[memberId] || {};
-                // Access areas grouped by permission level (edit vs view-only)
-                // 'files'/'decisions' are universally granted, so exclude from the access display (always true is noise)
-                const accessEditAreas = ACCESS_AREAS.filter(a =>
-                  perms[a.id] === "edit" && !["files", "decisions"].includes(a.id)
-                ).map(a => a.label);
-                const accessViewAreas = ACCESS_AREAS.filter(a =>
-                  perms[a.id] === "view" && !["files", "decisions"].includes(a.id)
-                ).map(a => a.label);
                 const orgLabel = ({
                   PM: "[PMO] Project Office",
                   DE: "[E-BOM] Engineering",
@@ -6376,8 +6613,8 @@ function CollaboratorsScreen({ activeProjectCode }) {
                       borderBottom: `1px solid ${C.borderLight}`,
                       backgroundColor: isSelected ? C.primarySoft : "white",
                     }}>
-                    <td className="py-2 px-3 text-center">
-                      <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" />
+                    <td className="py-2 pl-4 pr-1 text-center">
+                      <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" style={{ accentColor: C.primary }} />
                     </td>
                     <td className="py-2 px-3">
                       <div className="flex items-center gap-1.5">
@@ -6391,31 +6628,11 @@ function CollaboratorsScreen({ activeProjectCode }) {
                     </td>
                     <td className="py-2 px-3 text-[12px]" style={{ color: C.textPrimary }}>{c.role}</td>
                     <td className="py-2 px-3 text-[12px]" style={{ color: C.textPrimary }}>{orgLabel}</td>
-                    <td className="py-2 px-3">
-                      {accessEditAreas.length === 0 && accessViewAreas.length === 0 ? (
-                        <span className="text-[12px]" style={{ color: C.textDisabled }}>—</span>
-                      ) : (
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {accessEditAreas.map(label => (
-                            <span key={`e-${label}`}
-                              title={`Edit access to ${label}`}
-                              className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center"
-                              style={{ backgroundColor: C.primaryLight, color: C.primary }}>
-                              {label}
-                            </span>
-                          ))}
-                          {accessViewAreas.map(label => (
-                            <span key={`v-${label}`}
-                              title={`View-only access to ${label}`}
-                              className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 border"
-                              style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
-                              {label}
-                              <span className="text-[10px] font-medium opacity-70 ml-0.5">view</span>
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </td>
+                    {PERM_COLUMNS.map(area => (
+                      <td key={area.id} className="py-2 px-2 text-center">
+                        <PermissionCell level={perms[area.id] || "none"} />
+                      </td>
+                    ))}
                     <td className="py-2 px-3 text-[12px] tabular-nums" style={{ color: C.textSecondary }}>
                       {meta.email || `${meta.name?.toLowerCase().replace(/[ .]/g, '.')}@samsung.com`}
                     </td>
@@ -6435,7 +6652,7 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 );
               })}
               {filteredInternal.length === 0 && (
-                <tr><td colSpan={7} className="py-8 text-center text-[12px]" style={{ color: C.textDisabled }}>No internal members.</td></tr>
+                <tr><td colSpan={10} className="py-8 text-center text-[12px]" style={{ color: C.textDisabled }}>No internal members.</td></tr>
               )}
             </tbody>
           </table>
@@ -6443,9 +6660,9 @@ function CollaboratorsScreen({ activeProjectCode }) {
       </div>
 
       {/* === EXTERNAL TABLE === */}
-      <div className="rounded-xl border bg-white" style={{ borderColor: C.border }}>
-        <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: C.border }}>
-          <div className="text-[12px] font-medium tracking-wider" style={{ color: C.textSecondary }}>
+      <div className="rounded-xl bg-white overflow-hidden">
+        <div className="px-1 py-1 flex items-center justify-between">
+          <div className="text-[12px] font-medium" style={{ color: C.textSecondary }}>
             External · {filteredExternal.length}
           </div>
         </div>
@@ -6453,8 +6670,8 @@ function CollaboratorsScreen({ activeProjectCode }) {
           <table className="w-full text-xs">
             <thead style={{ backgroundColor: C.bg }}>
               <tr style={{ color: C.textSecondary, borderBottom: `1px solid ${C.border}` }}>
-                <th className="text-center font-medium py-2 px-3 w-8">
-                  <input type="checkbox" className="rounded"
+                <th className="text-center font-medium py-2 pl-4 pr-1 w-10">
+                  <input type="checkbox" className="rounded" style={{ accentColor: C.primary }}
                     checked={filteredExternal.length > 0 && filteredExternal.every(c => selectedIds.has(`ext-${c.id}`))}
                     onChange={(e) => {
                       const ids = filteredExternal.map(c => `ext-${c.id}`);
@@ -6464,7 +6681,9 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 <th className="text-left font-medium py-2 px-3 w-32">Name</th>
                 <th className="text-left font-medium py-2 px-3 w-28">Role</th>
                 <th className="text-left font-medium py-2 px-3 w-44">Organization</th>
-                <th className="text-left font-medium py-2 px-3 w-40">Access</th>
+                <th className="text-center font-medium py-2 px-2 w-16">E-BOM</th>
+                <th className="text-center font-medium py-2 px-2 w-16">C-BOM</th>
+                <th className="text-center font-medium py-2 px-2 w-16">Q-BOM</th>
                 <th className="text-left font-medium py-2 px-3 w-48">Email</th>
                 <th className="text-left font-medium py-2 px-3 w-24">Contact</th>
               </tr>
@@ -6481,19 +6700,15 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 return supplierGroups.map(([company, members]) => (
                   <React.Fragment key={`sup-${company}`}>
                     <tr style={{ borderBottom: `1px solid ${C.borderLight}`, backgroundColor: "#fcfcfd" }}>
-                      <td colSpan={7} className="py-1.5 px-3">
+                      <td colSpan={10} className="py-1.5 px-3">
                         <div className="flex items-center gap-2 pl-3">
-                          <div className="w-1 h-3 rounded-sm" style={{ backgroundColor: members[0]?.color || C.textDisabled }} />
                           <button
                             onClick={() => SUPPLIER_DETAILS[company] && setSupplierProfileOpen(company)}
                             className="text-[10px] font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 rounded inline-flex items-center gap-1"
                             style={{ color: C.textPrimary, cursor: SUPPLIER_DETAILS[company] ? "pointer" : "default" }}
                             title={SUPPLIER_DETAILS[company] ? "View supplier details" : undefined}>
                             {company}
-                            <span className="font-normal" style={{ color: C.textDisabled }}>({members.length})</span>
-                            {SUPPLIER_DETAILS[company] && (
-                              <Info className="w-2.5 h-2.5 opacity-50" />
-                            )}
+                            <span className="font-normal" style={{ color: C.textDisabled }}>{members.length}</span>
                           </button>
                         </div>
                       </td>
@@ -6502,13 +6717,6 @@ function CollaboratorsScreen({ activeProjectCode }) {
                       const memberId = `ext-${c.id}`;
                       const isSelected = selectedIds.has(memberId);
                       const perms = permissions[memberId] || {};
-                      // Same edit/view split as Internal
-                      const accessEditAreas = ACCESS_AREAS.filter(a =>
-                        perms[a.id] === "edit" && !["files", "decisions"].includes(a.id)
-                      ).map(a => a.label);
-                      const accessViewAreas = ACCESS_AREAS.filter(a =>
-                        perms[a.id] === "view" && !["files", "decisions"].includes(a.id)
-                      ).map(a => a.label);
                       return (
                         <tr key={memberId}
                           className="transition-colors hover:bg-gray-50"
@@ -6516,8 +6724,8 @@ function CollaboratorsScreen({ activeProjectCode }) {
                             borderBottom: `1px solid ${C.borderLight}`,
                             backgroundColor: isSelected ? C.primarySoft : "white",
                           }}>
-                          <td className="py-2 px-3 text-center">
-                            <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" />
+                          <td className="py-2 pl-4 pr-1 text-center">
+                            <input type="checkbox" checked={isSelected} onChange={() => toggleId(memberId)} className="rounded" style={{ accentColor: C.primary }} />
                           </td>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-1.5">
@@ -6539,31 +6747,11 @@ function CollaboratorsScreen({ activeProjectCode }) {
                               </button>
                             ) : c.company}
                           </td>
-                          <td className="py-2 px-3">
-                            {accessEditAreas.length === 0 && accessViewAreas.length === 0 ? (
-                              <span className="text-[12px]" style={{ color: C.textDisabled }}>—</span>
-                            ) : (
-                              <div className="flex items-center gap-1 flex-wrap">
-                                {accessEditAreas.map(label => (
-                                  <span key={`e-${label}`}
-                                    title={`Edit access to ${label}`}
-                                    className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center"
-                                    style={{ backgroundColor: C.primaryLight, color: C.primary }}>
-                                    {label}
-                                  </span>
-                                ))}
-                                {accessViewAreas.map(label => (
-                                  <span key={`v-${label}`}
-                                    title={`View-only access to ${label}`}
-                                    className="text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 border"
-                                    style={{ borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
-                                    {label}
-                                    <span className="text-[10px] font-medium opacity-70 ml-0.5">view</span>
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </td>
+                          {PERM_COLUMNS.map(area => (
+                            <td key={area.id} className="py-2 px-2 text-center">
+                              <PermissionCell level={perms[area.id] || "none"} />
+                            </td>
+                          ))}
                           <td className="py-2 px-3 text-[12px] tabular-nums" style={{ color: C.textSecondary }}>{c.email}</td>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-1">
@@ -6584,7 +6772,7 @@ function CollaboratorsScreen({ activeProjectCode }) {
                 ));
               })()}
               {filteredExternal.length === 0 && (
-                <tr><td colSpan={7} className="py-8 text-center text-[12px]" style={{ color: C.textDisabled }}>No external partners.</td></tr>
+                <tr><td colSpan={10} className="py-8 text-center text-[12px]" style={{ color: C.textDisabled }}>No external partners.</td></tr>
               )}
             </tbody>
           </table>
@@ -6926,6 +7114,8 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
   // Kanban filters (Party / Collab Type)
   const [partyFilters, setPartyFilters] = useState({ internal: true, external: true });
   const [collabFilters, setCollabFilters] = useState({ design: true, cost: true, quality: true });
+  // Table view status chip filter (null = all). Selected chip shows in primary color (Figma filter bar).
+  const [tableStatusFilter, setTableStatusFilter] = useState(null);
 
   // Resolve BOM data: Hero project uses full base; new projects show all not_created; others derive from phase
   const bomsForProject = useMemo(() => {
@@ -6992,18 +7182,22 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
       label: a.label,
       name: `${a.label} (archived)`,
       version: a.versions[0] || "—",
-      parts: null,
+      parts: a.parts != null ? a.parts : null,
       status: "archived",
       lifecycle: "archived",
       missing: 0,
       syncDelta: 0,
-      lastActivity: null,
+      lastActivity: a.lastActivity || null,
       owner: a.label === "E-BOM" ? "DE" : a.label === "C-BOM" ? "CM" : "QM",
       collabType: "internal",
     })) : [];
     const tableRows = [...bomsForProject, ...archivedRows];
     // Lifecycle counts for the status chip row (Figma pattern: Draft N · In Review N · Approved N ...)
     const lcCount = (lc) => tableRows.filter(b => b.lifecycle === lc).length;
+    // Rows shown in the table — narrowed when a status chip is selected.
+    const displayRows = tableStatusFilter
+      ? tableRows.filter(b => b.lifecycle === tableStatusFilter)
+      : tableRows;
     const statusChips = [
       { id: "draft",    label: "Draft",     count: lcCount("draft") },
       { id: "review",   label: "In Review", count: lcCount("review") },
@@ -7014,82 +7208,37 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
     <div>
       {/* Unified content box — radius 24 (rounded-3xl) */}
       <div className="rounded-3xl border bg-white overflow-hidden" style={{ borderColor: C.border }}>
-      {/* (1) Filter bar section — 24px horizontal padding */}
-      <div className="px-6 py-3 flex items-center gap-x-5 gap-y-3 flex-wrap">
-        {/* Operation Org */}
-        <div className="flex items-center gap-2">
-          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Operation Org.</span>
-          <div className="relative" style={{ width: 180 }}>
-            <select className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] appearance-none bg-white outline-none focus:outline-none focus-visible:ring-2"
-              style={{ borderColor: C.border, color: C.textPrimary }}>
-              <option>All Operations</option>
-              <option>Mobile R&D</option>
-              <option>Cost Engineering</option>
-              <option>Quality Assurance</option>
-            </select>
-            <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textSecondary }} />
-          </div>
-        </div>
-        {/* Updated Date (range) */}
-        <div className="flex items-center gap-2">
-          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Updated Date</span>
-          <div className="relative" style={{ width: 200 }}>
-            <input placeholder="MM/DD/YYYY - MM/DD/YYYY"
-              className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] outline-none focus:outline-none focus-visible:ring-2 placeholder:text-[11px]"
-              style={{ borderColor: C.border, color: C.textPrimary }} />
-            <Calendar className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: C.textSecondary }} />
-          </div>
-        </div>
-        {/* Owner search */}
-        <div className="flex items-center gap-2">
-          <span className="text-[12px] shrink-0" style={{ color: C.textSecondary }}>Owner</span>
-          <div className="relative" style={{ width: 180 }}>
-            <input placeholder="Search"
-              className="w-full h-9 pl-3 pr-8 rounded-md border text-[12px] outline-none focus:outline-none focus-visible:ring-2"
-              style={{ borderColor: C.border, color: C.textPrimary }} />
-            <Search className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2" style={{ color: C.textDisabled }} />
-          </div>
-        </div>
-        {/* Right cluster: More Filters + Search + icons */}
-        <div className="ml-auto flex items-center gap-3">
-          <button className="flex items-center gap-1 text-[12px] font-medium hover:opacity-80 focus:outline-none focus-visible:ring-2 rounded"
-            style={{ color: C.textPrimary }}>
-            More Filters
-            <ChevronDown className="w-3.5 h-3.5" />
-          </button>
-          <button className="h-9 px-6 rounded-full text-[12px] font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2"
-            style={{ borderColor: C.primary, color: C.primary, backgroundColor: "white" }}>
-            Search
-          </button>
-          <div className="flex items-center gap-1">
-            <button className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
-              style={{ color: C.textSecondary }} title="Save filter">
-              <Bookmark className="w-4 h-4" />
-            </button>
-            <button className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
-              style={{ color: C.textSecondary }} title="Settings">
-              <Settings className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* (2) Status count chips section — chips wrapped in a pill container (radius 1000), 24px side margin */}
+      {/* (2) Status count chips section — Figma filter bar: selected chip = primary fill */}
       <div className="flex items-center px-6 py-3" style={{ borderColor: C.borderLight }}>
         <div className="flex items-center gap-1 p-1" style={{ backgroundColor: C.surfaceTinted, borderRadius: 1000 }}>
-          {statusChips.map((chip, i) => (
-            <React.Fragment key={chip.id}>
-              <button className="flex items-center gap-1.5 px-3.5 py-1 text-[12px] transition-colors hover:bg-white focus:outline-none focus-visible:ring-2"
-                style={{ color: C.textSecondary, borderRadius: 1000 }}>
-                <span>{chip.label}</span>
-                <span className="font-medium" style={{ color: C.textPrimary }}>{chip.count}</span>
-              </button>
-              {i < statusChips.length - 1 && <div className="w-px h-3" style={{ backgroundColor: C.border }} />}
-            </React.Fragment>
-          ))}
+          {statusChips.map((chip, i) => {
+            const isSelected = tableStatusFilter === chip.id;
+            return (
+              <React.Fragment key={chip.id}>
+                <button
+                  onClick={() => setTableStatusFilter(isSelected ? null : chip.id)}
+                  className="flex items-center gap-1.5 px-3.5 py-1 text-[12px] transition-colors focus:outline-none focus-visible:ring-2"
+                  style={{
+                    color: isSelected ? "white" : C.textSecondary,
+                    backgroundColor: isSelected ? C.primary : "transparent",
+                    borderRadius: 1000,
+                  }}
+                  onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = "white"; }}
+                  onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = "transparent"; }}>
+                  <span>{chip.label}</span>
+                  <span className="font-medium" style={{ color: isSelected ? "white" : C.textPrimary }}>{chip.count}</span>
+                </button>
+                {!isSelected && tableStatusFilter !== statusChips[i + 1]?.id && i < statusChips.length - 1 && (
+                  <div className="w-px h-3" style={{ backgroundColor: C.border }} />
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
-        <button className="ml-3 w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
-          style={{ color: C.textSecondary }} title="Reset filters">
+        <button
+          onClick={() => setTableStatusFilter(null)}
+          className="ml-3 w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2"
+          style={{ color: C.textSecondary }} title="Reset filter">
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -7108,7 +7257,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
               </button>
             </>
           ) : (
-            <span>Total <span className="font-medium">{tableRows.length}</span></span>
+            <span>Total <span className="font-medium">{displayRows.length}</span></span>
           )}
         </div>
         <div className="flex items-center gap-1">
@@ -7128,9 +7277,9 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
           <tr style={{ color: C.textSecondary }}>
             <th className="text-center font-medium py-3 px-4 w-10 first:rounded-l-lg">
               <input type="checkbox" className="rounded" style={{ accentColor: C.primary }}
-                checked={tableRows.length > 0 && selectedBomRows.length === tableRows.length}
-                ref={(el) => { if (el) el.indeterminate = selectedBomRows.length > 0 && selectedBomRows.length < tableRows.length; }}
-                onChange={(e) => setSelectedBomRows(e.target.checked ? tableRows.map((b, idx) => b.id ?? idx) : [])} />
+                checked={displayRows.length > 0 && selectedBomRows.length === displayRows.length}
+                ref={(el) => { if (el) el.indeterminate = selectedBomRows.length > 0 && selectedBomRows.length < displayRows.length; }}
+                onChange={(e) => setSelectedBomRows(e.target.checked ? displayRows.map((b, idx) => b.id ?? idx) : [])} />
             </th>
             <th className="text-left font-medium py-3 px-4">BOM</th>
             <th className="text-center font-medium py-3 px-4">Version</th>
@@ -7140,7 +7289,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
           </tr>
         </thead>
         <tbody>
-          {tableRows.map((b) => {
+          {displayRows.map((b) => {
             const hasIssue = b.syncDelta > 0 || b.missing > 0;
             const isInactive = b.status !== "active";
             const isArchived = b.status === "archived";
@@ -7233,7 +7382,7 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                 {/* Status — Figma list pattern: solid-fill pill (color bg + white text), no icon.
                     Draft=neutral dark, In Review=primary, Approved=success, Archived=disabled.
                     Sync issues shown as a small warning dot before the pill. */}
-                <td className="py-3 px-4 text-right">
+                <td className="py-3 px-4 text-left">
                   {b.status === "not_created" ? (
                     <button
                       onClick={(e) => { e.stopPropagation(); /* TODO: create flow */ }}
@@ -7265,12 +7414,6 @@ function BomListScreen({ activeProjectCode, activeBom, setActiveBom, setView }) 
                     }[b.lifecycle] || { label: "Active", bg: "#475467" };
                     return (
                       <div className="inline-flex items-center gap-1.5">
-                        {/* Sync warning dot — small flag without overtaking the lifecycle status */}
-                        {hasIssue && (
-                          <span title={b.syncNote || `${b.missing} parts need sync`}>
-                            <AlertTriangle className="w-3 h-3" style={{ color: C.warning }} />
-                          </span>
-                        )}
                         <span className="inline-flex items-center text-[12px] font-medium px-3 py-1 rounded-full text-white"
                           style={{ backgroundColor: lifecycleMeta.bg }}>
                           {lifecycleMeta.label}
@@ -7913,7 +8056,11 @@ function ArchivedKanbanCard({ bom }) {
 }
 
 // === SCREEN 2. BOM WORKSPACE ===
-function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activePersona, activeBom, setActiveBom, onOpenItemChat, activeProjectCode, setView }) {
+// Parts that have an active collaboration thread (single source for the count, the
+// grid "Collaborations" filter, the per-row badge, and the chat-list rooms).
+const COLLAB_ITEM_IDS = [3, 6, 10, 5];
+
+function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activePersona, activeBom, setActiveBom, onOpenItemChat, activeProjectCode, setView, pendingDetailTab, onPendingDetailTabConsumed }) {
   const project = PROJECTS.find((p) => p.code === activeProjectCode) || PROJECTS[0];
   const isHeroProject = project.code === ACTIVE_PROJECT_CODE;
 
@@ -8094,13 +8241,22 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
     setStructure(d.structure);
     setGroupBy(d.groupBy);
     setOverlay(d.overlay);
-    setSelectedItemId(null); // Reset selection when switching BOM
     setModuleFilter(null);   // Reset module filter when switching BOM
+    // NOTE: selectedItemId is intentionally NOT reset here, so deep-links from the
+    // Overview (Pending Decisions "Review") can switch BOM and keep the item open.
+    // Direct BOM-tab clicks (LNB / tabs) clear the selection explicitly at their call site.
   }, [activeBom]);
 
-  // Always start with Spec tab when an item is selected
+  // When an item is selected, default to Spec tab — unless an explicit pendingDetailTab
+  // was passed (e.g. "Review Fit" from DE Overview → jump straight to Design Validation).
   useEffect(() => {
-    if (selectedItemId) setDrawerTab("spec");
+    if (!selectedItemId) return;
+    if (pendingDetailTab) {
+      setDrawerTab(pendingDetailTab);
+      if (onPendingDetailTabConsumed) onPendingDetailTabConsumed();
+    } else {
+      setDrawerTab("spec");
+    }
   }, [selectedItemId]);
 
   const toggleNode = (id) => {
@@ -8128,7 +8284,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
       if (filter === "all") return true;
       if (filter === "missing") return isMissingNode(n);
       if (filter === "blocked") return Object.values(n.status || {}).some((s) => s === "block");
-      if (filter === "comments") return (n.comments || 0) > 0;
+      if (filter === "comments") return COLLAB_ITEM_IDS.includes(n.id);
       return true;
     };
 
@@ -8497,16 +8653,17 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
           </div>
           {/* Divider — separates the master toggle from the shaping pickers */}
           <div className="w-px h-5 mx-0.5" style={{ backgroundColor: C.border }} />
-          {/* Group dropdown — visible in both tree and flat. Disabled in tree (hierarchy already groups). */}
-          <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}
-            disabled={structure === "tree"}
-            title={structure === "tree" ? "Switch to Flat view to apply grouping" : undefined}
-            className="h-7 px-2 rounded-md border text-[12px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
-            style={{
-              borderColor: C.border,
-              color: structure === "tree" ? C.textDisabled : C.textPrimary,
-              backgroundColor: structure === "tree" ? C.bg : "white",
-            }}>
+          {/* Group dropdown — selecting a grouping auto-switches to Flat view so the grouping actually applies. */}
+          <select value={structure === "tree" ? "none" : groupBy}
+            onChange={(e) => {
+              const val = e.target.value;
+              setGroupBy(val);
+              // Grouping only renders in flat mode; auto-switch so the selection takes effect.
+              if (val !== "none" && structure === "tree") setStructure("flat");
+            }}
+            title="Group parts (switches to Flat view)"
+            className="h-7 px-2 rounded-md border text-[12px] outline-none bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
               {/* E-BOM: engineering perspective (no supplier/risk/ppap — those are downstream) */}
               {activeBom === "E" && (
                 <>
@@ -8751,14 +8908,14 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                 activeBom === "E" ? eBomMissingIds.length :
                 0;
               const blockedCount = BOM_TREE.filter((n) => Object.values(n.status || {}).some((s) => s === "block")).length;
-              const commentsCount = BOM_TREE.filter((n) => (n.comments || 0) > 0).length;
+              const commentsCount = BOM_TREE.filter((n) => COLLAB_ITEM_IDS.includes(n.id)).length;
               // Filter pills — status subset filters. Clicking an active chip clears it (back to all).
               //   "Missing" = parts with a required data gap (no supplier / no should-cost / no PPAP).
               //   "Blocked" = part-level D/C/Q status === "block".
               return [
                 { id: "missing", label: "Missing", icon: AlertCircle, count: missingCount, accent: C.warning, hideIfZero: true },
                 { id: "blocked", label: "Blocked", icon: XCircle, count: blockedCount, accent: C.error, hideIfZero: true },
-                { id: "comments", label: "Comments", icon: MessageSquare, count: commentsCount, accent: C.textSecondary, hideIfZero: true },
+                { id: "comments", label: "Collaborations", icon: MessageSquare, count: commentsCount, accent: C.textSecondary, hideIfZero: true },
               ].filter(f => !(f.hideIfZero && f.count === 0)).map((f) => {
                 const isActive = filter === f.id;
                 return (
@@ -9001,7 +9158,7 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
 
                 return (
                   <tr key={node.id} onClick={() => setSelectedItemId(node.id)}
-                    className="border-b transition-colors cursor-pointer"
+                    className="group border-b transition-colors cursor-pointer"
                     style={{
                       borderColor: C.borderLight,
                       // Left border: selection only (3px primary). Hero shown via dot instead.
@@ -9269,11 +9426,11 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                           <div className="flex items-center justify-center gap-1">
                             {issues.map(([k, v]) => (
                               <div key={k} className="flex flex-col items-center gap-0.5"
-                                title={`${k}: ${STATUS_MAP[v].label}`}>
+                                title={`${statusKeyLabel(k)}: ${STATUS_MAP[v].label}`}>
                                 <StatusDot kind={v} size={6} />
                                 <span className="text-[10px] font-medium"
                                   style={{ color: STATUS_MAP[v].color || C.textDisabled }}>
-                                  {k}
+                                  {statusKeyLabel(k)}
                                 </span>
                               </div>
                             ))}
@@ -9312,19 +9469,39 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
                     )}
                     <td className="py-2 px-3 text-right">
                       {(() => {
-                        // Extract comments for this part from ACTIVITY_FEED
-                        const nodeMessages = ACTIVITY_FEED.filter((m) => m.itemRef && m.itemRef.id === node.id);
+                        // Comment count — matches Item360 drawer's gating so this badge and
+                        // the chat button in the detail panel always show the same number.
+                        // For Hero parts (scenario timeline), only messages up to the current
+                        // scenarioStep are counted; non-hero parts use the full feed.
+                        // Collaboration thread count for this part (single source: PART_COLLABS).
+                        const collab = COLLAB_ITEM_IDS.includes(node.id) ? PART_COLLABS[node.id] : null;
+                        const nodeMessages = collab ? collab.timeline : [];
                         const count = nodeMessages.length;
-                        if (count === 0) return null;
+                        const openComments = (e) => {
+                          e.stopPropagation(); // don't trigger the row → detail
+                          setSelectedItemId(node.id);
+                        };
+                        if (count === 0) {
+                          // No comments yet — still allow starting a thread (appears on hover).
+                          return (
+                            <button onClick={openComments}
+                              title="Add comment"
+                              className="inline-flex items-center justify-center w-6 h-6 rounded opacity-0 group-hover:opacity-100 hover:bg-gray-100 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                              style={{ color: C.textDisabled }}>
+                              <MessageSquare className="w-3 h-3" />
+                            </button>
+                          );
+                        }
                         const lastMessage = nodeMessages[nodeMessages.length - 1];
                         const lastPersona = lastMessage.persona;
                         return (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-medium"
-                            title={`Latest: ${PERSONAS[lastPersona]?.name || lastPersona} · ${lastMessage.ts}`}
+                          <button onClick={openComments}
+                            title={`Open comments · Latest: ${PERSONAS[lastPersona]?.name || lastPersona} · ${lastMessage.ts}`}
+                            className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                             style={{ color: node.isHero ? C.warning : C.textSecondary }}>
                             <MessageSquare className="w-3 h-3" />
                             {count}
-                          </span>
+                          </button>
                         );
                       })()}
                     </td>
@@ -9352,16 +9529,16 @@ function BomWorkspace({ selectedItemId, setSelectedItemId, scenarioStep, activeP
         </div>
 
         {/* RIGHT: Item 360 Drawer — 400px default, flex-1 when user drags */}
-        <div className="bg-white overflow-auto"
+        <div className="bg-white overflow-hidden flex flex-col"
           style={{
             width: leftPanelWidth !== null ? undefined : 400,
             flex: leftPanelWidth !== null ? "1 1 0%" : "0 0 400px",
             minWidth: 320,
           }}>
           {selectedItemId && selectedItem ? (
-            <Item360Drawer item={selectedItem} tab={drawerTab} setTab={setDrawerTab} scenarioStep={scenarioStep} onOpenChat={onOpenItemChat} activeBom={activeBom} />
+            <ChatRoomPanel item={selectedItem} onClose={() => setSelectedItemId(null)} scenarioStep={scenarioStep} activePersona={activePersona} activeBom={activeBom} />
           ) : (
-            <BomSummaryCard />
+            <ChatListPanel onOpenAgenda={(id) => setSelectedItemId(id)} activePersona={activePersona} activeBom={activeBom} />
           )}
         </div>
 
@@ -9517,7 +9694,7 @@ function TimelinePanel({ activeBom, activeBomMeta, events, expandedEvent, setExp
               return (
                 <div key={`date-${idx}`} className="px-1 pt-1 pb-2 text-[12px] font-medium"
                   style={{ color: C.textDisabled }}>
-                  {item.date}
+                  {fmtDate(item.date)}
                 </div>
               );
             }
@@ -9860,6 +10037,699 @@ function BomSummaryCard() {
   );
 }
 
+// ============================================================
+// COLLABORATION — messaging-app style (chat list → chat room → details)
+// Plugs into the BOM workspace right layer.
+// ChatListPanel  : conversation list (BOM-wide + part rooms)
+// ChatRoomPanel  : a chat room (bubbles + composer); pinned decision; Details entry
+// Details overlay: spec/BOM summary, participants, Item 360, AI assist
+// Props (room): { item, onClose, scenarioStep, activePersona, activeBom, bomLevel }
+// ============================================================
+
+// --- Mock data (co-located) ---
+const PART_COLLABS = {
+  3: {
+    title: "AMOLED Panel 6.7\" FHD+ 120Hz",
+    status: "voting", unread: 3,
+    participantKeys: ["DE", "CM", "SM", "QM"],
+    costDetail: [
+      ["Current unit", "$38.70"],
+      ["Proposed unit", "$45.20  (+$6.50)"],
+      ["Should-cost", "$41.80"],
+      ["Gap vs should-cost", "+$3.40"],
+      ["Best quote", "BOE Display"],
+    ],
+    qualityDetail: [
+      ["PPAP level", "Level 3 (required)"],
+      ["APQP phase", "Phase 3 · Process design"],
+      ["Status", "Pending change approval"],
+    ],
+    vote: {
+      facet: "cost", deadline: "D-3 · Due 14:00", totalVoters: 8,
+      options: [
+        { id: "A", label: "Approve proposed", note: "$45.20 · Lock Rev B", votes: 4 },
+        { id: "B", label: "Keep current", note: "$38.70 · Request re-quote", votes: 2 },
+      ],
+    },
+    timeline: [
+      { id: 1, persona: "DE", ts: "10:18", facet: "spec", text: "The Rev B spec pushed the unit cost up by $6.50. Need a decision, please." },
+      { id: 11, kind: "system", ts: "10:20", text: "Decision vote opened · Cost" },
+      { id: 14, kind: "vote", ts: "10:20" },
+      { id: 2, persona: "CM", ts: "11:08", facet: "cost", text: "Even against Should-cost $41.80 there is a +$3.40 gap. Budget impact summarized.", quoted: { from: "#cost channel", author: "Cory Chen" } },
+      { id: 3, persona: "SM", ts: "14:22", facet: "cost", text: "BOE quote is the best of the three. Limited room for further negotiation." },
+      { id: 4, persona: "QM", ts: "15:05", facet: "quality", text: "PPAP Lv3 will be required for the Rev B change — I'll open the request once cost is locked." },
+    ],
+    activity: [
+      { id: 1, ts: "Today 10:15", actor: "DE", action: "applied the Rev B spec", detail: "Display 6.5\" → 6.7\", refresh 90Hz → 120Hz" },
+      { id: 2, ts: "Today 11:00", actor: "CM", action: "updated the unit cost", detail: "$38.70 → $45.20 (+$6.50)" },
+      { id: 3, ts: "Today 11:30", actor: "PM", action: "proposed a decision", detail: "Approve proposed · Cost" },
+      { id: 4, ts: "Today 15:05", actor: "QM", action: "flagged a quality requirement", detail: "PPAP Level 3 required" },
+    ],
+  },
+  6: {
+    title: "Touch Controller IC I2C",
+    status: "voting", unread: 1,
+    participantKeys: ["SM", "CM", "DE"],
+    costDetail: [
+      ["Current unit", "$1.20"],
+      ["Proposed unit", "$1.80  (+$0.60)"],
+      ["Should-cost", "$1.55"],
+      ["Gap vs should-cost", "+$0.25"],
+      ["Best quote", "Synaptics"],
+    ],
+    qualityDetail: [
+      ["PPAP level", "Level 2"],
+      ["APQP phase", "Phase 2 · Design"],
+      ["Status", "On track"],
+    ],
+    vote: {
+      facet: "cost", deadline: "D-1 · Due 17:00", totalVoters: 6,
+      options: [
+        { id: "A", label: "Approve increase", note: "$1.80 · Single source", votes: 3 },
+        { id: "B", label: "Re-source", note: "Qualify a second vendor", votes: 1 },
+      ],
+    },
+    timeline: [
+      { id: 1, persona: "SM", ts: "09:40", facet: "cost", text: "Supplier raised the IC price ~50% citing a wafer shortage." },
+      { id: 2, persona: "CM", ts: "11:25", facet: "cost", text: "Even against should-cost $1.55 we're +$0.25 over. Volume is low, so limited leverage." },
+      { id: 21, kind: "vote", ts: "D-1 · Due 17:00" },
+      { id: 3, persona: "DE", ts: "14:10", facet: "spec", text: "Spec is locked; a second source would need full re-validation." },
+      { id: 23, kind: "action", persona: "PM", ts: "15:00", facet: "cost", task: { title: "Book the supplier call to close the vote", assignee: "SM", due: "Due today", done: false } },
+      { id: 4, persona: "SM", ts: "16:40", facet: "cost", text: "Need a call on the increase today." },
+    ],
+    activity: [
+      { id: 1, ts: "Today 09:40", actor: "SM", action: "updated the unit cost", detail: "$1.20 → $1.80 (+$0.60)" },
+      { id: 2, ts: "Today 11:25", actor: "CM", action: "flagged a should-cost gap", detail: "+$0.25 vs $1.55" },
+      { id: 3, ts: "Today 15:00", actor: "PM", action: "proposed a decision", detail: "Approve increase · Cost" },
+    ],
+  },
+  10: {
+    title: "Mainboard 5G SM-XXXX",
+    status: "discussion", unread: 0,
+    participantKeys: ["CM", "PM"],
+    costDetail: [
+      ["Current unit", "$52.00"],
+      ["Should-cost", "$49.50"],
+      ["Sourcing", "Sole-source (Supplier A)"],
+    ],
+    qualityDetail: [
+      ["PPAP level", "To be defined"],
+      ["Status", "In review"],
+    ],
+    vote: null,
+    timeline: [
+      { id: 1, persona: "PM", ts: "Mon 14:00", text: "Opening this for review — we need a sourcing direction for the mainboard." },
+      { id: 31, kind: "system", ts: "Mon 14:00", text: "Status: In discussion" },
+      { id: 2, persona: "CM", ts: "Tue 10:20", facet: "cost", text: "Only Supplier A is qualified at this volume; I recommend sole-sourcing." },
+      { id: 33, kind: "approval", persona: "CM", ts: "Tue 10:30", facet: "cost", approval: { title: "Approve sole-sourcing the mainboard PCB", detail: "Supplier A · $52.00/unit", state: "pending" } },
+    ],
+    activity: [
+      { id: 1, ts: "Mon 14:00", actor: "PM", action: "opened the discussion", detail: "Sourcing direction needed" },
+      { id: 2, ts: "Tue 10:20", actor: "CM", action: "recommended sole-sourcing", detail: "Supplier A only qualified vendor" },
+    ],
+  },
+  5: {
+    title: "OCA Optical Clear Adhesive 6.7\"",
+    status: "decided", unread: 0,
+    participantKeys: ["SM", "CM", "PM"],
+    costDetail: [
+      ["Adopted unit", "$0.78"],
+      ["Previous unit", "$0.85"],
+      ["Saving", "-$0.07 (-8%)"],
+      ["Supplier", "3M"],
+    ],
+    qualityDetail: [
+      ["PPAP level", "Level 1"],
+      ["Status", "Approved"],
+    ],
+    vote: {
+      facet: "cost", deadline: "Closed", totalVoters: 4,
+      options: [
+        { id: "A", label: "Adopt re-quote", note: "$0.78 · 3M", votes: 3 },
+        { id: "B", label: "Keep current", note: "$0.85", votes: 1 },
+      ],
+    },
+    timeline: [
+      { id: 1, persona: "SM", ts: "Mon 09:10", facet: "cost", text: "Re-quote came in 8% lower than the current price." },
+      { id: 52, kind: "approval", persona: "SM", ts: "Mon 11:00", facet: "cost", approval: { title: "Approve the 8% lower re-quote", detail: "3M · $0.78", state: "approved" } },
+      { id: 2, persona: "PM", ts: "Mon 11:30", text: "Approved — adopting the re-quote." },
+      { id: 51, kind: "vote", ts: "Closed" },
+      { id: 53, kind: "action", persona: "PM", ts: "Mon 11:35", facet: "cost", task: { title: "Update the sourcing BOM unit cost", assignee: "SM", due: "Done", done: true } },
+    ],
+    activity: [
+      { id: 1, ts: "Mon 09:10", actor: "SM", action: "added a re-quote", detail: "$0.85 → $0.78 (-8%)" },
+      { id: 2, ts: "Mon 11:30", actor: "PM", action: "approved the decision", detail: "Adopt re-quote · Cost" },
+    ],
+  },
+};
+
+const EMPTY_COLLAB = { title: "", status: "discussion", unread: 0, participantKeys: [], costDetail: [], qualityDetail: [], vote: null, timeline: [], activity: [] };
+
+// Whole-BOM collaboration — keyed per BOM (E/C/Q). Each BOM has its own thread,
+// participants, status and decision. Part rooms stay item-keyed (shared across BOMs).
+const BOM_COLLABS = {
+  E: {
+    title: "Engineering BOM v1.8", status: "voting", subline: "12 parts · 3 open agendas", unread: 2,
+    participantKeys: ["DE", "PM", "CM"], lead: "DE",
+    externals: [{ id: "boe", initial: "B", name: "BOE Display", role: "Supplier · Panel" }],
+    activity: [
+      { id: 1, ts: "Mon 09:30", actor: "PM", action: "opened BOM v1.8 for review", detail: "Phase Gate G3 readiness" },
+      { id: 2, ts: "Today 11:40", actor: "DE", action: "froze the spec", detail: "except AMOLED Rev B" },
+    ],
+    summary: [
+      ["Total parts", "12"],
+      ["Est. total cost", "$1.24M (+1.8% vs v1.7)"],
+      ["Open agendas", "3"],
+      ["Phase gate", "G3 readiness review"],
+    ],
+    vote: {
+      deadline: "D-4 · Due 17:00", totalVoters: 5,
+      options: [
+        { id: "A", label: "Approve BOM v1.8", note: "Proceed to Phase Gate G3", votes: 3 },
+        { id: "B", label: "Hold for rework", note: "Resolve open agendas first", votes: 1 },
+      ],
+    },
+    timeline: [
+      { id: 1, persona: "PM", ts: "09:30", text: "BOM v1.8 is ready for review. 3 part-level agendas are still open." },
+      { id: 11, kind: "vote", ts: "D-4 · Due 17:00" },
+      { id: 2, persona: "DE", ts: "11:40", text: "Spec freeze is done except the AMOLED Rev B item, which is in part-level voting." },
+    ],
+  },
+  C: {
+    title: "Cost BOM v2.0", status: "discussion", subline: "12 parts · cost rollup in review", unread: 3,
+    participantKeys: ["CM", "SM", "PM"], lead: "CM", externals: [],
+    activity: [
+      { id: 1, ts: "Mon 10:05", actor: "CM", action: "posted the v2.0 cost rollup", detail: "+1.8% vs target" },
+      { id: 2, ts: "Today 13:22", actor: "SM", action: "requested re-quotes", detail: "3 suppliers · due D-1" },
+    ],
+    summary: [
+      ["Total parts", "12"],
+      ["Rolled-up cost", "$1.24M"],
+      ["vs Target", "+1.8%"],
+      ["Should-cost gap", "+3.2%"],
+    ],
+    vote: null,
+    timeline: [
+      { id: 1, persona: "CM", ts: "10:05", text: "Cost rollup for v2.0 is up. Two movers (AMOLED, Touch IC) drive most of the variance." },
+      { id: 2, persona: "SM", ts: "13:22", text: "Re-quotes requested from 3 suppliers; responses expected by D-1." },
+    ],
+  },
+  Q: {
+    title: "Quality BOM v1.5", status: "decided", subline: "9 parts · PPAP tracking", unread: 0,
+    participantKeys: ["QM", "SM", "DE"], lead: "QM", externals: [],
+    activity: [
+      { id: 1, ts: "Mon 09:10", actor: "QM", action: "adopted PPAP Level 3", detail: "critical parts" },
+      { id: 2, ts: "Today 14:48", actor: "SM", action: "uploaded dimensional reports", detail: "supplier submission" },
+    ],
+    summary: [
+      ["Tracked parts", "9"],
+      ["PPAP submitted", "7 / 9"],
+      ["Open NCRs", "1"],
+      ["Phase gate", "PSW approved"],
+    ],
+    vote: {
+      deadline: "Closed", totalVoters: 6,
+      options: [
+        { id: "A", label: "Adopt PPAP Level 3", note: "Full submission for critical parts", votes: 5 },
+        { id: "B", label: "PPAP Level 2", note: "Reduced submission", votes: 1 },
+      ],
+    },
+    timeline: [
+      { id: 1, persona: "QM", ts: "09:10", text: "PPAP Level 3 adopted for critical parts. PSW approved for 7 of 9." },
+      { id: 51, kind: "vote", ts: "Closed" },
+      { id: 2, persona: "SM", ts: "14:48", text: "Supplier submitted the remaining dimensional reports today." },
+    ],
+  },
+};
+
+const STATUS_BADGE = {
+  voting:     { label: "Voting open",   icon: Clock,         color: C.primary, bg: C.primaryLight },
+  decided:    { label: "Decided",       icon: CheckCircle,   color: C.success, bg: C.successLight },
+  discussion: { label: "In discussion", icon: MessageSquare, color: C.info,    bg: C.infoLight },
+};
+
+const FACET_META = {
+  spec:    { label: "Spec",    color: "#1565E0", bg: "#E3F2FD" },
+  cost:    { label: "Cost",    color: "#B54708", bg: "#FEF0C7" },
+  quality: { label: "Quality", color: "#7C3AED", bg: "#EDE9FE" },
+};
+const ROLE_FACET = { DE: "spec", CM: "cost", SM: "cost", QM: "quality" };
+
+// Conversation list rows — derived from the same data the rooms render
+const ROOM_ORDER = [6, 3, 10, 5];
+const lastOf = (tl) => { const msgs = (tl || []).filter((m) => !m.kind && m.text); const m = msgs[msgs.length - 1]; return m ? { sender: m.persona, text: m.text, ts: m.ts } : { sender: "", text: "", ts: "" }; };
+const PART_ROOMS = ROOM_ORDER.map((id) => {
+  const c = PART_COLLABS[id];
+  return { id, kind: "part", title: c.title, status: c.status, last: lastOf(c.timeline), unread: c.unread || 0 };
+});
+
+function RoomAvatar({ kind, status, size = 36 }) {
+  const meta = STATUS_BADGE[status] || STATUS_BADGE.discussion;
+  const Icon = kind === "bom" ? Layers : Package;
+  return (
+    <div className="rounded-full flex items-center justify-center shrink-0"
+      style={{ width: size, height: size, backgroundColor: kind === "bom" ? C.primaryLight : C.surfaceTinted }}>
+      <Icon className="w-[18px] h-[18px]" style={{ color: kind === "bom" ? C.primary : meta.color }} />
+    </div>
+  );
+}
+
+function FacetChip({ f, small }) {
+  const m = FACET_META[f];
+  if (!m) return null;
+  return (
+    <span className={`inline-flex items-center rounded-full font-medium ${small ? "h-4 px-1.5 text-[9px]" : "h-[18px] px-2 text-[11px]"}`}
+      style={{ backgroundColor: m.bg, color: m.color }}>{m.label}</span>
+  );
+}
+
+function DetailRows({ rows, empty = "No detail on record", accent }) {
+  return (
+    <div className="rounded-xl border p-3" style={{ borderColor: C.border, backgroundColor: "white" }}>
+      {rows && rows.length > 0 ? (
+        <div className="space-y-1">
+          {rows.map(([k, v]) => (
+            <div key={k} className="flex items-start gap-2 text-[12px]">
+              <span className="w-1/3 shrink-0" style={{ color: C.textDisabled }}>{k}</span>
+              <span className="flex-1 min-w-0 font-medium" style={{ color: C.textPrimary }}>{v}</span>
+            </div>
+          ))}
+        </div>
+      ) : <div className="text-[11px]" style={{ color: C.textDisabled }}>{empty}</div>}
+    </div>
+  );
+}
+
+// Inline collaboration cards (rendered in the chat stream)
+function ActionCard({ m }) {
+  const t = m.task || {};
+  const [done, setDone] = useState(!!t.done);
+  const a = PERSONAS[t.assignee] || {};
+  return (
+    <div className="rounded-xl border p-3" style={{ borderColor: C.border, backgroundColor: "white", boxShadow: "0 1px 1.5px rgba(16,24,40,0.05)" }}>
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <ListChecks className="w-4 h-4 shrink-0" style={{ color: C.primary }} />
+        <span className="text-[11px] font-semibold" style={{ color: C.textPrimary }}>Action item</span>
+        {m.facet && <FacetChip f={m.facet} />}
+        <span className="ml-auto text-[10px]" style={{ color: C.textDisabled }}>{m.ts}</span>
+      </div>
+      <div className="text-[12px] font-medium mb-2" style={{ color: done ? C.textDisabled : C.textPrimary, textDecoration: done ? "line-through" : "none" }}>{t.title}</div>
+      <div className="flex items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full pl-0.5 pr-2 py-0.5" style={{ backgroundColor: C.surfaceTinted }}>
+          <PersonaAvatar p={t.assignee} size={18} />
+          <span className="text-[10px] font-medium" style={{ color: C.textSecondary }}>{a.name || t.assignee}</span>
+        </span>
+        {t.due && <span className="inline-flex items-center gap-1 text-[10px]" style={{ color: C.textDisabled }}><Calendar className="w-3 h-3" />{t.due}</span>}
+        <button onClick={() => setDone((d) => !d)}
+          className="ml-auto inline-flex items-center gap-1 h-7 px-2.5 rounded-lg text-[11px] font-medium border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          style={done ? { borderColor: C.success, color: C.success, backgroundColor: C.successLight } : { borderColor: C.border, color: C.textSecondary, backgroundColor: "white" }}>
+          {done ? <CheckCircle className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}{done ? "Done" : "Mark done"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ApprovalCard({ m }) {
+  const ap = m.approval || {};
+  const req = PERSONAS[m.persona] || {};
+  const [state, setState] = useState(ap.state || "pending");
+  return (
+    <div className="rounded-xl border p-3" style={{ borderColor: C.border, backgroundColor: "white", boxShadow: "0 1px 1.5px rgba(16,24,40,0.05)" }}>
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <Check className="w-4 h-4 shrink-0" style={{ color: C.primary }} />
+        <span className="text-[11px] font-semibold" style={{ color: C.textPrimary }}>Approval request</span>
+        {m.facet && <FacetChip f={m.facet} />}
+        <span className="ml-auto text-[10px]" style={{ color: C.textDisabled }}>{m.ts}</span>
+      </div>
+      <div className="text-[12px] font-medium" style={{ color: C.textPrimary }}>{ap.title}</div>
+      {ap.detail && <div className="text-[11px] mt-0.5" style={{ color: C.textSecondary }}>{ap.detail}</div>}
+      <div className="text-[10px] mt-1" style={{ color: C.textDisabled }}>Requested by {req.name || m.persona}</div>
+      {state === "pending" ? (
+        <div className="flex gap-2 mt-2.5">
+          <button onClick={() => setState("approved")} className="flex-1 h-8 rounded-lg text-[12px] font-medium text-white inline-flex items-center justify-center gap-1 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1" style={{ backgroundColor: C.primary }}><Check className="w-3.5 h-3.5" /> Approve</button>
+          <button onClick={() => setState("changes")} className="flex-1 h-8 rounded-lg text-[12px] font-medium border inline-flex items-center justify-center gap-1 bg-white hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1" style={{ borderColor: C.border, color: C.textSecondary }}><X className="w-3.5 h-3.5" /> Request changes</button>
+        </div>
+      ) : (
+        <div className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-lg"
+          style={state === "approved" ? { backgroundColor: C.successLight, color: C.success } : { backgroundColor: "#FEF0C7", color: C.warning }}>
+          {state === "approved" ? <><Check className="w-3.5 h-3.5" /> Approved</> : <><X className="w-3.5 h-3.5" /> Changes requested</>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============== CHAT ROOM ===============
+function ChatRoomPanel({ item, onClose, scenarioStep = 0, activePersona = "PM", activeBom = "E", bomLevel = false }) {
+  const src = bomLevel ? (BOM_COLLABS[activeBom] || BOM_COLLABS.E) : ((item && PART_COLLABS[item.id]) || EMPTY_COLLAB);
+  const decided = src.status === "decided";
+  const hasVote = !!(src.vote && src.vote.options && src.vote.options.length > 0);
+  const total = hasVote ? (src.vote.options.reduce((s, o) => s + o.votes, 0) || 1) : 1;
+  const winnerId = hasVote ? src.vote.options.reduce((a, b) => (b.votes > a.votes ? b : a)).id : null;
+  const sb = STATUS_BADGE[src.status] || STATUS_BADGE.discussion;
+  const title = bomLevel ? src.title : (item ? (item.partName || item.desc || item.partId) : "Conversation");
+  const specEntries = Object.entries((item && item.spec) || {}).slice(0, 3);
+  const summaryRows = bomLevel ? src.summary : specEntries;
+  const summaryLabel = bomLevel ? "BOM summary" : "Spec summary";
+  const memberCount = src.participantKeys ? src.participantKeys.length : 0;
+
+  const [messages, setMessages] = useState(src.timeline || []);
+  const [draft, setDraft] = useState("");
+  const [vote, setVote] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [tab, setTab] = useState("chat");
+  const scrollRef = useRef(null);
+  const voteRef = useRef(null);
+  const scrollToVote = () => { if (voteRef.current) voteRef.current.scrollIntoView({ behavior: "smooth", block: "center" }); };
+
+  const post = () => {
+    const t = draft.trim();
+    if (!t) return;
+    setMessages((m) => [...m, { id: Date.now(), persona: activePersona, ts: "now", text: t }]);
+    setDraft("");
+    setTimeout(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, 30);
+  };
+
+  // Re-sync messages when the room changes (switching BOM E/C/Q or part)
+  const roomKey = bomLevel ? `bom:${activeBom}` : `part:${item && item.id}`;
+  useEffect(() => { setMessages(src.timeline || []); /* eslint-disable-next-line */ }, [roomKey]);
+
+  const VoteBlock = () => (
+    <div className="space-y-2">
+      {src.vote.options.map((o) => {
+        const pct = Math.round((o.votes / total) * 100);
+        const selected = vote === o.id;
+        const isWinner = decided && o.id === winnerId;
+        const barColor = isWinner ? C.textSecondary : selected ? C.primary : C.textDisabled;
+        return (
+          <button key={o.id} onClick={() => !decided && setVote(o.id)} disabled={decided}
+            className="w-full text-left rounded-lg border p-2.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-default"
+            style={{ borderColor: isWinner ? C.textDisabled : selected ? C.primary : C.border, backgroundColor: "white" }}>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full border flex items-center justify-center shrink-0" style={{ borderColor: selected || isWinner ? (isWinner ? C.textSecondary : C.primary) : C.border }}>
+                {(selected || isWinner) && <span className="w-2 h-2 rounded-full" style={{ backgroundColor: isWinner ? C.textSecondary : C.primary }} />}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[12px] font-medium" style={{ color: C.textPrimary }}>Option {o.id} — {o.label}{isWinner && <span className="ml-1.5 text-[10px] font-medium" style={{ color: C.textSecondary }}>· Adopted</span>}</div>
+                <div className="text-[10px] truncate" style={{ color: C.textDisabled }}>{o.note}</div>
+              </div>
+              <span className="text-[12px] font-medium tabular-nums shrink-0" style={{ color: barColor }}>{pct}%</span>
+            </div>
+            <div className="mt-1.5 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: C.bg }}>
+              <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: barColor }} />
+            </div>
+          </button>
+        );
+      })}
+      <div className="text-[10px]" style={{ color: C.textDisabled }}>{total}/{src.vote.totalVoters} voted{submitted && vote ? " · Your vote counted" : ""}</div>
+      {!decided && (
+        <button onClick={() => vote && setSubmitted(true)} disabled={!vote || submitted}
+          className="w-full h-9 rounded-lg text-[13px] font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+          style={{ backgroundColor: vote && !submitted ? C.primary : C.textDisabled, opacity: vote && !submitted ? 1 : 0.6 }}>{submitted ? "Voted" : "Submit vote"}</button>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col h-full relative" style={{ backgroundColor: C.surface }}>
+      {/* Top bar */}
+      <div className="shrink-0 flex items-center gap-2 px-2 pt-2 pb-1.5">
+        <button onClick={onClose} title="Back" className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 focus:outline-none focus-visible:ring-2" style={{ color: C.textSecondary }}>
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <div className="flex-1 min-w-0 px-1">
+          <div className="text-[13px] font-semibold truncate" style={{ color: C.textPrimary }}>{title}</div>
+        </div>
+      </div>
+      {/* Tabs */}
+      <div className="shrink-0 flex border-b px-2" style={{ borderColor: C.border }}>
+        {[["details", "Details"], ["chat", "Chat"], ["activity", "Activity"]].map(([t, label]) => (
+          <button key={t} onClick={() => setTab(t)}
+            className="relative h-9 px-4 text-[12px] font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-inset"
+            style={{ color: tab === t ? C.primary : C.textSecondary }}>
+            {label}
+            {tab === t && <span className="absolute left-2 right-2 bottom-0 h-0.5 rounded-full" style={{ backgroundColor: C.primary }} />}
+          </button>
+        ))}
+      </div>
+
+      {tab === "chat" && (
+        <>
+      {/* Decision banner — only while the vote is active; jumps to the card */}
+      {hasVote && !decided && (
+        <button onClick={scrollToVote}
+          className="shrink-0 w-full flex items-center gap-2 px-3 py-2 border-b text-left transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset"
+          style={{ borderColor: C.border, backgroundColor: C.primarySoft }}>
+          <ListChecks className="w-3.5 h-3.5 shrink-0" style={{ color: C.primary }} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 text-[12px] font-medium" style={{ color: C.textPrimary }}>
+              Decision vote
+              {src.vote.facet && <FacetChip f={src.vote.facet} />}
+            </div>
+            <div className="text-[10px] truncate" style={{ color: C.textSecondary }}>{src.vote.deadline}</div>
+          </div>
+          <span className="text-[10px] font-medium shrink-0" style={{ color: C.primary }}>View</span>
+          <ChevronDown className="w-4 h-4 shrink-0" style={{ color: C.textDisabled }} />
+        </button>
+      )}
+
+      {/* Messages */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-3" style={{ backgroundColor: "#F7F8FA" }}>
+        {messages.length === 0 && !hasVote ? (
+          <div className="h-full flex flex-col items-center justify-center text-center px-8">
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: C.surfaceTinted }}>
+              <MessageSquare className="w-6 h-6" style={{ color: C.textDisabled }} />
+            </div>
+            <div className="text-[13px] font-medium" style={{ color: C.textPrimary }}>No collaboration yet</div>
+            <div className="text-[11px] mt-1 leading-relaxed" style={{ color: C.textDisabled }}>
+              {bomLevel ? "Start the discussion for this BOM" : "Be the first to raise this part"} — send a message below.
+              {!hasVote && " A decision can be proposed once it's discussed."}
+            </div>
+          </div>
+        ) : messages.map((m, i) => {
+          const mine = m.persona === activePersona;
+          const p = PERSONAS[m.persona] || {};
+          const prev = messages[i - 1];
+          const grouped = !!prev && prev.persona === m.persona && !m.quoted && !m.kind && !prev.kind;
+          const topGap = i === 0 ? "" : grouped ? "mt-1" : "mt-3";
+          const fm = m.facet && FACET_META[m.facet];
+          if (m.kind === "system") {
+            return (
+              <div key={m.id} className="flex justify-center my-3">
+                <span className="text-[10px] px-2.5 py-1 rounded-full" style={{ backgroundColor: C.surfaceTinted, color: C.textDisabled }}>{m.text}</span>
+              </div>
+            );
+          }
+          if (m.kind === "action") return <div key={m.id} className={topGap}><ActionCard m={m} /></div>;
+          if (m.kind === "approval") return <div key={m.id} className={topGap}><ApprovalCard m={m} /></div>;
+          if (m.kind === "vote") {
+            if (!hasVote) return null;
+            return (
+              <div key={m.id} ref={voteRef} className={topGap}>
+                <div className="rounded-xl border p-3" style={{ borderColor: decided ? C.border : C.primaryLight, backgroundColor: decided ? C.surfaceTinted : C.primarySoft }}>
+                  <div className="flex items-center gap-1.5 mb-2.5">
+                    <ListChecks className="w-4 h-4 shrink-0" style={{ color: decided ? C.textSecondary : C.primary }} />
+                    <span className="text-[12px] font-semibold" style={{ color: decided ? C.textSecondary : C.textPrimary }}>{decided ? "Decision result" : "Decision vote"}</span>
+                    {src.vote.facet && <FacetChip f={src.vote.facet} />}
+                    <span className="ml-auto text-[10px] font-medium" style={{ color: C.textSecondary }}>{decided ? `Option ${winnerId} adopted` : src.vote.deadline}</span>
+                  </div>
+                  <VoteBlock />
+                </div>
+              </div>
+            );
+          }
+          if (mine) {
+            return (
+              <div key={m.id} className={`flex justify-end ${topGap}`}>
+                <div className="max-w-[82%]">
+                  <div className="rounded-xl rounded-br-sm px-3 py-2 text-[12px] leading-relaxed" style={{ backgroundColor: C.primary, color: "white" }}>{m.text}</div>
+                  <div className="text-[9px] text-right mt-0.5" style={{ color: C.textDisabled }}>{m.ts}</div>
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div key={m.id} className={`flex gap-2 ${topGap}`}>
+              <div className="w-7 shrink-0">{!grouped && <PersonaAvatar p={m.persona} size={28} />}</div>
+              <div className="max-w-[82%] min-w-0">
+                {!grouped && <div className="text-[11px] font-medium mb-0.5" style={{ color: C.textPrimary }}>{p.name}</div>}
+                {m.quoted && (
+                  <div className="rounded-lg px-2 py-1 mb-1 text-[10px]" style={{ backgroundColor: C.primarySoft, borderLeft: `2px solid ${C.primary}`, color: C.primary }}>
+                    <CornerDownRight className="w-3 h-3 inline mr-1" />Quoted from {m.quoted.from} · {m.quoted.author}
+                  </div>
+                )}
+                <div className="rounded-xl rounded-tl-sm px-3 py-2 text-[12px] leading-relaxed inline-block"
+                  style={{ backgroundColor: "white", color: C.textSecondary, border: `1px solid ${C.border}` }}>{m.text}</div>
+                <div className="text-[9px] mt-0.5" style={{ color: C.textDisabled }}>{m.ts}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Composer */}
+      <div className="shrink-0 border-t px-2.5 py-2 flex items-end gap-2" style={{ borderColor: C.border }}>
+        <div className="flex-1 rounded-2xl border px-3 py-2 transition-colors focus-within:border-violet-500" style={{ borderColor: C.border }}>
+          <textarea rows={1} value={draft} onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); post(); } }}
+            placeholder="Message" className="w-full resize-none outline-none text-[12px] bg-transparent leading-relaxed" style={{ color: C.textPrimary }} />
+        </div>
+        <button onClick={post} disabled={!draft.trim()} title="Send"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0 transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed"
+          style={{ backgroundColor: draft.trim() ? C.primary : C.textDisabled, opacity: draft.trim() ? 1 : 0.6 }}>
+          <Send className="w-4 h-4" />
+        </button>
+      </div>
+        </>
+      )}
+
+      {tab === "details" && (
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+          {bomLevel ? (
+            <>
+              <div className="text-[11px]" style={{ color: C.textSecondary }}>{src.subline}</div>
+              <div>
+                <div className="text-[11px] font-medium mb-1.5" style={{ color: C.textSecondary }}>BOM summary</div>
+                <DetailRows rows={src.summary} />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Spec */}
+              <div>
+                <div className="text-[11px] font-medium mb-1.5" style={{ color: C.textSecondary }}>Spec</div>
+                <DetailRows rows={[
+                  ...(item && item.partId ? [["Part ID", item.partId]] : []),
+                  ...(item && item.itemCode ? [["Item code", item.itemCode]] : []),
+                  ...specEntries,
+                ]} empty="No spec on record" />
+              </div>
+              {/* Cost */}
+              <div>
+                <div className="text-[11px] font-medium mb-1.5" style={{ color: C.textSecondary }}>Cost</div>
+                <DetailRows rows={src.costDetail} />
+              </div>
+              {/* Quality */}
+              <div>
+                <div className="text-[11px] font-medium mb-1.5" style={{ color: C.textSecondary }}>Quality</div>
+                <DetailRows rows={src.qualityDetail} />
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {tab === "activity" && (
+        <div className="flex-1 overflow-y-auto px-4 py-4" style={{ backgroundColor: C.surface }}>
+          {src.activity && src.activity.length > 0 ? (
+            <div>
+              {src.activity.map((a, i) => {
+                const p = PERSONAS[a.actor] || {};
+                const last = i === src.activity.length - 1;
+                return (
+                  <div key={a.id || i} className="flex gap-2.5">
+                    <div className="flex flex-col items-center shrink-0">
+                      <PersonaAvatar p={a.actor} size={26} />
+                      {!last && <div className="w-px flex-1 mt-1" style={{ backgroundColor: C.border }} />}
+                    </div>
+                    <div className="pb-4 min-w-0">
+                      <div className="text-[12px] leading-snug" style={{ color: C.textPrimary }}>
+                        <span className="font-medium">{p.name || a.actor}</span> {a.action}
+                      </div>
+                      {a.detail && <div className="text-[11px] mt-0.5 leading-relaxed" style={{ color: C.textSecondary }}>{a.detail}</div>}
+                      <div className="text-[10px] mt-0.5" style={{ color: C.textDisabled }}>{a.ts}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-center px-8">
+              <div className="text-[12px] font-medium" style={{ color: C.textSecondary }}>No activity yet</div>
+              <div className="text-[11px] mt-0.5" style={{ color: C.textDisabled }}>Changes to this item will appear here</div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// =============== CHAT LIST ===============
+function ChatListPanel({ onOpenAgenda, activePersona = "PM", activeBom = "E" }) {
+  const [bomOpen, setBomOpen] = useState(false);
+  if (bomOpen) return <ChatRoomPanel bomLevel onClose={() => setBomOpen(false)} activePersona={activePersona} activeBom={activeBom} />;
+
+  const bomc = BOM_COLLABS[activeBom] || BOM_COLLABS.E;
+  const bomRooms = [{ id: "bom", kind: "bom", title: bomc.title, status: bomc.status, last: lastOf(bomc.timeline), unread: bomc.unread || 0 }];
+  const partRooms = PART_ROOMS;
+
+  const Row = (room) => {
+    const sender = PERSONAS[room.last.sender];
+    const senderName = sender ? sender.name.split(" ")[0] : "";
+    return (
+      <button key={room.id} onClick={() => room.kind === "bom" ? setBomOpen(true) : (onOpenAgenda && onOpenAgenda(room.id))}
+        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white text-left transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset">
+        <RoomAvatar kind={room.kind} status={room.status} size={40} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[13px] font-medium truncate flex-1 min-w-0" style={{ color: C.textPrimary }}>{room.title}</span>
+            <span className="text-[10px] tabular-nums shrink-0" style={{ color: C.textDisabled }}>{room.last.ts}</span>
+          </div>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-[11px] truncate flex-1 min-w-0" style={{ color: C.textSecondary }}>
+              {senderName ? `${senderName}: ` : ""}{room.last.text}
+            </span>
+            {room.unread > 0
+              ? <span className="shrink-0 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[10px] font-medium text-white" style={{ backgroundColor: C.primary }}>{room.unread}</span>
+              : room.status === "decided"
+                ? <CheckCircle className="w-3.5 h-3.5 shrink-0" style={{ color: C.success }} />
+                : null}
+          </div>
+        </div>
+      </button>
+    );
+  };
+
+  return (
+    <div className="flex flex-col h-full" style={{ backgroundColor: "#f1f3f5" }}>
+      <div className="shrink-0 px-4 py-3.5">
+        <span className="text-[15px] font-medium" style={{ color: C.textPrimary }}>Collaborations</span>
+      </div>
+      <div className="flex-1 overflow-y-auto px-3 pb-3">
+        {bomRooms.length === 0 && partRooms.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center px-8">
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: C.surfaceTinted }}>
+              <MessageSquare className="w-6 h-6" style={{ color: C.textDisabled }} />
+            </div>
+            <div className="text-[13px] font-medium" style={{ color: C.textPrimary }}>No collaborations yet</div>
+            <div className="text-[11px] mt-1 leading-relaxed" style={{ color: C.textDisabled }}>
+              Open a part from the BOM and send a message to start one, or raise a BOM-wide topic.
+            </div>
+          </div>
+        ) : (
+          <>
+            {bomRooms.length > 0 && (
+              <>
+                <div className="px-1 pt-2 pb-1.5 text-[10px] font-medium" style={{ color: C.textDisabled }}>BOM-wide</div>
+                <div className="space-y-2">{bomRooms.map(Row)}</div>
+              </>
+            )}
+            {partRooms.length > 0 && (
+              <>
+                <div className="px-1 pt-3 pb-1.5 text-[10px] font-medium" style={{ color: C.textDisabled }}>Parts · {partRooms.length}</div>
+                <div className="space-y-2">{partRooms.map(Row)}</div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // === ITEM 360 DRAWER ===
 function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom }) {
   const isHero = item.id === 3;
@@ -9875,8 +10745,8 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
 
   // BOM-specific action label for missing item
   const missingActionMap = {
-    Q: { label: "Register for PPAP", icon: ShieldCheck, desc: "This part needs to be registered for PPAP qualification in the Quality BOM" },
-    C: { label: "Select Supplier & Quote", icon: Building2, desc: "This part needs supplier selection and cost entry in the C-BOM (Source & Cost)" },
+    Q: { label: "Register for PPAP", icon: ShieldCheck, tab: "quality", desc: "This part needs to be registered for PPAP qualification in the Quality BOM" },
+    C: { label: "Select Supplier & Quote", icon: Building2, tab: "procurement", desc: "This part needs supplier selection and cost entry in the C-BOM (Source & Cost)" },
   };
   const missingAction = missingActionMap[activeBom];
 
@@ -9897,16 +10767,11 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
             <Package className="w-6 h-6" style={{ color: isHero ? C.warning : C.textSecondary }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium" style={{ color: C.textPrimary }}>
+            <div className="text-sm font-medium truncate" title={item.partName || item.desc} style={{ color: C.textPrimary }}>
               {item.partName || item.desc}
             </div>
             <div className="text-xs tabular-nums" style={{ color: C.textSecondary }}>
               {item.partId} · {item.itemCode || "N/A"}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2">
-              {item.status && Object.entries(item.status).map(([k, v]) => (
-                <StatusPill key={k} kind={v} label={`${k}`} />
-              ))}
             </div>
           </div>
           {/* Chat button - icon only, badge for count */}
@@ -9931,6 +10796,50 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
             </button>
           )}
         </div>
+
+        {/* Resolve panel — surfaced when the part has open issues (warn/block) so DE can act here */}
+        {(() => {
+          if (!item.status) return null;
+          // Map each status area with an open issue to a concrete resolve action.
+          const issueAreas = Object.entries(item.status).filter(([, v]) => v === "warn" || v === "block");
+          if (issueAreas.length === 0) return null;
+          const areaResolve = {
+            D: { label: "Design Spec", tab: "spec" },
+            C: { label: "Cost & Sourcing", tab: "procurement" },
+            Q: { label: "Quality / PPAP", tab: "quality" },
+          };
+          const worst = issueAreas.some(([, v]) => v === "block") ? "block" : "warn";
+          const accent = worst === "block" ? C.error : C.warning;
+          return (
+            // Compact single-row banner: severity label + ghost chips per area (routes to the tab).
+            <div className="mt-3 p-2.5 rounded-lg flex items-center gap-x-2.5 gap-y-1.5 flex-wrap"
+              style={{ backgroundColor: worst === "block" ? C.errorLight : C.warningLight }}>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <AlertCircle className="w-4 h-4" style={{ color: accent }} />
+                <span className="text-[11px] font-medium tracking-wide" style={{ color: accent }}>
+                  {worst === "block" ? "BLOCKING" : "NEEDS ATTENTION"}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {issueAreas.map(([k, v]) => {
+                  const r = areaResolve[k];
+                  if (!r) return null;
+                  const chipColor = v === "block" ? C.error : C.primary;
+                  return (
+                    <button key={k}
+                      onClick={() => setTab(r.tab)}
+                      title={`Resolve ${r.label}`}
+                      className="inline-flex items-center gap-1 h-6 px-2 rounded-md text-[11px] font-medium border bg-white transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                      style={{ borderColor: chipColor, color: chipColor }}>
+                      <Edit3 className="w-3 h-3" />
+                      {r.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Missing/Lagged Action Banner — actionable CTA when item lacks required info in this BOM */}
@@ -9949,7 +10858,8 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
             </div>
             {isMissingInActiveBom && missingAction && (
               <button
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-white transition-opacity hover:opacity-90"
+                onClick={() => setTab(missingAction.tab)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                 style={{ backgroundColor: C.primary }}>
                 <missingAction.icon className="w-3 h-3" />
                 {missingAction.label}
@@ -9957,7 +10867,8 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
             )}
             {isLaggedInActiveBom && (
               <button
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-white transition-opacity hover:opacity-90"
+                onClick={() => setTab("spec")}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                 style={{ backgroundColor: C.primary }}>
                 <RefreshCw className="w-3 h-3" />
                 Sync from E-BOM
@@ -9970,18 +10881,21 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
       {/* Tabs */}
       <div className="flex border-b sticky top-0 bg-white z-10" style={{ borderColor: C.border }}>
         {[
-          { id: "spec", label: "Spec", icon: FileText },
-          { id: "procurement", label: "Cost & Sourcing", icon: DollarSign },
-          { id: "quality", label: "Quality", icon: ShieldCheck },
-          { id: "activity", label: "Activity", icon: Activity },
+          { id: "spec", label: "Spec", full: "Spec" },
+          // Design Validation is shown only when an SM-submitted supplier pack exists for this part.
+          // (Mock: AMOLED Panel id=3 in the Hero scenario.)
+          ...(item.id === 3 ? [{ id: "validation", label: "Validation", full: "Design Validation" }] : []),
+          { id: "procurement", label: "Cost", full: "Cost & Sourcing" },
+          { id: "quality", label: "Quality", full: "Quality" },
+          { id: "activity", label: "Activity", full: "Activity" },
         ].map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className="flex-1 px-2 py-2.5 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            title={t.full}
+            className="flex-1 min-w-0 px-2 h-10 text-xs font-medium flex items-center justify-center border-b-2 truncate transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
             style={{
               borderColor: tab === t.id ? C.primary : "transparent",
               color: tab === t.id ? C.primary : C.textSecondary,
             }}>
-            <t.icon className="w-3.5 h-3.5" />
             {t.label}
           </button>
         ))}
@@ -9989,7 +10903,8 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
 
       {/* Tab content */}
       <div className="p-4">
-        {tab === "spec" && <SpecTab item={item} scenarioStep={scenarioStep} />}
+        {tab === "spec" && <SpecTab item={item} scenarioStep={scenarioStep} onOpenChat={onOpenChat} />}
+        {tab === "validation" && <DesignValidationTab item={item} scenarioStep={scenarioStep} onOpenChat={onOpenChat} />}
         {tab === "procurement" && <ProcurementTab item={item} scenarioStep={scenarioStep} />}
         {tab === "quality" && <QualityTab item={item} scenarioStep={scenarioStep} />}
         {tab === "activity" && <ItemActivityTab item={item} scenarioStep={scenarioStep} />}
@@ -9998,9 +10913,46 @@ function Item360Drawer({ item, tab, setTab, scenarioStep, onOpenChat, activeBom 
   );
 }
 
-function SpecTab({ item, scenarioStep }) {
+function SpecTab({ item, scenarioStep, onOpenChat }) {
   const isHero = item.id === 3;
   const specEdited = scenarioStep >= 2;
+  // Similar parts (AI recommended) — each carries simulation data for the "what if I switch?" modal.
+  const similarParts = [
+    { id: "EI2-I6DA-002WB", desc: "PANEL,AMOLED,6.5IN,FHD+,90HZ", sim: 92,
+      specDiff: [
+        { key: "Display Size",  from: "6.7\"",        to: "6.5\"",         risk: "warn" },
+        { key: "Refresh Rate",  from: "120Hz",        to: "90Hz",          risk: "warn" },
+        { key: "Resolution",    from: "FHD+",         to: "FHD+",          risk: "ok" },
+        { key: "Pin Layout",    from: "40-pin FPC",   to: "40-pin FPC",    risk: "ok" },
+      ],
+      costDelta: -2.80, costNote: "Unit cost drops by $2.80 (current $38.70 → $35.90)",
+      qualityImpact: "PPAP transferable — same supplier line. Re-validation ~1 week.",
+      bomImpact: { E: "Spec sheet update", C: "Should-cost recalc", Q: "PPAP re-validate" } },
+    { id: "EI2-I6DA-004WB", desc: "PANEL,AMOLED,6.7IN,QHD+,120HZ", sim: 87,
+      specDiff: [
+        { key: "Display Size",  from: "6.7\"",        to: "6.7\"",         risk: "ok" },
+        { key: "Resolution",    from: "FHD+",         to: "QHD+",          risk: "warn" },
+        { key: "Power Draw",    from: "1.8W",         to: "2.4W",          risk: "warn" },
+        { key: "Pin Layout",    from: "40-pin FPC",   to: "44-pin FPC",    risk: "block" },
+      ],
+      costDelta: +6.40, costNote: "Unit cost rises by $6.40 (current $38.70 → $45.10)",
+      qualityImpact: "New PPAP Lv3 required. Pin layout change forces mainboard re-validation.",
+      bomImpact: { E: "Mainboard FPC connector change", C: "RFQ to 2 suppliers", Q: "PPAP Lv3 + DVT" } },
+  ];
+
+  const [simPart, setSimPart] = useState(null); // selected similar part for simulation
+  const closeSim = () => setSimPart(null);
+  const discussPart = (sp) => {
+    closeSim();
+    // Seed chat with this part as context; pass simulation summary so the chat can show what's being discussed.
+    if (onOpenChat) {
+      onOpenChat({
+        itemId: item.id, partId: item.partId, partName: item.partName || item.desc,
+        simulation: { candidateId: sp.id, candidateDesc: sp.desc, costDelta: sp.costDelta, sim: sp.sim },
+      });
+    }
+  };
+
   return (
     <div>
       {isHero && specEdited && (
@@ -10035,132 +10987,308 @@ function SpecTab({ item, scenarioStep }) {
       <div className="mt-5">
         <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Similar Parts (AI recommended)</div>
         <div className="space-y-2">
-          {[
-            { id: "EI2-I6DA-002WB", desc: "PANEL,AMOLED,6.5IN,FHD+,90HZ", sim: 92 },
-            { id: "EI2-I6DA-004WB", desc: "PANEL,AMOLED,6.7IN,QHD+,120HZ", sim: 87 },
-          ].map((s) => (
-            <div key={s.id} className="p-2 rounded-md border flex items-center justify-between text-xs"
+          {similarParts.map((s) => (
+            <div key={s.id} className="p-2 rounded-md border flex items-center gap-2 text-xs"
               style={{ borderColor: C.borderLight }}>
-              <div>
+              <div className="flex-1 min-w-0">
                 <div className="tabular-nums" style={{ color: C.textPrimary }}>{s.id}</div>
-                <div style={{ color: C.textSecondary }}>{s.desc}</div>
+                <div className="truncate" style={{ color: C.textSecondary }}>{s.desc}</div>
               </div>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium shrink-0"
                 style={{ backgroundColor: C.successLight, color: C.success }}>{s.sim}% match</span>
+              <button onClick={() => setSimPart(s)}
+                className="h-6 px-2 rounded-md text-[10px] font-medium border shrink-0 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center gap-1"
+                style={{ borderColor: C.primary, color: C.primary, backgroundColor: "white" }}
+                title={`Simulate switching to ${s.id}`}>
+                <Sparkles className="w-3 h-3" />
+                Simulate
+              </button>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Simulation Modal — "what if I switch to this part?" */}
+      {simPart && (
+        <>
+          <div className="fixed inset-0 z-40" style={{ backgroundColor: "rgba(16, 24, 40, 0.4)" }}
+            onClick={closeSim} />
+          <div className="fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl flex flex-col"
+            style={{ transform: "translate(-50%, -50%)", width: "min(640px, 92vw)", maxHeight: "85vh" }}>
+            {/* Header */}
+            <div className="flex items-start gap-3 px-6 py-4 border-b shrink-0" style={{ borderColor: C.border }}>
+              <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+                style={{ backgroundColor: C.primaryLight }}>
+                <Sparkles className="w-4 h-4" style={{ color: C.primary }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[16px] font-medium" style={{ color: C.textPrimary }}>
+                  Switch Simulation
+                </div>
+                <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
+                  Impact of replacing <span className="tabular-nums">{item.partId}</span> with <span className="tabular-nums">{simPart.id}</span>
+                </div>
+              </div>
+              <button onClick={closeSim}
+                className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-gray-100 focus:outline-none focus-visible:ring-2 shrink-0"
+                style={{ color: C.textSecondary }} title="Close">
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Body — scrollable */}
+            <div className="overflow-y-auto px-6 py-4 flex flex-col gap-4">
+              {/* Spec diff table */}
+              <div>
+                <div className="text-[12px] font-medium mb-2" style={{ color: C.textSecondary }}>Specification changes</div>
+                <div className="rounded-lg overflow-hidden border" style={{ borderColor: C.borderLight }}>
+                  <table className="w-full text-[12px]">
+                    <thead style={{ backgroundColor: C.surfaceTinted }}>
+                      <tr style={{ color: C.textSecondary }}>
+                        <th className="text-left font-medium py-2 px-3">Property</th>
+                        <th className="text-left font-medium py-2 px-3">Current</th>
+                        <th className="text-left font-medium py-2 px-3">After switch</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {simPart.specDiff.map((d) => {
+                        const changed = d.from !== d.to;
+                        const riskColor = d.risk === "block" ? C.error : d.risk === "warn" ? C.warning : C.success;
+                        return (
+                          <tr key={d.key} className="border-t" style={{ borderColor: C.borderLight }}>
+                            <td className="py-2 px-3" style={{ color: C.textPrimary }}>{d.key}</td>
+                            <td className="py-2 px-3 tabular-nums" style={{ color: C.textSecondary }}>{d.from}</td>
+                            <td className="py-2 px-3 tabular-nums" style={{ color: changed ? riskColor : C.textSecondary, fontWeight: changed ? 500 : 400 }}>
+                              {d.to}{changed && d.risk !== "ok" && (
+                                <AlertCircle className="w-3 h-3 inline ml-1 -mt-0.5" style={{ color: riskColor }} />
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Cost impact */}
+              <div className="p-3 rounded-lg flex items-start gap-2"
+                style={{ backgroundColor: simPart.costDelta < 0 ? C.successLight : C.errorLight }}>
+                <DollarSign className="w-4 h-4 shrink-0 mt-0.5"
+                  style={{ color: simPart.costDelta < 0 ? C.success : C.error }} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-medium tracking-wider"
+                    style={{ color: simPart.costDelta < 0 ? C.success : C.error }}>
+                    COST IMPACT {simPart.costDelta < 0 ? "↓" : "↑"} ${Math.abs(simPart.costDelta).toFixed(2)}
+                  </div>
+                  <div className="text-[12px] mt-0.5" style={{ color: C.textPrimary }}>{simPart.costNote}</div>
+                </div>
+              </div>
+
+              {/* Quality impact */}
+              <div className="p-3 rounded-lg flex items-start gap-2"
+                style={{ backgroundColor: C.warningLight }}>
+                <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.warning }} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-medium tracking-wider" style={{ color: C.warning }}>QUALITY IMPACT</div>
+                  <div className="text-[12px] mt-0.5" style={{ color: C.textPrimary }}>{simPart.qualityImpact}</div>
+                </div>
+              </div>
+
+              {/* BOM downstream impact */}
+              <div>
+                <div className="text-[12px] font-medium mb-2" style={{ color: C.textSecondary }}>Downstream BOM impact</div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { k: "E", label: "E-BOM", note: simPart.bomImpact.E, color: C.info, tint: C.infoLight },
+                    { k: "C", label: "C-BOM", note: simPart.bomImpact.C, color: C.warning, tint: C.warningLight },
+                    { k: "Q", label: "Q-BOM", note: simPart.bomImpact.Q, color: "#7c3aed", tint: "#f4eafe" },
+                  ].map((b) => (
+                    <div key={b.k} className="p-2 rounded-lg" style={{ backgroundColor: b.tint }}>
+                      <div className="text-[10px] font-medium" style={{ color: b.color }}>{b.label}</div>
+                      <div className="text-[11px] mt-0.5" style={{ color: C.textPrimary }}>{b.note}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer actions */}
+            <div className="px-6 py-3 border-t flex items-center justify-end gap-2 shrink-0"
+              style={{ borderColor: C.border }}>
+              <button onClick={() => discussPart(simPart)}
+                className="h-9 px-4 rounded-md text-[13px] font-medium border transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center gap-1.5"
+                style={{ borderColor: C.border, color: C.textPrimary, backgroundColor: "white" }}>
+                <MessageSquare className="w-4 h-4" />
+                Discuss
+              </button>
+              <button onClick={closeSim}
+                className="h-9 px-4 rounded-md text-[13px] font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center gap-1.5"
+                style={{ backgroundColor: C.primary }}
+                title={`Change part to ${simPart.id}`}>
+                <GitMerge className="w-4 h-4" />
+                Change
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function CostTab({ item, scenarioStep }) {
-  const isHero = item.id === 3;
-  const cost = item.cost;
-  const rfqSent = isHero && scenarioStep >= 5;
-  const quoted = isHero && scenarioStep >= 6 ? 38.90 : (cost && cost.quoted);
+// === DESIGN VALIDATION TAB ===
+// DE's checklist for confirming a supplier-submitted part meets design requirements.
+// Triggered when SM forwards a recommended supplier (e.g. BOE for AMOLED Panel).
+// Flow: review supplier pack → tick 4 fit checks → notify CM with @mention for cost roll-up.
+function DesignValidationTab({ item, scenarioStep, onOpenChat }) {
+  // Supplier pack from SM (mock — in production this comes from the SM submission record)
+  const supplierPack = {
+    supplier: "BOE Technology",
+    submittedBy: "Sam Lee",
+    submittedAt: "28 min ago",
+    quote: 38.90,
+    risk: "Med", cap: 88, perf: 85,
+    specSheet: "BOE_AMOLED_6.7_120Hz_Rev2.pdf",
+    quotesCompared: 3,
+  };
 
-  if (!cost) {
-    return (
-      <div className="text-center py-12">
-        <DollarSign className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
-        <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>No Cost Info</div>
-        <div className="text-xs" style={{ color: C.textSecondary }}>Cost analysis hasn't started for this part yet.</div>
-      </div>
-    );
-  }
+  // 4-step fit checklist — DE toggles each. All must pass to enable Confirm Fit.
+  const checklist = [
+    {
+      id: "spec",
+      label: "Spec sheet meets design requirements",
+      detail: "6.7\" · FHD+ · 120Hz · 40-pin FPC — matches Rev A baseline.",
+    },
+    {
+      id: "mech",
+      label: "Mechanical fit (clearance margin)",
+      detail: "0.3mm clearance margin verified against housing CAD.",
+    },
+    {
+      id: "mfg",
+      label: "Manufacturability (mass production)",
+      detail: "BOE has shipped 2.3M+ similar panels. Tooling ready, lead time 6 weeks.",
+    },
+    {
+      id: "rev",
+      label: "Lock spec as Rev B",
+      detail: "E-BOM revision will increment once all checks pass.",
+    },
+  ];
 
-  const currentValue = quoted || cost.current;
-  const overTarget = currentValue > cost.target;
-  const deltaAmt = currentValue - cost.target;
+  const [checked, setChecked] = useState({});
+  const allChecked = checklist.every((c) => checked[c.id]);
+  const toggle = (id) => setChecked((p) => ({ ...p, [id]: !p[id] }));
+
+  const handleConfirm = () => {
+    if (!allChecked || !onOpenChat) return;
+    // Seed chat with the canonical confirmation message + @CM mention.
+    // The chat panel will pre-fill its composer with seedMessage.
+    onOpenChat({
+      itemId: item.id,
+      partId: item.partId,
+      partName: item.partName || item.desc,
+      bom: "E",
+      seedMessage: `@Cory — Design Validation complete for AMOLED Panel 6.7" (BOE Technology).
+✓ Spec verified: 6.7" / FHD+ / 120Hz / 40-pin FPC
+✓ Mechanical fit: 0.3mm clearance margin
+✓ Manufacturability: BOE tooling ready
+✓ Spec locked as Rev B
+
+Ready for final cost roll-up at $38.90. Please verify and confirm.`,
+    });
+  };
 
   return (
     <div>
-      {/* Target vs Current */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="p-3 rounded-md border" style={{ borderColor: C.border }}>
-          <div className="text-[10px] font-medium" style={{ color: C.textSecondary }}>Target Cost</div>
-          <div className="text-xl font-medium mt-0.5" style={{ color: C.textPrimary }}>${cost.target.toFixed(2)}</div>
+      {/* Supplier Pack from SM */}
+      <div className="mb-4">
+        <div className="text-[10px] font-medium tracking-wider mb-2" style={{ color: C.textSecondary }}>
+          SUPPLIER PACK FROM SM
         </div>
-        <div className="p-3 rounded-md border"
-          style={{
-            borderColor: C.border,
-            backgroundColor: overTarget ? C.errorLight : C.successLight,
-          }}>
-          <div className="text-[10px] font-medium" style={{ color: overTarget ? C.error : C.success }}>
-            CURRENT
-          </div>
-          <div className="text-xl font-medium mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
-            ${currentValue.toFixed(2)}
-          </div>
-          <div className="text-[10px] mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
-            {overTarget ? "+" : ""}${deltaAmt.toFixed(2)} {overTarget ? "over" : "under"} target
-          </div>
-        </div>
-      </div>
-
-      {/* Multi-source Price */}
-      <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Multi-source Price</div>
-      <div className="space-y-1.5 mb-4">
-        {[
-          { label: "Historical", value: cost.historical, source: "Internal DB" },
-          { label: "Market Price", value: cost.market, source: "Market Intel" },
-          { label: "Should-cost", value: cost.shouldCost, source: "AI Estimation", ai: true },
-          { label: "Quoted", value: quoted, source: rfqSent ? "RFQ Response" : (cost.quoted ? "Awarded" : "Pending RFQ") },
-        ].map((p) => (
-          <div key={p.label} className="flex items-center justify-between py-1.5 px-2 rounded text-xs"
-            style={{ backgroundColor: p.ai ? C.primarySoft : "transparent" }}>
-            <div className="flex items-center gap-1.5">
-              {p.ai && <Sparkles className="w-3 h-3" style={{ color: C.primary }} />}
-              <span className="font-medium" style={{ color: C.textPrimary }}>{p.label}</span>
-              <span className="text-[10px]" style={{ color: C.textDisabled }}>· {p.source}</span>
+        <div className="p-3 rounded-lg border" style={{ borderColor: C.border }}>
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
+              style={{ backgroundColor: C.primarySoft, color: C.primary }}>
+              <Package className="w-4 h-4" />
             </div>
-            <span className="tabular-nums font-medium" style={{ color: p.value ? C.textPrimary : C.textDisabled }}>
-              {p.value ? `$${p.value.toFixed(2)}` : "—"}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Cost Bridge mini chart */}
-      <div className="p-3 rounded-md border mb-4" style={{ borderColor: C.border }}>
-        <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Cost Bridge</div>
-        <div className="flex items-end gap-1 h-24">
-          {(() => {
-            const maxV = Math.max(cost.historical, cost.shouldCost, cost.market, quoted || 0, cost.target);
-            return [
-              { label: "Historical", v: cost.historical, c: C.textDisabled },
-              { label: "Should", v: cost.shouldCost, c: C.primary },
-              { label: "Market", v: cost.market, c: C.warning },
-              { label: "Quoted", v: quoted || 0, c: C.success },
-              { label: "Target", v: cost.target, c: C.info, dashed: true },
-            ].map((b) => (
-              <div key={b.label} className="flex-1 flex flex-col items-center">
-                <div className="text-[10px] tabular-nums mb-1" style={{ color: b.c }}>
-                  {b.v ? `$${b.v.toFixed(1)}` : "—"}
-                </div>
-                <div className="w-full rounded-t"
-                  style={{
-                    height: b.v ? `${(b.v / maxV) * 70}px` : "2px",
-                    backgroundColor: b.c,
-                    opacity: b.dashed ? 0.5 : 1,
-                  }} />
-                <div className="text-[10px] mt-1 text-center" style={{ color: C.textSecondary }}>{b.label}</div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-medium" style={{ color: C.textPrimary }}>{supplierPack.supplier}</span>
+                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded"
+                  style={{ backgroundColor: C.primarySoft, color: C.primary }}>Recommended by SM</span>
               </div>
-            ));
-          })()}
+              <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>
+                Quote <span className="tabular-nums font-medium" style={{ color: C.textPrimary }}>${supplierPack.quote.toFixed(2)}</span>
+                <span style={{ color: C.borderLight }}> · </span>
+                Risk {supplierPack.risk} · Cap {supplierPack.cap} · Perf {supplierPack.perf}
+                <span style={{ color: C.borderLight }}> · </span>
+                {supplierPack.quotesCompared} quotes compared
+              </div>
+              <div className="text-[12px] mt-1 flex items-center gap-1.5" style={{ color: C.primary }}>
+                <FileText className="w-3 h-3" />
+                {supplierPack.specSheet}
+              </div>
+              <div className="text-[10px] mt-2" style={{ color: C.textDisabled }}>
+                Submitted by {supplierPack.submittedBy} · {supplierPack.submittedAt}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Action button (RFQ only for the Hero scenario part) */}
-      {isHero && (
-        <div className="flex gap-2">
-          <button className="flex-1 px-3 py-2 rounded-md text-xs font-medium text-white flex items-center justify-center gap-1.5"
-            style={{ backgroundColor: rfqSent ? C.success : C.primary }}>
-            {rfqSent ? <CheckCircle className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}
-            {rfqSent ? "RFQ Sent" : "Send RFQ"}
-          </button>
+      {/* Fit Checklist */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[10px] font-medium tracking-wider" style={{ color: C.textSecondary }}>
+            FIT CHECKLIST <span className="ml-1" style={{ color: C.textDisabled }}>{Object.values(checked).filter(Boolean).length}/{checklist.length}</span>
+          </div>
+          <div className="text-[10px]" style={{ color: C.textDisabled }}>Rev B Draft</div>
+        </div>
+        <div className="rounded-lg border overflow-hidden" style={{ borderColor: C.border }}>
+          {checklist.map((c, idx) => {
+            const isChecked = !!checked[c.id];
+            return (
+              <button key={c.id}
+                onClick={() => toggle(c.id)}
+                className="w-full flex items-start gap-3 p-3 text-left transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset"
+                style={{
+                  borderBottom: idx < checklist.length - 1 ? `1px solid ${C.borderLight}` : "none",
+                  backgroundColor: isChecked ? C.successLight : "white",
+                }}>
+                <div className="w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5"
+                  style={{
+                    border: isChecked ? "none" : `1.5px solid ${C.border}`,
+                    backgroundColor: isChecked ? C.success : "white",
+                  }}>
+                  {isChecked && <Check className="w-3 h-3 text-white" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium" style={{ color: C.textPrimary }}>{c.label}</div>
+                  <div className="text-[12px] mt-0.5" style={{ color: C.textSecondary }}>↳ {c.detail}</div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Confirm Fit & Notify CM */}
+      <button
+        onClick={handleConfirm}
+        disabled={!allChecked}
+        className="w-full h-10 rounded-md text-sm font-medium text-white transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 inline-flex items-center justify-center gap-1.5 disabled:cursor-not-allowed"
+        style={{
+          backgroundColor: allChecked ? C.primary : C.textDisabled,
+          opacity: allChecked ? 1 : 0.6,
+        }}>
+        <AtSign className="w-4 h-4" />
+        Confirm Fit & Notify CM
+      </button>
+      {!allChecked && (
+        <div className="text-[10px] mt-1.5 text-center" style={{ color: C.textDisabled }}>
+          Complete all {checklist.length} checks to enable
         </div>
       )}
     </div>
@@ -10170,6 +11298,29 @@ function CostTab({ item, scenarioStep }) {
 // === PROCUREMENT TAB (Cost + Sourcing combined) ===
 // Decision flow: "How much?" → "From whom?" → "Send RFQ"
 function ProcurementTab({ item, scenarioStep }) {
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+
+  // Open the supplier profile popover. Use full SUPPLIER_DETAILS entry when available;
+  // otherwise build a minimal profile from the part-level supplier card data so the
+  // popover still renders meaningful info even for non-master suppliers.
+  const openSupplierProfile = (s) => {
+    const full = SUPPLIER_DETAILS[s.name];
+    if (full) {
+      setSelectedSupplier(full);
+    } else {
+      setSelectedSupplier({
+        name: s.name,
+        location: s.location || "—",
+        badge: s.recommended ? "Recommended" : "Qualified",
+        tags: ["Qualified Supplier"],
+        summary: `Risk: ${s.risk} · Capability ${s.capability}/100 · Performance ${s.performance}/100${s.quote ? ` · Latest quote $${s.quote.toFixed(2)}` : ""}.`,
+        purchaseHistory: [],
+        items: [],
+        rfx: [],
+      });
+    }
+  };
+
   const isHero = item.id === 3;
   const cost = item.cost;
   const rfqSent = isHero && scenarioStep >= 5;
@@ -10220,7 +11371,7 @@ function ProcurementTab({ item, scenarioStep }) {
                 backgroundColor: overTarget ? C.errorLight : C.successLight,
               }}>
               <div className="text-[10px] font-medium" style={{ color: overTarget ? C.error : C.success }}>
-                CURRENT
+                Current Cost
               </div>
               <div className="text-xl font-medium mt-0.5" style={{ color: overTarget ? C.error : C.success }}>
                 ${currentValue.toFixed(2)}
@@ -10231,6 +11382,59 @@ function ProcurementTab({ item, scenarioStep }) {
             </div>
           </div>
 
+          {/* AI Cost Driver insight — auto-computed from price comparison so the user sees WHY the gap exists */}
+          {(() => {
+            const insights = [];
+            if (cost.historical != null && cost.shouldCost != null) {
+              const d = cost.shouldCost - cost.historical;
+              const pct = (d / cost.historical) * 100;
+              if (Math.abs(d) >= 0.01) {
+                insights.push({
+                  text: `Should-cost is ${d > 0 ? "+" : "−"}$${Math.abs(d).toFixed(2)} (${d > 0 ? "+" : "−"}${Math.abs(pct).toFixed(1)}%) vs Historical — likely material/labor cost shift.`,
+                  warn: d > 0,
+                });
+              }
+            }
+            if (cost.market != null && cost.shouldCost != null) {
+              const d = cost.market - cost.shouldCost;
+              if (Math.abs(d) >= 0.5) {
+                insights.push({
+                  text: `Market Price is ${d > 0 ? "+" : "−"}$${Math.abs(d).toFixed(2)} vs Should-cost — ${d > 0 ? "suppliers may quote above ideal." : "favorable market window."}`,
+                  warn: d > 0,
+                });
+              }
+            }
+            if (quoted != null && cost.shouldCost != null) {
+              const d = quoted - cost.shouldCost;
+              if (Math.abs(d) >= 0.5) {
+                insights.push({
+                  text: `Awarded quote is ${d > 0 ? "+" : "−"}$${Math.abs(d).toFixed(2)} vs Should-cost — ${d > 0 ? "negotiation room remains." : "secured below ideal."}`,
+                  warn: d > 0,
+                });
+              }
+            }
+            if (insights.length === 0) return null;
+            const anyWarn = insights.some((i) => i.warn);
+            return (
+              <div className="mb-3 p-3 rounded-md flex items-start gap-2"
+                style={{ backgroundColor: C.primarySoft }}>
+                <Sparkles className="w-4 h-4 shrink-0 mt-0.5" style={{ color: C.primary }} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-medium tracking-wider mb-1" style={{ color: C.primary }}>
+                    AI COST DRIVER ANALYSIS
+                  </div>
+                  <ul className="space-y-0.5">
+                    {insights.map((ins, i) => (
+                      <li key={i} className="text-xs leading-snug" style={{ color: C.textPrimary }}>
+                        · {ins.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Multi-source Price */}
           <div className="text-xs font-medium mb-2" style={{ color: C.textPrimary }}>Multi-source Price</div>
           <div className="space-y-1.5 mb-4">
@@ -10239,19 +11443,40 @@ function ProcurementTab({ item, scenarioStep }) {
               { label: "Market Price", value: cost.market, source: "Market Intel" },
               { label: "Should-cost", value: cost.shouldCost, source: "AI Estimation", ai: true },
               { label: "Quoted", value: quoted, source: rfqSent ? "RFQ Response" : (cost.quoted ? "Awarded" : "Pending RFQ") },
-            ].map((p) => (
-              <div key={p.label} className="flex items-center justify-between py-1.5 px-2 rounded text-xs"
-                style={{ backgroundColor: p.ai ? C.primarySoft : "transparent" }}>
-                <div className="flex items-center gap-1.5">
-                  {p.ai && <Sparkles className="w-3 h-3" style={{ color: C.primary }} />}
-                  <span className="font-medium" style={{ color: C.textPrimary }}>{p.label}</span>
-                  <span className="text-[10px]" style={{ color: C.textDisabled }}>· {p.source}</span>
+            ].map((p) => {
+              // Single most decision-relevant delta: vs Should-cost (the AI benchmark).
+              // (Historical-vs-Should is already explained in the AI Cost Driver box above.)
+              let delta = null;
+              if (p.value != null && p.label !== "Should-cost" && cost.shouldCost != null) {
+                const d = p.value - cost.shouldCost;
+                if (Math.abs(d) >= 0.01) delta = d;
+              }
+              return (
+                <div key={p.label} className="flex items-center justify-between py-1.5 px-2 rounded text-xs gap-2"
+                  style={{ backgroundColor: p.ai ? C.primarySoft : "transparent" }}>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {p.ai && <Sparkles className="w-3 h-3 shrink-0" style={{ color: C.primary }} />}
+                    <span className="font-medium whitespace-nowrap" style={{ color: C.textPrimary }}>{p.label}</span>
+                    <span className="text-[10px] truncate" style={{ color: C.textDisabled }}>· {p.source}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {delta != null && (
+                      <span className="text-[10px] tabular-nums font-medium px-1 py-0.5 rounded"
+                        title={`${delta > 0 ? "+" : "−"}$${Math.abs(delta).toFixed(2)} vs Should-cost`}
+                        style={{
+                          backgroundColor: delta > 0 ? C.errorLight : C.successLight,
+                          color: delta > 0 ? C.error : C.success,
+                        }}>
+                        {delta > 0 ? "+" : "−"}${Math.abs(delta).toFixed(2)} vs Should
+                      </span>
+                    )}
+                    <span className="tabular-nums font-medium" style={{ color: p.value ? C.textPrimary : C.textDisabled }}>
+                      {p.value ? `$${p.value.toFixed(2)}` : "—"}
+                    </span>
+                  </div>
                 </div>
-                <span className="tabular-nums font-medium" style={{ color: p.value ? C.textPrimary : C.textDisabled }}>
-                  {p.value ? `$${p.value.toFixed(2)}` : "—"}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Cost Bridge mini chart */}
@@ -10286,6 +11511,80 @@ function ProcurementTab({ item, scenarioStep }) {
         </>
       )}
 
+      {/* === SUB-TIER BOM (children components) ===
+          Shows the part's nested BOM structure so cost drivers from sub-components are visible.
+          Click a child row to drill into its own detail. */}
+      {(() => {
+        const selfNode = BOM_TREE.find((n) => n.id === item.id);
+        const childIds = (selfNode && selfNode.children) || [];
+        if (childIds.length === 0) return null;
+        const children = childIds.map((cid) => BOM_TREE.find((n) => n.id === cid)).filter(Boolean);
+        if (children.length === 0) return null;
+        // Sum of children quoted/should-cost (rough cost roll-up)
+        const sum = (key) => children.reduce((acc, c) => acc + (c.cost && c.cost[key] != null ? c.cost[key] : 0), 0);
+        const childrenQuotedTotal = sum("quoted");
+        const childrenShouldTotal = sum("shouldCost");
+        return (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xs font-medium" style={{ color: C.textPrimary }}>
+                Sub-tier Components <span className="text-[10px]" style={{ color: C.textSecondary }}>· {children.length}</span>
+              </div>
+              {(childrenQuotedTotal > 0 || childrenShouldTotal > 0) && (
+                <div className="text-[10px] tabular-nums" style={{ color: C.textSecondary }}>
+                  Roll-up: {childrenQuotedTotal > 0 ? `Quoted $${childrenQuotedTotal.toFixed(2)}` : ""}
+                  {childrenQuotedTotal > 0 && childrenShouldTotal > 0 ? " · " : ""}
+                  {childrenShouldTotal > 0 ? `Should $${childrenShouldTotal.toFixed(2)}` : ""}
+                </div>
+              )}
+            </div>
+            <div className="rounded-md border overflow-hidden" style={{ borderColor: C.borderLight }}>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr style={{ color: C.textDisabled, backgroundColor: C.surfaceTinted, borderBottom: `1px solid ${C.borderLight}` }}>
+                    <th className="text-left font-medium py-2 px-3">Part</th>
+                    <th className="text-right font-medium py-2 px-2">Should</th>
+                    <th className="text-right font-medium py-2 px-2">Quoted</th>
+                    <th className="text-right font-medium py-2 px-2">Δ vs Should</th>
+                    <th className="text-center font-medium py-2 px-2 w-10"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {children.map((c) => {
+                    const should = c.cost && c.cost.shouldCost;
+                    const q = c.cost && c.cost.quoted;
+                    const delta = (should != null && q != null) ? q - should : null;
+                    return (
+                      <tr key={c.id}
+                        className="border-b transition-colors hover:bg-gray-50"
+                        style={{ borderColor: C.borderLight }}>
+                        <td className="py-2 px-3">
+                          <div className="font-medium truncate" style={{ color: C.textPrimary }}>{c.desc || c.partId}</div>
+                          <div className="text-[10px] tabular-nums" style={{ color: C.textDisabled }}>{c.partId}</div>
+                        </td>
+                        <td className="py-2 px-2 text-right tabular-nums" style={{ color: should != null ? C.textPrimary : C.textDisabled }}>
+                          {should != null ? `$${should.toFixed(2)}` : "—"}
+                        </td>
+                        <td className="py-2 px-2 text-right tabular-nums" style={{ color: q != null ? C.textPrimary : C.textDisabled }}>
+                          {q != null ? `$${q.toFixed(2)}` : "—"}
+                        </td>
+                        <td className="py-2 px-2 text-right tabular-nums font-medium"
+                          style={{ color: delta == null ? C.textDisabled : delta > 0 ? C.error : C.success }}>
+                          {delta == null ? "—" : `${delta > 0 ? "+" : "−"}$${Math.abs(delta).toFixed(2)}`}
+                        </td>
+                        <td className="py-2 px-2 text-center">
+                          <ChevronRight className="w-3.5 h-3.5 inline" style={{ color: C.textDisabled }} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* === SOURCING SECTION === */}
       {suppliers.length > 0 && (
         <>
@@ -10299,11 +11598,13 @@ function ProcurementTab({ item, scenarioStep }) {
             {suppliers.map((s, idx) => {
               const isAwarded = s.awarded || (!isHero && idx === 0 && s.recommended);
               return (
-                <div key={s.name} className="p-2.5 rounded-md border"
+                <button key={s.name} onClick={() => openSupplierProfile(s)}
+                  className="w-full text-left p-2.5 rounded-md border transition-colors hover:shadow-sm hover:border-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
                   style={{
                     borderColor: isAwarded ? C.success : C.borderLight,
                     backgroundColor: isAwarded ? C.successLight : "white",
-                  }}>
+                  }}
+                  title={`View ${s.name} profile`}>
                   <div className="flex items-start justify-between mb-1.5">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <Building2 className="w-3.5 h-3.5" style={{ color: C.textSecondary }} />
@@ -10338,7 +11639,7 @@ function ProcurementTab({ item, scenarioStep }) {
                       <div className="font-medium" style={{ color: C.textPrimary }}>{s.performance}/100</div>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -10368,6 +11669,11 @@ function ProcurementTab({ item, scenarioStep }) {
             : rfqSent ? <><Clock className="w-3.5 h-3.5" />Awaiting Quotes (D-3)</>
             : <><Send className="w-3.5 h-3.5" />Send Multi-Supplier RFQ</>}
         </button>
+      )}
+
+      {/* Supplier profile popover — opens when any qualified-supplier card is clicked */}
+      {selectedSupplier && (
+        <SupplierProfilePopover supplier={selectedSupplier} onClose={() => setSelectedSupplier(null)} />
       )}
     </div>
   );
@@ -10501,7 +11807,7 @@ function ItemActivityTab({ item, scenarioStep }) {
 
   if (activity.length === 0) {
     return (
-      <div className="text-center py-8">
+      <div className="text-center py-12">
         <Activity className="w-10 h-10 mx-auto mb-2" style={{ color: C.textDisabled }} />
         <div className="text-sm font-medium mb-1" style={{ color: C.textPrimary }}>No Activity Yet</div>
         <div className="text-xs" style={{ color: C.textSecondary }}>
@@ -10627,6 +11933,9 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
   const [scope, setScope] = useState(context ? "item" : "all");
   const [bomFilter, setBomFilter] = useState("E"); // when scope === "bom"
   const [itemContext, setItemContext] = useState(context); // when scope === "item"
+  const [itemBomFilter, setItemBomFilter] = useState(null); // within item scope: null=all, "E"|"C"|"Q"
+  // Composer draft text — controlled so external callers can seed it (e.g. "Confirm Fit & Notify CM" pre-fills the @CM mention).
+  const [composerText, setComposerText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Visibility (who can see the next message) — default to Internal team for safety
@@ -10642,6 +11951,15 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
     if (context) {
       setScope("item");
       setItemContext(context);
+      // If opened from a specific BOM (e.g. comment in C-BOM workspace), preselect that
+      // perspective — but only if that BOM actually has messages for this part; else show All.
+      const bom = context.bom || null;
+      const hasMsgInBom = bom
+        ? ACTIVITY_FEED.some((m) => m.itemRef && m.itemRef.id === context.itemId && (CHANNEL_TO_BOM[m.channel] || "E") === bom)
+        : false;
+      setItemBomFilter(hasMsgInBom ? bom : null);
+      // Seed composer if the caller provided a draft message (e.g. DE → CM mention from Design Validation).
+      if (context.seedMessage) setComposerText(context.seedMessage);
     }
   }, [context]);
 
@@ -10667,14 +11985,20 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
   // Apply scope filter
   const scopedMessages = useMemo(() => {
     if (scope === "item" && itemContext) {
-      return allMessages.filter((m) => m.itemRef && m.itemRef.id === itemContext.itemId);
+      // A part's conversation is unified across BOMs; the BOM-perspective filter
+      // (itemBomFilter) narrows to messages from one BOM context (via channel).
+      return allMessages.filter((m) => {
+        if (!(m.itemRef && m.itemRef.id === itemContext.itemId)) return false;
+        if (itemBomFilter && (CHANNEL_TO_BOM[m.channel] || "E") !== itemBomFilter) return false;
+        return true;
+      });
     }
     if (scope === "bom") {
       const channels = BOM_TO_CHANNELS[bomFilter] || [];
       return allMessages.filter((m) => channels.includes(m.channel));
     }
     return allMessages;
-  }, [allMessages, scope, bomFilter, itemContext]);
+  }, [allMessages, scope, bomFilter, itemContext, itemBomFilter]);
 
   // Apply search filter
   const displayMessages = useMemo(() => {
@@ -10687,16 +12011,44 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
     );
   }, [scopedMessages, searchQuery]);
 
-  // BOM mode: group by channel (Q6-c)
-  const groupedByChannel = useMemo(() => {
+  // BOM mode: group messages by the BOM version they happened under (history-style).
+  // Each BOM has a version timeline; recent scenario messages sit on the current version,
+  // older collaboration history sits on the previous version.
+  const BOM_VERSIONS = {
+    E: { current: "v1.8", prev: "v1.5" },
+    C: { current: "v2.0", prev: "v1.5" },
+    Q: { current: "v1.5", prev: "v1.0" },
+  };
+  // Heuristic: scenario messages (Hero, id <= 8) and items without an explicit "ago" timestamp
+  // are on the CURRENT version; messages whose ts mentions a past day are on the PREVIOUS version.
+  const versionOfMessage = (m, bom) => {
+    const v = BOM_VERSIONS[bom] || BOM_VERSIONS.E;
+    const ts = (m.ts || "").toLowerCase();
+    const isPast = ts.includes("ago") || ts.includes("yesterday") || ts.includes("day");
+    return isPast ? v.prev : v.current;
+  };
+
+  // Resolve a message's source: which BOM (via channel) + which version of that BOM.
+  // Used to render the source chip on ALL-scope bubbles so origin is always visible.
+  const sourceOf = (m) => {
+    const bom = CHANNEL_TO_BOM[m.channel] || "E";
+    return { bom, version: versionOfMessage(m, bom) };
+  };
+
+  const groupedByVersion = useMemo(() => {
     if (scope !== "bom") return null;
-    const channels = BOM_TO_CHANNELS[bomFilter] || [];
+    const v = BOM_VERSIONS[bomFilter] || BOM_VERSIONS.E;
+    // Order: current version first (newest), then previous.
+    const order = [v.current, v.prev];
     const groups = {};
-    channels.forEach((ch) => { groups[ch] = []; });
+    order.forEach((ver) => { groups[ver] = []; });
     displayMessages.forEach((m) => {
-      if (groups[m.channel]) groups[m.channel].push(m);
+      const ver = versionOfMessage(m, bomFilter);
+      if (!groups[ver]) groups[ver] = [];
+      groups[ver].push(m);
     });
-    return groups;
+    // Return as ordered array of [version, msgs, isCurrent]
+    return order.map((ver) => [ver, groups[ver] || [], ver === v.current]);
   }, [displayMessages, scope, bomFilter]);
 
   // Open thread (click on a part chip)
@@ -10708,6 +12060,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
       partName: itemRef.partName || itemRef.desc,
     });
     setScope("item");
+    setItemBomFilter(null); // start with unified view for a newly opened part
     if (setSelectedItemId) setSelectedItemId(itemRef.id);
   };
 
@@ -10799,7 +12152,7 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
             <span className="text-[10px] font-medium tracking-wide shrink-0" style={{ color: C.textDisabled }}>
               BOM:
             </span>
-            {["M", "E", "S", "Q", "C"].map((id) => (
+            {["E", "C", "Q"].map((id) => (
               <button key={id} onClick={() => setBomFilter(id)}
                 className="px-2 py-0.5 rounded-full text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:opacity-80"
                 style={{
@@ -10827,13 +12180,51 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
                 {itemContext.partId}
               </div>
             </div>
-            <button onClick={() => { setItemContext(null); setScope("all"); }}
+            <button onClick={() => { setItemContext(null); setScope("all"); setItemBomFilter(null); }}
               className="p-0.5 rounded hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               title="Clear item filter">
               <X className="w-3 h-3" style={{ color: C.textSecondary }} />
             </button>
           </div>
         )}
+
+        {/* BOM perspective filter (within item scope) — a part's history is unified across BOMs,
+            but can be narrowed to one BOM's perspective (Engineering / Cost / Quality). */}
+        {scope === "item" && itemContext && (() => {
+          // Count this part's messages per BOM context.
+          const partMsgs = allMessages.filter((m) => m.itemRef && m.itemRef.id === itemContext.itemId);
+          const countFor = (bom) => partMsgs.filter((m) => (CHANNEL_TO_BOM[m.channel] || "E") === bom).length;
+          const perspectives = [
+            { id: null, label: "All", count: partMsgs.length },
+            { id: "E", label: "E-BOM", count: countFor("E") },
+            { id: "C", label: "C-BOM", count: countFor("C") },
+            { id: "Q", label: "Q-BOM", count: countFor("Q") },
+          ];
+          return (
+            <div className="flex items-center gap-1 mb-2 flex-wrap">
+              {perspectives.map((p) => {
+                const isActive = itemBomFilter === p.id;
+                const disabled = p.id !== null && p.count === 0;
+                const tint = { E: C.info, C: C.warning, Q: "#7c3aed" }[p.id];
+                return (
+                  <button key={p.label}
+                    disabled={disabled}
+                    onClick={() => setItemBomFilter(p.id)}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: isActive ? (tint || C.primary) : "transparent",
+                      color: isActive ? "white" : C.textSecondary,
+                      border: isActive ? "none" : `1px solid ${C.border}`,
+                    }}>
+                    {p.id && <GitBranch className="w-2.5 h-2.5" />}
+                    {p.label}
+                    <span style={{ opacity: 0.7 }}>{p.count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {/* Search */}
         <div className="flex items-center gap-2 px-2 py-1 rounded-md border focus-within:ring-2 focus-within:ring-offset-1"
@@ -10872,39 +12263,45 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
                 "Mention a teammate to start collaborating."}
             </div>
           </div>
-        ) : scope === "bom" && groupedByChannel ? (
-          // BOM scope: group by channel
-          Object.entries(groupedByChannel).map(([channel, msgs]) => (
+        ) : scope === "bom" && groupedByVersion ? (
+          // BOM scope: group by BOM version (history-style version dividers)
+          groupedByVersion.map(([version, msgs, isCurrent]) => (
             msgs.length > 0 && (
-              <div key={channel}>
-                {/* Channel header */}
-                <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-[10px] font-medium tracking-wide" style={{ color: C.textSecondary }}>
-                    #{channel}
+              <div key={version} className="mb-1">
+                {/* Version divider — minimal: centered text with lines on both sides (Figma) */}
+                <div className="flex items-center gap-2 mb-2 px-1 sticky top-0 z-[1] py-1"
+                  style={{ backgroundColor: "#ffffff" }}>
+                  <div className="flex-1 h-px" style={{ backgroundColor: C.borderLight }} />
+                  <span className="text-[12px] font-medium whitespace-nowrap" style={{ color: C.textDisabled }}>
+                    {bomFilter}-BOM {version}{isCurrent ? " current" : ""}
                   </span>
                   <div className="flex-1 h-px" style={{ backgroundColor: C.borderLight }} />
-                  <span className="text-[10px]" style={{ color: C.textDisabled }}>
-                    {msgs.length}
-                  </span>
                 </div>
-                {/* Messages in this channel */}
+                {/* Messages under this version */}
                 <div className="space-y-2">
                   {msgs.map((m) => (
                     <ChatMessage key={m.id} message={m}
                       onOpenItem={openItemScope}
-                      showItemChip={scope !== "item"} />
+                      showItemChip={scope !== "item"}
+                      showBomChip={false} />
                   ))}
                 </div>
               </div>
             )
           ))
         ) : (
-          // All scope or Item scope: flat list with date grouping intent
-          displayMessages.map((m) => (
-            <ChatMessage key={m.id} message={m}
-              onOpenItem={openItemScope}
-              showItemChip={scope !== "item"} />
-          ))
+          // All scope or Item scope: flat list. Source chip shows BOM + version so origin is visible.
+          displayMessages.map((m) => {
+            const src = sourceOf(m);
+            return (
+              <ChatMessage key={m.id} message={m}
+                onOpenItem={openItemScope}
+                showItemChip={scope !== "item"}
+                showBomChip={true}
+                sourceBom={src.bom}
+                sourceVersion={src.version} />
+            );
+          })
         )}
       </div>
 
@@ -10934,16 +12331,22 @@ function ChatPanel({ scenarioStep, selectedItemId, setSelectedItemId, context, a
             <ChevronDown className="w-2.5 h-2.5" />
           </button>
         </div>
-        <div className="rounded-md border flex items-center gap-2 p-2"
+        <div className="rounded-md border flex items-start gap-2 p-2"
           style={{ borderColor: scope === "item" ? C.primary : C.border }}>
-          <input type="text"
+          <textarea
+            value={composerText}
+            onChange={(e) => setComposerText(e.target.value)}
             placeholder={composerCtx.placeholder}
-            className="flex-1 text-xs outline-none bg-transparent"
-            style={{ color: C.textPrimary }} />
-          <Paperclip className="w-3.5 h-3.5" style={{ color: C.textDisabled }} />
-          <AtSign className="w-3.5 h-3.5" style={{ color: C.textDisabled }} />
-          <Smile className="w-3.5 h-3.5" style={{ color: C.textDisabled }} />
-          <button className="ml-1 px-2 py-1 rounded text-[10px] font-medium text-white flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            rows={Math.min(8, Math.max(1, composerText.split("\n").length, composerText.length > 80 ? 3 : 1))}
+            className="flex-1 text-xs outline-none bg-transparent resize-none"
+            style={{ color: C.textPrimary, fontFamily: "inherit" }} />
+          <Paperclip className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: C.textDisabled }} />
+          <AtSign className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: C.textDisabled }} />
+          <Smile className="w-3.5 h-3.5 mt-1 shrink-0" style={{ color: C.textDisabled }} />
+          <button
+            onClick={() => setComposerText("")}
+            disabled={!composerText.trim()}
+            className="ml-1 px-2 py-1 rounded text-[10px] font-medium text-white flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ backgroundColor: C.primary }}>
             <Send className="w-3 h-3" />
             Send
@@ -11120,7 +12523,7 @@ function VisibilityPicker({ value, onChange, onClose, project }) {
 }
 
 // === CHAT MESSAGE — individual message render ===
-function ChatMessage({ message: m, onOpenItem, showItemChip }) {
+function ChatMessage({ message: m, onOpenItem, showItemChip, sourceBom, sourceVersion, showBomChip }) {
   const isAI = m.persona === "AI";
   // Visibility — for mock data we infer from channel:
   // - sourcing/cost channels often include external suppliers; show "2 groups"
@@ -11128,6 +12531,9 @@ function ChatMessage({ message: m, onOpenItem, showItemChip }) {
   const visibility = m.visibility || (
     m.channel === "sourcing" ? { label: "2 Groups", external: true } : { label: "Internal", external: false }
   );
+  // BOM tint for the source chip
+  const bomTint = { E: C.infoLight, C: C.warningLight, Q: "#f4eafe" }[sourceBom] || C.bg;
+  const bomColor = { E: C.info, C: C.warning, Q: "#7c3aed" }[sourceBom] || C.textSecondary;
 
   return (
     <div className="flex items-start gap-2 p-2 rounded-md"
@@ -11143,10 +12549,14 @@ function ChatMessage({ message: m, onOpenItem, showItemChip }) {
           </span>
           {isAI && <Sparkles className="w-3 h-3 shrink-0" style={{ color: C.primary }} />}
           <span className="text-[10px]" style={{ color: C.textDisabled }}>{m.ts}</span>
-          {m.channel && (
-            <span className="text-[10px] px-1 py-0.5 rounded tabular-nums"
-              style={{ backgroundColor: C.bg, color: C.textSecondary }}>
-              #{m.channel}
+          {/* Source chip — which BOM + version this message belongs to.
+              Hidden in BOM scope (already grouped by version) to avoid redundancy. */}
+          {showBomChip && sourceBom && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded"
+              style={{ backgroundColor: bomTint, color: bomColor }}
+              title={`${sourceBom}-BOM ${sourceVersion || ""}`}>
+              <GitBranch className="w-2.5 h-2.5" />
+              {sourceBom}-BOM{sourceVersion ? ` ${sourceVersion}` : ""}
             </span>
           )}
           {/* Visibility indicator — pushed to right edge of header */}
@@ -11493,7 +12903,7 @@ function CostPhaseTab({ isHeroProject, project }) {
               </div>
               <div className="text-center">
                 <div className="text-[10px] font-medium" style={{ color: C.textPrimary }}>{d.phase}</div>
-                <div className="text-[10px]" style={{ color: C.textSecondary }}>{d.date}</div>
+                <div className="text-[10px]" style={{ color: C.textSecondary }}>{fmtDate(d.date)}</div>
                 <div className="text-[10px] tabular-nums font-medium mt-0.5"
                   style={{ color: d.delta < 0 ? C.success : C.error }}>
                   {d.delta < 0 ? "" : "+"}{d.delta.toFixed(1)}
@@ -11529,7 +12939,7 @@ function CostPhaseTab({ isHeroProject, project }) {
           {phaseData.map((d) => (
             <tr key={d.phase} className="border-b" style={{ borderColor: C.borderLight }}>
               <td className="py-2.5 px-2 font-medium" style={{ color: C.textPrimary }}>{d.phase}</td>
-              <td className="py-2.5 px-2 tabular-nums" style={{ color: C.textSecondary }}>{d.date}</td>
+              <td className="py-2.5 px-2 tabular-nums" style={{ color: C.textSecondary }}>{fmtDate(d.date)}</td>
               <td className="text-right tabular-nums py-2.5 px-2" style={{ color: C.textPrimary }}>${d.current.toFixed(2)}</td>
               <td className="text-right tabular-nums py-2.5 px-2" style={{ color: C.textSecondary }}>${d.target.toFixed(2)}</td>
               <td className="text-right tabular-nums font-medium py-2.5 px-2"
@@ -12175,6 +13585,7 @@ function CaidentiaApp() {
       itemId: item.id,
       partId: item.partId,
       partName: item.partName || item.desc,
+      bom: activeBom, // which BOM the user was viewing — preselect this perspective in chat
     });
   };
 
@@ -12267,7 +13678,13 @@ function CaidentiaApp() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [scenarioStep, chatOpen]);
 
-  const onOpenItem = (id) => {
+  // Pending tab — when a caller (e.g. DE Overview "Review Fit") wants the detail panel
+  // to land on a specific tab instead of the default Spec. Consumed once on detail open.
+  const [pendingDetailTab, setPendingDetailTab] = useState(null);
+
+  const onOpenItem = (id, bom, opts) => {
+    if (bom) setActiveBom(bom);
+    if (opts && opts.tab) setPendingDetailTab(opts.tab);
     setSelectedItemId(id);
     setView("bom");
   };
@@ -12394,6 +13811,7 @@ function CaidentiaApp() {
                   primaryCta={primaryCta}
                   isCollapsed={lnbCollapsed}
                   setIsCollapsed={setLnbCollapsed}
+                  setSelectedItemId={setSelectedItemId}
                 />
               </div>
 
@@ -12404,7 +13822,7 @@ function CaidentiaApp() {
                   {(() => {
                     const SCREEN_TITLES = {
                       info: "Project Info",
-                      collaborators: "Collaborators",
+                      // "collaborators" renders its own title row (with actions) inside the screen.
                       // "cockpit" (Overview) renders its own content with no title row.
                       // "bomlist" & "bom" render their own title rows inside their screens.
                     };
@@ -12423,6 +13841,8 @@ function CaidentiaApp() {
                       activeProjectCode={activeProjectCode}
                       setView={setView}
                       activePersona={activePersona}
+                      setActiveBom={setActiveBom}
+                      setSelectedItemId={setSelectedItemId}
                     />
                   )}
                   {view === "info" && (
@@ -12456,6 +13876,8 @@ function CaidentiaApp() {
                       onOpenItemChat={onOpenItemChat}
                       activeProjectCode={activeProjectCode}
                       setView={setView}
+                      pendingDetailTab={pendingDetailTab}
+                      onPendingDetailTabConsumed={() => setPendingDetailTab(null)}
                     />
                   )}
                   {view === "apqp" && (
@@ -12616,8 +14038,13 @@ function PasswordGate({ onUnlock }) {
 }
 
 // === ROOT — password gate wraps the prototype ===
+// To re-enable the password lock before deploy, set the value below to true.
+const PASSWORD_GATE_ENABLED = false;
+
 export default function App() {
   const [unlocked, setUnlocked] = useState(false);
-  if (!unlocked) return <PasswordGate onUnlock={() => setUnlocked(true)} />;
+  if (PASSWORD_GATE_ENABLED && !unlocked) {
+    return <PasswordGate onUnlock={() => setUnlocked(true)} />;
+  }
   return <CaidentiaApp />;
 }
